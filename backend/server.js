@@ -22,12 +22,11 @@ app.use(express.json());
 
 
 //Import Routes
-import authaRoutes from './routes/user.js';
+import authRoutes from './routes/user.js';
 
 // use Routes
 
-app.use('/api/auth', authaRoutes);
-
+app.use('/api/auth', authRoutes);
 
 
 

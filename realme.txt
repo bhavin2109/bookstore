@@ -1,9 +1,0 @@
-username: bhavin2109
-password: zerotwo02
-
-connection string: mongodb+srv://bhavin2109:zerotwo02@cluster-1.9kgcpbk.mongodb.net/
-
-atlas sql db name: sample_mflix
-
-url: mongodb://atlas-sql-69441f9dba62ee2dbc09e42d-l58fuv.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin
-
