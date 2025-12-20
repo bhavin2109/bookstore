@@ -1,12 +1,11 @@
 import React from "react";
-import Header from "../components/Header.jsx";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "../index.css";
 
 const Home = () => {
   const images = [
@@ -20,9 +19,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="bg-black">
-     
-
+    <div className="home-container">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
@@ -33,14 +30,14 @@ const Home = () => {
         }}
         speed={900}
         loop={true}
-        className="h-screen w-full"
+        className="home-swiper"
       >
         {images.map((img, index) => (
           <SwiperSlide key={index}>
             <img
               src={img}
               alt={`slide-${index}`}
-              className="h-screen w-full object-cover"
+              className="home-swiper-slide"
             />
           </SwiperSlide>
         ))}

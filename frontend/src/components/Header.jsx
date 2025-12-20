@@ -4,7 +4,7 @@ import '../index.css'
 
 const Header = () => {
   return (
-    <div className="header w-full h-15 bg-blue-400 flex justify-around items-center">
+    <div className="header">
       <div className="logo">Logo</div>
       <div className="nav-links">
         <Link to="/home">Home</Link>
