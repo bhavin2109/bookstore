@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer components {
+  .nav-links {
+    @apply p-4 flex gap-4 text-white font-semibold;
+  }
+}
