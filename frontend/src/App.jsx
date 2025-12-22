@@ -7,6 +7,7 @@ import AboutUs from './pages/AboutUs.jsx'
 import ContactUs from './pages/ContactUs.jsx'
 import Register from './pages/Register.jsx'
 import VerifyOtp from './pages/VerifyOtp.jsx'
+import Footer from './components/Footer.jsx'
 
 
 const App = () => {
@@ -22,7 +23,7 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/verify-otp' element={<VerifyOtp />} />
       </Routes>
-
+      <Footer />
     </>
   )
 }
