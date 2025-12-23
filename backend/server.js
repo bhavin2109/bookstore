@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
+import Products from './models/Products.js';
 
 dotenv.config();
 
@@ -23,6 +24,9 @@ app.use(express.json());
 
 //Import Routes
 import authRoutes from './routes/user.js';
+import productRoutes from './routes/productRoutes.js';
+
+app.use('/api/admin/products', productRoutes);
 
 // use Routes
 

@@ -6,13 +6,14 @@ import Products from './pages/Products.jsx'
 import AboutUs from './pages/AboutUs.jsx'
 import ContactUs from './pages/ContactUs.jsx'
 import Register from './pages/Register.jsx'
+import Login from './pages/Login.jsx'
 import VerifyOtp from './pages/VerifyOtp.jsx'
 import Footer from './components/Footer.jsx'
 
 
 const App = () => {
   return (
-    <>
+    <div className="overflow-x-hidden max-w-full">
       <Header />
       <Routes>
         <Route path='/' element={<Navigate to='/home' replace />} />
@@ -21,10 +22,11 @@ const App = () => {
         <Route path='/about-us' element={<AboutUs />} />
         <Route path='/contact-us' element={<ContactUs />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/login' element={<Login />} />
         <Route path='/verify-otp' element={<VerifyOtp />} />
       </Routes>
       <Footer />
-    </>
+    </div>
   )
 }
 

@@ -2,9 +2,9 @@ import React from 'react'
 
 function Footer() {
   return (
-    <div>
+    <div className="overflow-x-hidden max-w-full">
     <footer className="bg-gray-800 text-white py-8 mt-12">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 w-full max-w-full">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-lg font-bold mb-4">About Us</h3>
@@ -35,7 +35,7 @@ function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 BookStore. All rights reserved.</p>
+          <p>&copy; 2026 BookStore. All rights reserved.</p>
         </div>
       </div>
     </footer>
