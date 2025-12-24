@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-// import { registerUser } from '../services/authServices';
+import { registerUser } from '../services/authServices';
 
 function Register() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ function Register() {
     }
 
     try {
-      // const response = await registerUser(form);
+      const response = await registerUser(form);
       // Store email in localStorage for OTP verification
       localStorage.setItem("registerEmail", form.email);
       alert("OTP sent to your email for verification.");

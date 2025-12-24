@@ -8,12 +8,12 @@ const generateToken = (user) => {
     throw new Error('JWT_SECRET not configured');
   }
   return jwt.sign(
-    { 
-      id: user._id, 
+    {
+      id: user._id,
       email: user.email,
-      role: user.role 
-    }, 
-    jwtSecret, 
+      role: user.role
+    },
+    jwtSecret,
     {
       expiresIn: "7d",
     }
@@ -41,12 +41,12 @@ const register = async (req, res, next) => {
       // If user exists and is verified, reject
       if (existingUser.isVerified) {
         console.log('❌ User already exists and verified');
-        return res.status(400).json({ 
+        return res.status(400).json({
           message: "User already exists and verified",
-          isVerified: true 
+          isVerified: true
         });
       }
-      
+
       // If user exists but NOT verified, delete old record and allow re-registration
       console.log('🔄 Unverified user found, deleting old record...');
       await User.deleteOne({ email });
@@ -94,12 +94,12 @@ export const verifyOtp = async (req, res) => {
       console.log('❌ User not found');
       return res.status(400).json({ message: "User not found" });
     }
-    
+
     if (user.isVerified) {
       console.log('❌ User already verified');
       return res.status(400).json({ message: "User already verified" });
     }
-    
+
     if (user.otp !== otp) {
       console.log('❌ Invalid OTP provided');
       return res.status(400).json({ message: "Invalid OTP" });
@@ -129,7 +129,7 @@ export const verifyOtp = async (req, res) => {
     console.log('✅ Token generated successfully');
 
     // Return token in response
-    res.status(200).json({ 
+    res.status(200).json({
       message: "OTP verified successfully",
       token,
       user: {
@@ -142,6 +142,28 @@ export const verifyOtp = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Verify OTP error:', error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Delete user by email (for testing purposes)
+export const deleteUser = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const result = await User.deleteOne({ email });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error('❌ Delete user error:', error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

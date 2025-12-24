@@ -1,6 +1,6 @@
 import express from 'express';
 import sendOtpMail from '../middlewares/sendOtpMail.js';
-import { register, verifyOtp } from '../controllers/user.js';
+import { register, verifyOtp, deleteUser } from '../controllers/user.js';
 
 const router = express.Router();
 
@@ -11,10 +11,13 @@ router.post('/register', register, sendOtpMail, (req, res) => {
 
 router.post('/verify-otp', verifyOtp);
 
+// DELETE route for testing - remove in production
+router.delete('/delete-user', deleteUser);
+
 // Error handling middleware (must be last)
 router.use((err, req, res, next) => {
     console.error('❌ Route error:', err.stack);
-    res.status(500).json({ 
+    res.status(500).json({
         message: 'Something went wrong!',
         error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
