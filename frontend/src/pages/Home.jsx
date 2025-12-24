@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import WhyChooseUs from "../components/WhyChooseUs";
+import FAQs from "../components/FAQs";
 import { books } from "../data/books";
 
 const Home = () => {
@@ -25,7 +27,7 @@ const Home = () => {
   // Auto-rotate through books with smooth transitions
   useEffect(() => {
     if (!isAutoPlaying) return;
-    
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % heroBooks.length);
     }, 5000);
@@ -64,7 +66,7 @@ const Home = () => {
   const getStackedBooks = () => {
     const stack = [];
     const maxStackSize = 3; // Only 3 books in stack
-    
+
     // Get books after the active one
     for (let i = 1; i <= maxStackSize; i++) {
       const index = (activeIndex + i) % heroBooks.length;
@@ -74,7 +76,7 @@ const Home = () => {
         originalIndex: index,
       });
     }
-    
+
     return stack;
   };
 
@@ -105,7 +107,7 @@ const Home = () => {
               backgroundImage: `url(${bookSpinesBg})`,
             }}
           ></div>
-          
+
           {/* Welcome Content */}
           <div className="relative z-10 max-w-md space-y-8 text-center lg:text-left">
             <motion.h1
@@ -116,7 +118,7 @@ const Home = () => {
             >
               Welcome to BookStore
             </motion.h1>
-            
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -125,7 +127,7 @@ const Home = () => {
             >
               Get your favorite books from 50+ publishers, 200+ authors and 1000+ categories.
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -135,7 +137,7 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, x: 5 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-xl"
+                  className="flex items-center gap-4 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-xl"
                 >
                   <span>Go to Collections</span>
                   <motion.svg
@@ -166,7 +168,7 @@ const Home = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative hidden lg:flex w-full lg:w-2/3 bg-gradient-to-br from-slate-900 via-slate-800 to-black overflow-visible"
+          className="relative hidden lg:flex w-full lg:w-2/3 bg-linear-to-br from-slate-900 via-slate-800 to-black overflow-visible"
         >
           {/* Blurred Book Spines Background */}
           <div
@@ -177,8 +179,8 @@ const Home = () => {
           ></div>
 
           {/* Main Book + Stack Container */}
-          <div 
-            className="relative z-10 w-full h-full flex items-center justify-center pl-8 lg:pl-16" 
+          <div
+            className="relative z-10 w-full h-full flex items-center justify-center pl-8 lg:pl-16"
             style={{ perspective: '1500px', perspectiveOrigin: 'left center' }}
           >
             <div className="relative w-full max-w-5xl h-full flex items-center">
@@ -189,8 +191,8 @@ const Home = () => {
                   initial={{ opacity: 0, scale: 0.9, x: -50, rotateY: -10 }}
                   animate={{ opacity: 1, scale: 1, x: 0, rotateY: 0 }}
                   exit={{ opacity: 0, scale: 0.9, x: 50, rotateY: 10 }}
-                  transition={{ 
-                    duration: 0.8, 
+                  transition={{
+                    duration: 0.8,
                     ease: [0.25, 0.1, 0.25, 1]
                   }}
                   className="relative flex-shrink-0 z-30 cursor-pointer"
@@ -220,7 +222,7 @@ const Home = () => {
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.8 }}
                     />
-                    
+
                     {/* Book Info Overlay */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -271,10 +273,10 @@ const Home = () => {
                   return (
                     <motion.div
                       key={`${originalIndex}-${activeIndex}`}
-                      initial={{ 
-                        opacity: 0, 
-                        scale: 0.8, 
-                        x: translateX + 100, 
+                      initial={{
+                        opacity: 0,
+                        scale: 0.8,
+                        x: translateX + 100,
                         z: -300,
                         rotateY: 15
                       }}
@@ -306,7 +308,7 @@ const Home = () => {
                       }}
                       className="origin-left"
                       onClick={() => handleBookClick(originalIndex)}
-                      whileHover={{ 
+                      whileHover={{
                         scale: scale + 0.08,
                         z: translateZ + 30,
                         x: translateX - 5,
@@ -337,7 +339,7 @@ const Home = () => {
                             className="w-full h-auto object-cover"
                             style={{ maxHeight: '400px' }}
                           />
-                          
+
                           {/* Book Info Overlay */}
                           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/85 to-transparent p-4">
                             <h3 className="text-lg font-bold text-white mb-1 line-clamp-1" style={{ fontFamily: 'serif' }}>
@@ -364,11 +366,10 @@ const Home = () => {
                 <motion.button
                   key={index}
                   onClick={() => handleBookClick(index)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    index === activeIndex
-                      ? 'w-8 bg-red-600'
-                      : 'w-3 bg-white/50 hover:bg-white/70'
-                  }`}
+                  className={`h-1.5 rounded-full transition-all ${index === activeIndex
+                    ? 'w-8 bg-red-600'
+                    : 'w-3 bg-white/50 hover:bg-white/70'
+                    }`}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                   animate={{
@@ -415,18 +416,17 @@ const Home = () => {
                   />
                 </motion.div>
               </AnimatePresence>
-              
+
               {/* Mobile Pagination */}
               <div className="flex gap-2 justify-center mt-4">
                 {heroBooks.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => handleBookClick(index)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      index === activeIndex
-                        ? 'w-6 bg-red-600'
-                        : 'w-3 bg-white/50'
-                    }`}
+                    className={`h-1.5 rounded-full transition-all ${index === activeIndex
+                      ? 'w-6 bg-red-600'
+                      : 'w-3 bg-white/50'
+                      }`}
                   />
                 ))}
               </div>
@@ -489,6 +489,12 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
+      {/* FAQs Section */}
+      <FAQs />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { registerUser } from '../services/authServices';
 
@@ -41,7 +42,7 @@ function Register() {
     }
 
     try {
-      const response = await registerUser(form);
+      await registerUser(form);
       // Store email in localStorage for OTP verification
       localStorage.setItem("registerEmail", form.email);
       alert("OTP sent to your email for verification.");
@@ -84,7 +85,7 @@ function Register() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
+      className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -207,7 +208,7 @@ function Register() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
           >
             {loading ? (
               <motion.span

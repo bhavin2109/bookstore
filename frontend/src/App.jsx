@@ -9,6 +9,7 @@ import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
 import VerifyOtp from './pages/VerifyOtp.jsx'
 import Footer from './components/Footer.jsx'
+import ProductDetails from './pages/ProductDetails.jsx'
 
 
 const App = () => {
@@ -24,6 +25,8 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/verify-otp' element={<VerifyOtp />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+
       </Routes>
       <Footer />
     </div>

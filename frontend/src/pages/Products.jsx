@@ -1,170 +1,162 @@
-import React, { useEffect, useRef } from "react";
-import { motion, useInView, useAnimation } from "framer-motion";
-import ProductCard from "../components/ProductCard";
-import { books } from "../data/books";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAllProducts } from "../services/productServices.js";
+import { motion } from "framer-motion";
 
-// Generate random values for floating particles (outside component to avoid linter issues)
-const generateParticleData = () => {
-  const random = () => Math.random();
-  return Array.from({ length: 15 }, () => ({
-    left: random() * 100,
-    top: random() * 100,
-    duration: 3 + random() * 2,
-    delay: random() * 2,
-  }));
-};
+function Products() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const floatingParticlesData = generateParticleData();
-
-const Products = () => {
-
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
-  const controls = useAnimation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [isInView, controls]);
+    const fetchProducts = async () => {
+      try {
+        const res = await getAllProducts();
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
+        // 🛡️ safety check
+        if (res && Array.isArray(res.products)) {
+          setProducts(res.products);
+        } else {
+          setProducts([]);
+        }
+      } catch (err) {
+        setError(
+          err?.message ||
+          err ||
+          "Failed to fetch products. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
+    fetchProducts();
+  }, []);
+
+  // ⏳ loading state
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64 bg-white">
+        <p className="text-lg font-bold text-black">Loading products...</p>
+      </div>
+    );
+  }
+
+  // ❌ error state
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64 bg-white">
+        <p className="text-red-600 font-bold">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen bg-white overflow-x-hidden max-w-full"
-    >
-      {/* Hero Section */}
-      <motion.section
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20"
-      >
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 h-full w-full">
-            {floatingParticlesData.map((particle, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-1 w-1 rounded-full bg-white/20"
-                style={{
-                  left: `${particle.left}%`,
-                  top: `${particle.top}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: particle.duration,
-                  repeat: Infinity,
-                  delay: particle.delay,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="relative mx-auto max-w-6xl px-4 text-center">
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="mb-4 text-5xl font-bold text-white md:text-6xl"
-          >
-            Our Collection
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-lg text-slate-300 md:text-xl"
-          >
-            Handpicked titles for every kind of reader
-          </motion.p>
-        </div>
-      </motion.section>
-
-      {/* Books Grid */}
-      <div className="mx-auto max-w-7xl px-4 py-16 w-full">
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          ref={containerRef}
-          variants={containerVariants}
-          initial="hidden"
-          animate={controls}
-          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 text-center"
         >
-          {books.map((book, index) => (
-            <ProductCard
-              key={book.id}
-              book={book}
-              index={index}
-              variants={cardVariants}
-            />
-          ))}
+          <h1 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tight mb-3">
+            Our Collection
+          </h1>
+          <p className="text-gray-600 text-lg">Discover your next great read</p>
         </motion.div>
-      </div>
 
-      {/* Stats Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="bg-slate-50 py-16"
-      >
-        <div className="mx-auto max-w-6xl px-4">
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { number: "10K+", label: "Books Available", icon: "📚" },
-              { number: "5K+", label: "Happy Readers", icon: "😊" },
-              { number: "500+", label: "New Arrivals", icon: "✨" },
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="rounded-xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200"
+        {products.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
+            <p className="text-xl font-medium text-gray-500">No products available at the moment.</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.08 } },
+            }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
+          >
+            {products.map((product) => (
+              <motion.article
+                key={product._id}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 },
+                }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                onClick={() => navigate(`/products/${product._id}`)}
+                className="group relative flex flex-col h-full overflow-hidden rounded-lg bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 cursor-pointer"
               >
-                <div className="mb-4 text-4xl">{stat.icon}</div>
-                <div className="mb-2 text-3xl font-bold text-slate-900">
-                  {stat.number}
+                {/* Category Badge */}
+                {product.category && (
+                  <div className="absolute top-4 left-4 z-10 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider shadow-lg">
+                    {product.category}
+                  </div>
+                )}
+
+                {/* Image Container */}
+                <div className="relative aspect-[3/4] overflow-hidden border-b-2 border-black bg-white">
+                  <img
+                    src={product.image || "https://via.placeholder.com/400?text=No+Image"}
+                    alt={product.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
                 </div>
-                <div className="text-base font-medium text-slate-600">
-                  {stat.label}
+
+                {/* Content */}
+                <div className="flex flex-1 flex-col p-5 lg:p-6 bg-white">
+                  <h3 className="text-lg lg:text-xl font-bold text-black mb-2 line-clamp-2 leading-tight group-hover:text-gray-800 transition-colors">
+                    {product.title}
+                  </h3>
+
+                  {product.author && (
+                    <p className="text-sm font-semibold text-gray-700 mb-3">
+                      by {product.author}
+                    </p>
+                  )}
+
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-grow leading-relaxed">
+                    {product.description}
+                  </p>
+
+                  {/* Price and Action */}
+                  <div className="mt-auto pt-4 border-t-2 border-black flex items-center justify-between gap-3">
+                    <p className="text-2xl lg:text-3xl font-black text-black">
+                      ₹{product.price}
+                    </p>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/products/${product._id}`);
+                      }}
+                      className="px-5 py-2.5 bg-black text-white text-sm font-bold rounded-md hover:bg-white hover:text-black border-2 border-black transition-all duration-200 uppercase tracking-wide"
+                    >
+                      View
+                    </button>
+                  </div>
                 </div>
-              </motion.div>
+
+                {/* Shine Effect */}
+                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full pointer-events-none"></div>
+              </motion.article>
             ))}
-          </div>
-        </div>
-      </motion.section>
-    </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </div>
   );
-};
+}
 
 export default Products;

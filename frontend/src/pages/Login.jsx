@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { loginUser } from "../services/authServices";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -29,18 +30,21 @@ const Login = () => {
 
     setLoading(true);
     try {
-      // Simulate login success
-      const userName = form.email.split("@")[0] || "User";
-      localStorage.setItem("token", "demo-token");
-      localStorage.setItem("userName", userName);
-      localStorage.setItem("userEmail", form.email);
+      const response = await loginUser(form);
 
-      // Notify other tabs
-      window.dispatchEvent(new Event("storage"));
+      // Store token and user data
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
 
-      navigate("/home");
-    } catch {
-      setError("Login failed. Please try again.");
+        // Notify other tabs
+        window.dispatchEvent(new Event("storage"));
+
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }

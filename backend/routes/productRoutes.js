@@ -1,18 +1,23 @@
 import express from "express";
 import Product from "../models/Products.js";
+import { getAllProducts, getSingleProduct } from "../controllers/productController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 const createProduct = async (req, res) => {
   try {
-    const { title, image, price, description, genre } = req.body;
+    const { title, image, price, description, genre, author, category } = req.body;
 
     const newProduct = new Product({
       title,
       image,
       price,
       description,
-      genre
+      genre,
+      author,
+      category,
+      createdBy: req.user._id // Add user reference
     });
 
     await newProduct.save();
@@ -30,6 +35,9 @@ const createProduct = async (req, res) => {
   }
 };
 
-router.post("/create-product", createProduct);
+// Protected route - requires authentication
+router.post("/create-product", protect, createProduct);
+router.get("/", getAllProducts);
+router.get("/:id", getSingleProduct);
 
 export default router;

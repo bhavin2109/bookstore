@@ -27,6 +27,7 @@ import authRoutes from './routes/user.js';
 import productRoutes from './routes/productRoutes.js';
 
 app.use('/api/admin/products', productRoutes);
+app.use("/api/products", productRoutes);
 
 // use Routes
 

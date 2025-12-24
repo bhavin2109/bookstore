@@ -168,4 +168,59 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+// Login function
+export const login = async (req, res) => {
+  try {
+    console.log('🔐 Login function started');
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    console.log('📧 Login attempt for:', email);
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log('❌ User not found');
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Check if user is verified
+    if (!user.isVerified) {
+      console.log('❌ User not verified');
+      return res.status(401).json({ message: "Please verify your email first" });
+    }
+
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      console.log('❌ Invalid password');
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // Generate token
+    console.log('🔑 Generating JWT token...');
+    const token = generateToken(user);
+    console.log('✅ Login successful');
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified
+      }
+    });
+  } catch (error) {
+    console.error('❌ Login error:', error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 export { register };
