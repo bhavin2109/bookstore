@@ -19,6 +19,10 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
+    author: {
+        type: String,
+        required: true
+    },
     genre : {
         type: String,
         required: true
