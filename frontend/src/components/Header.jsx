@@ -66,7 +66,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md max-w-full">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md w-full">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 text-white w-full">
         {/* Logo */}
         <Link to="/home" className="text-lg font-bold tracking-tight">

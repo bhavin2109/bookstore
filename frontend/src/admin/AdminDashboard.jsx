@@ -32,15 +32,18 @@ const AdminDashboard = () => {
   }, [navigate]);
 
   return (
-    <AdminHeader>
-      <div className="bg-slate-800 p-6 rounded-lg text-white shadow-lg border border-slate-700 mb-8">
-        <h2 className="text-2xl font-semibold mb-4 text-emerald-400">
-          Admin Dashboard
-        </h2>
-        <p className="text-slate-300">
-          Welcome to the admin panel. Manage your bookstore here.
-        </p>
-      </div>
+    <AdminHeader
+      title="Books Management"
+      noPadding={true}
+      actions={
+        <button
+          onClick={() => navigate("/admin/books/add")}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm"
+        >
+          + Add New Book
+        </button>
+      }
+    >
       <BooksManagement />
     </AdminHeader>
   );

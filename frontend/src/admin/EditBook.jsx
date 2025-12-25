@@ -95,7 +95,7 @@ const EditBook = () => {
     return <div className="text-center text-white py-10">Loading...</div>;
 
   return (
-    <AdminHeader>
+    <AdminHeader title="Edit Book">
       <div className="max-w-2xl mx-auto bg-slate-800 p-8 rounded-lg border border-slate-700 shadow-xl">
         <h2 className="text-2xl font-bold text-blue-400 mb-6">Edit Book</h2>
 

@@ -21,7 +21,9 @@ const App = () => {
   const location = useLocation();
   const hideLayout = location.pathname.startsWith("/admin");
   return (
-    <div className="overflow-x-hidden max-w-full">
+    <div
+      className={`overflow-x-hidden max-w-full ${!hideLayout ? "pt-16" : ""}`}
+    >
       <ToastContainer
         position="top-right"
         autoClose={3000}
