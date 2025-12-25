@@ -170,6 +170,20 @@ const AddBook = () => {
 
           <div>
             <label className="block text-slate-400 text-sm mb-1">
+              Price ($)
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-emerald-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-slate-400 text-sm mb-1">
               Description
             </label>
             <textarea

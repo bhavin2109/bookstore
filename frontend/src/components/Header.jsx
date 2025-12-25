@@ -117,9 +117,8 @@ const Header = () => {
                 </span>
               </button>
 
-              {/* Dropdown */}
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-44 rounded-md border border-white/20 bg-slate-950/95 py-1 text-xs shadow-2xl z-[999] backdrop-blur">
+                <div className="absolute right-0 mt-2 w-44 rounded-md border border-white/20 bg-slate-950/95 py-1 text-xs shadow-2xl z-999 backdrop-blur">
                   {/* Manage Profile */}
                   <button
                     type="button"

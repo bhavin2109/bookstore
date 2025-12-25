@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { verifyOtp as verifyOtpAPI } from "../services/authServices";
@@ -90,7 +91,7 @@ function VerifyOtp() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
+      className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -128,18 +129,6 @@ function VerifyOtp() {
           className="mt-8 space-y-6"
           onSubmit={handleVerifyOtp}
         >
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-              role="alert"
-            >
-              {error}
-            </motion.div>
-          )}
-
           <motion.div
             variants={itemVariants}
             whileFocus={{ scale: 1.02 }}
@@ -189,7 +178,7 @@ function VerifyOtp() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
           >
             {loading ? (
               <motion.span
