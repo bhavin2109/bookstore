@@ -51,14 +51,19 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 py-12 overflow-x-hidden">
-      <div className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200">
+    <div className="h-[calc(100vh-4rem)] bg-slate-900 px-4 flex items-center justify-center overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mx-auto max-w-lg w-full rounded-2xl bg-slate-950 p-8 shadow-2xl border border-white/10"
+      >
         <div className="space-y-2 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-slate-800">
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-400">
             Welcome back
           </p>
-          <h2 className="text-3xl font-bold text-slate-900">Login</h2>
-          <p className="text-sm text-slate-600">
+          <h2 className="text-3xl font-bold text-white">Login</h2>
+          <p className="text-sm text-slate-400">
             Access your account and continue exploring.
           </p>
         </div>
@@ -68,7 +73,7 @@ const Login = () => {
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-sm font-medium text-slate-800"
+                className="text-sm font-medium text-slate-300"
               >
                 Email address
               </label>
@@ -78,7 +83,7 @@ const Login = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 placeholder="you@example.com"
                 value={form.email}
                 onChange={handleChange}
@@ -88,7 +93,7 @@ const Login = () => {
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="text-sm font-medium text-slate-800"
+                className="text-sm font-medium text-slate-300"
               >
                 Password
               </label>
@@ -98,7 +103,7 @@ const Login = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 placeholder="Your password"
                 value={form.password}
                 onChange={handleChange}
@@ -109,14 +114,24 @@ const Login = () => {
           <motion.button
             type="submit"
             disabled={loading}
-            whileHover={{ scale: 1.02, y: -1 }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg shadow-emerald-500/20"
           >
             {loading ? "Logging in..." : "Login"}
           </motion.button>
+
+          <p className="text-center text-sm text-slate-400 mt-4">
+            Don't have an account?{" "}
+            <a
+              href="/register"
+              className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              Sign up
+            </a>
+          </p>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

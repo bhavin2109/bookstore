@@ -66,20 +66,23 @@ const Header = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md w-full">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md w-full border-b border-white/5">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 text-white w-full">
         {/* Logo */}
-        <Link to="/home" className="text-lg font-bold tracking-tight">
-          BookStore
+        <Link
+          to="/home"
+          className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors"
+        >
+          Book<span className="text-emerald-400">Store</span>
         </Link>
 
         {/* Nav */}
-        <nav className="flex items-center gap-4 text-sm font-semibold">
+        <nav className="flex items-center gap-4 text-sm font-medium">
           {links.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className="rounded-md px-3 py-2 transition hover:bg-white/10"
+              className="rounded-md px-3 py-2 transition hover:bg-white/5 hover:text-emerald-400"
             >
               {link.label}
             </Link>
@@ -89,15 +92,9 @@ const Header = () => {
             <>
               <Link
                 to="/login"
-                className="rounded-md px-3 py-2 transition hover:bg-white/10"
+                className="rounded-full bg-emerald-500 px-4 py-2 text-white font-semibold transition hover:bg-emerald-600 shadow-md shadow-emerald-500/20"
               >
                 Login
-              </Link>
-              <Link
-                to="/register"
-                className="rounded-md px-3 py-2 transition hover:bg-white/10"
-              >
-                Register
               </Link>
             </>
           )}
@@ -107,22 +104,22 @@ const Header = () => {
               {/* Profile Button */}
               <button
                 type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/10 text-white shadow-sm transition hover:bg-white/20"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-slate-900 text-emerald-400 font-bold shadow-sm transition hover:bg-slate-800"
                 aria-label="Profile"
                 title={userName || "Profile"}
                 onClick={() => setShowMenu((prev) => !prev)}
               >
-                <span className="text-xs font-bold uppercase">
+                <span className="text-sm uppercase">
                   {(userName || "U").trim().charAt(0)}
                 </span>
               </button>
 
               {showMenu && (
-                <div className="absolute right-0 mt-2 w-44 rounded-md border border-white/20 bg-slate-950/95 py-1 text-xs shadow-2xl z-999 backdrop-blur">
+                <div className="absolute right-0 mt-2 w-48 rounded-xl border border-white/10 bg-slate-900 overflow-hidden shadow-2xl z-50">
                   {/* Manage Profile */}
                   <button
                     type="button"
-                    className="block w-full px-3 py-2 text-left text-white hover:bg-white/10"
+                    className="block w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
                     onClick={() => {
                       setShowMenu(false);
                       navigate("/profile");
@@ -134,7 +131,7 @@ const Header = () => {
                   {isAdmin && (
                     <button
                       type="button"
-                      className="block w-full px-3 py-2 text-left text-white hover:bg-white/10"
+                      className="block w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
                       onClick={() => {
                         setShowMenu(false);
                         navigate("/admin");
@@ -144,12 +141,12 @@ const Header = () => {
                     </button>
                   )}
 
-                  <div className="my-1 h-px bg-white/10" />
+                  <div className="h-px bg-white/10" />
 
                   {/* Logout */}
                   <button
                     type="button"
-                    className="block w-full px-3 py-2 text-left text-red-400 hover:bg-white/10"
+                    className="block w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-white/5 hover:text-red-300 transition-colors"
                     onClick={() => {
                       localStorage.removeItem("token");
                       localStorage.removeItem("userName");

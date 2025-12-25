@@ -8,6 +8,7 @@ import ContactUs from "./pages/ContactUs.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import VerifyOtp from "./pages/VerifyOtp.jsx";
+import Profile from "./pages/Profile.jsx";
 import Footer from "./components/Footer.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
 import AddBook from "./admin/AddBook.jsx";
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/products/:id" element={<ProductDetails />} />
 
         {/* Admin Routes */}
@@ -59,7 +61,10 @@ const App = () => {
         <Route path="/admin/books/add" element={<AddBook />} />
         <Route path="/admin/books/edit/:id" element={<EditBook />} />
       </Routes>
-      {!hideLayout && <Footer />}
+      {!hideLayout &&
+        !["/login", "/register", "/verify-otp", "/profile"].includes(
+          location.pathname
+        ) && <Footer />}
     </div>
   );
 };

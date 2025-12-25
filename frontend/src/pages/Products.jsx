@@ -24,9 +24,7 @@ function Products() {
         }
       } catch (err) {
         setError(
-          err?.message ||
-          err ||
-          "Failed to fetch products. Please try again."
+          err?.message || err || "Failed to fetch products. Please try again."
         );
       } finally {
         setLoading(false);
@@ -39,8 +37,10 @@ function Products() {
   // ⏳ loading state
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p className="text-lg font-bold text-black">Loading products...</p>
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <p className="text-lg font-bold text-emerald-400">
+          Loading products...
+        </p>
       </div>
     );
   }
@@ -48,14 +48,14 @@ function Products() {
   // ❌ error state
   if (error) {
     return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p className="text-red-600 font-bold">{error}</p>
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <p className="text-red-400 font-bold">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-slate-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -63,10 +63,12 @@ function Products() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <h1 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tight mb-3">
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-3">
             Our Collection
           </h1>
-          <p className="text-gray-600 text-lg">Discover your next great read</p>
+          <p className="text-slate-400 text-lg">
+            Discover your next great read
+          </p>
         </motion.div>
 
         {products.length === 0 ? (
@@ -75,7 +77,9 @@ function Products() {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <p className="text-xl font-medium text-gray-500">No products available at the moment.</p>
+            <p className="text-xl font-medium text-slate-500">
+              No products available at the moment.
+            </p>
           </motion.div>
         ) : (
           <motion.div

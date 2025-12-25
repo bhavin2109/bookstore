@@ -52,8 +52,10 @@ const BooksManagement = () => {
   // ⏳ loading state
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64 bg-white">
-        <p className="text-lg font-bold text-black">Loading products...</p>
+      <div className="flex justify-center items-center h-64 bg-slate-900">
+        <p className="text-lg font-bold text-emerald-400">
+          Loading products...
+        </p>
       </div>
     );
   }

@@ -1,5 +1,6 @@
-import React, { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import React, { useRef } from "react";
+// eslint-disable-next-line no-unused-vars
+import { motion, useInView } from "framer-motion";
 
 const ContactUs = () => {
   const formRef = useRef(null);
@@ -28,12 +29,22 @@ const ContactUs = () => {
     },
   };
 
+  const contactInfo = [
+    { title: "Email", content: "info@bookstore.com", icon: "📧" },
+    { title: "Phone", content: "(555) 123-4567", icon: "📞" },
+    {
+      title: "Address",
+      content: "123 Book Street, Reading City, RC 12345",
+      icon: "📍",
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="bg-white overflow-x-hidden max-w-full"
+      className="bg-slate-900 text-white overflow-x-hidden max-w-full"
     >
       <motion.section
         initial={{ opacity: 0, y: -30 }}
@@ -47,8 +58,10 @@ const ContactUs = () => {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="space-y-3 text-center"
         >
-          <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">Contact Us</h1>
-          <p className="text-lg text-slate-600">
+          <h1 className="text-3xl font-bold text-white md:text-4xl">
+            Contact <span className="text-emerald-400">Us</span>
+          </h1>
+          <p className="text-lg text-slate-400">
             We&apos;d love to hear from you. Get in touch with us today.
           </p>
         </motion.div>
@@ -59,17 +72,17 @@ const ContactUs = () => {
             variants={containerVariants}
             initial="hidden"
             animate={isFormInView ? "visible" : "hidden"}
-            className="lg:col-span-2 space-y-6 rounded-2xl bg-slate-50 p-8 shadow-sm ring-1 ring-slate-200"
+            className="lg:col-span-2 space-y-6 rounded-2xl bg-slate-950 p-8 shadow-xl border border-white/10"
           >
             <motion.div
               variants={itemVariants}
               className="grid gap-5 md:grid-cols-2"
             >
-              <motion.div
-                whileFocus={{ scale: 1.02 }}
-                className="space-y-2"
-              >
-                <label htmlFor="name" className="text-sm font-semibold text-slate-800">
+              <motion.div whileFocus={{ scale: 1.02 }} className="space-y-2">
+                <label
+                  htmlFor="name"
+                  className="text-sm font-semibold text-slate-300"
+                >
                   Name
                 </label>
                 <input
@@ -78,14 +91,14 @@ const ContactUs = () => {
                   type="text"
                   placeholder="Your full name"
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 />
               </motion.div>
-              <motion.div
-                whileFocus={{ scale: 1.02 }}
-                className="space-y-2"
-              >
-                <label htmlFor="email" className="text-sm font-semibold text-slate-800">
+              <motion.div whileFocus={{ scale: 1.02 }} className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-semibold text-slate-300"
+                >
                   Email
                 </label>
                 <input
@@ -94,7 +107,7 @@ const ContactUs = () => {
                   type="email"
                   placeholder="your.email@example.com"
                   required
-                  className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 />
               </motion.div>
             </motion.div>
@@ -104,7 +117,10 @@ const ContactUs = () => {
               whileFocus={{ scale: 1.01 }}
               className="space-y-2"
             >
-              <label htmlFor="subject" className="text-sm font-semibold text-slate-800">
+              <label
+                htmlFor="subject"
+                className="text-sm font-semibold text-slate-300"
+              >
                 Subject
               </label>
               <input
@@ -113,7 +129,7 @@ const ContactUs = () => {
                 type="text"
                 placeholder="How can we help?"
                 required
-                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
               />
             </motion.div>
 
@@ -122,7 +138,10 @@ const ContactUs = () => {
               whileFocus={{ scale: 1.01 }}
               className="space-y-2"
             >
-              <label htmlFor="message" className="text-sm font-semibold text-slate-800">
+              <label
+                htmlFor="message"
+                className="text-sm font-semibold text-slate-300"
+              >
                 Message
               </label>
               <textarea
@@ -131,7 +150,7 @@ const ContactUs = () => {
                 rows="5"
                 placeholder="Please describe your inquiry..."
                 required
-                className="w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all resize-none"
               ></textarea>
             </motion.div>
 
@@ -140,7 +159,7 @@ const ContactUs = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
-              className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 shadow-lg"
+              className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 shadow-lg shadow-emerald-500/20"
             >
               Send Message
             </motion.button>
@@ -151,31 +170,27 @@ const ContactUs = () => {
             variants={containerVariants}
             initial="hidden"
             animate={isInfoInView ? "visible" : "hidden"}
-            className="space-y-6 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200"
+            className="space-y-6 rounded-2xl bg-slate-950 p-8 shadow-xl border border-white/10"
           >
             <motion.h2
               variants={itemVariants}
-              className="text-2xl font-bold text-slate-900"
+              className="text-2xl font-bold text-white"
             >
               Other Ways to Reach Us
             </motion.h2>
             <div className="space-y-4">
-              {[
-                { title: "Email", content: "info@bookstore.com", icon: "📧" },
-                { title: "Phone", content: "(555) 123-4567", icon: "📞" },
-                { title: "Address", content: "123 Book Street, Reading City, RC 12345", icon: "📍" },
-              ].map((item, index) => (
+              {contactInfo.map((item) => (
                 <motion.div
                   key={item.title}
                   variants={itemVariants}
                   whileHover={{ scale: 1.05, x: 5 }}
-                  className="rounded-xl bg-slate-50 p-4 shadow-inner"
+                  className="rounded-xl bg-slate-900 p-4 shadow-inner border border-white/5"
                 >
-                  <h3 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-emerald-400 flex items-center gap-2">
                     <span className="text-2xl">{item.icon}</span>
                     {item.title}
                   </h3>
-                  <p className="text-slate-600 mt-1">{item.content}</p>
+                  <p className="text-slate-400 mt-1">{item.content}</p>
                 </motion.div>
               ))}
             </div>
@@ -183,7 +198,7 @@ const ContactUs = () => {
         </div>
       </motion.section>
     </motion.div>
-  )
-}
+  );
+};
 
-export default ContactUs
+export default ContactUs;

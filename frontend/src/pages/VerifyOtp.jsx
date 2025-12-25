@@ -91,13 +91,13 @@ function VerifyOtp() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
+      className="h-[calc(100vh-4rem)] bg-slate-900 px-4 flex items-center justify-center overflow-hidden w-full"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200"
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="mx-auto max-w-lg w-full rounded-2xl bg-slate-950 p-8 shadow-2xl border border-white/10"
       >
         <motion.div
           variants={containerVariants}
@@ -107,19 +107,19 @@ function VerifyOtp() {
         >
           <motion.p
             variants={itemVariants}
-            className="text-sm font-semibold uppercase tracking-wide text-slate-800"
+            className="text-sm font-semibold uppercase tracking-wide text-emerald-400"
           >
             Verify OTP
           </motion.p>
           <motion.h2
             variants={itemVariants}
-            className="text-3xl font-bold text-slate-900"
+            className="text-3xl font-bold text-white"
           >
             Complete your signup
           </motion.h2>
-          <motion.p variants={itemVariants} className="text-sm text-slate-600">
+          <motion.p variants={itemVariants} className="text-sm text-slate-400">
             We&apos;ve sent a 6-digit OTP to{" "}
-            <strong className="font-semibold">{email}</strong>
+            <strong className="font-semibold text-white">{email}</strong>
           </motion.p>
         </motion.div>
         <motion.form
@@ -134,7 +134,7 @@ function VerifyOtp() {
             whileFocus={{ scale: 1.02 }}
             className="space-y-2"
           >
-            <label htmlFor="otp" className="text-sm font-medium text-slate-800">
+            <label htmlFor="otp" className="text-sm font-medium text-slate-300">
               OTP
             </label>
             <motion.input
@@ -143,7 +143,7 @@ function VerifyOtp() {
               type="text"
               maxLength="6"
               required
-              className="w-full rounded-lg border border-slate-200 px-4 py-3 text-center text-xl tracking-[0.35em] text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-center text-xl tracking-[0.35em] text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all placeholder-slate-600"
               placeholder="000000"
               value={otp}
               onChange={(e) => {
@@ -162,7 +162,7 @@ function VerifyOtp() {
                 <motion.div
                   key={i}
                   className={`h-2 w-2 rounded-full ${
-                    i < otp.length ? "bg-indigo-600" : "bg-slate-300"
+                    i < otp.length ? "bg-emerald-500" : "bg-slate-700"
                   }`}
                   initial={{ scale: 0 }}
                   animate={{ scale: i < otp.length ? 1 : 0.5 }}
@@ -174,11 +174,11 @@ function VerifyOtp() {
 
           <motion.button
             variants={itemVariants}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg shadow-emerald-500/20"
           >
             {loading ? (
               <motion.span
@@ -194,15 +194,15 @@ function VerifyOtp() {
 
           <motion.div
             variants={itemVariants}
-            className="text-center text-sm text-slate-600"
+            className="text-center text-sm text-slate-400"
           >
             <p>
               Didn&apos;t receive OTP?{" "}
               <motion.button
                 type="button"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="font-semibold text-slate-900 hover:text-slate-700"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
                 onClick={handleResendOtp}
               >
                 Resend OTP

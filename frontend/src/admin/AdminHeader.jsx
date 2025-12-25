@@ -1,10 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+
 import AdminSidebar from "./AdminSidebar";
 
 const AdminHeader = ({ children, title, actions, noPadding = false }) => {
-  const navigate = useNavigate();
-
   return (
     <div className="flex h-screen bg-slate-900 text-white font-sans selection:bg-emerald-500/30 overflow-hidden">
       {/* Sidebar - Desktop */}

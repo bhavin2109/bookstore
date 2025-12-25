@@ -83,13 +83,13 @@ function Register() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-purple-50/20 px-4 py-12 overflow-x-hidden max-w-full"
+      className="h-[calc(100vh-4rem)] bg-slate-900 px-4 flex items-center justify-center overflow-hidden w-full"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200"
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="mx-auto max-w-lg w-full rounded-2xl bg-slate-950 p-8 shadow-2xl border border-white/10"
       >
         <motion.div
           variants={containerVariants}
@@ -99,17 +99,17 @@ function Register() {
         >
           <motion.p
             variants={itemVariants}
-            className="text-sm font-semibold uppercase tracking-wide text-slate-800"
+            className="text-sm font-semibold uppercase tracking-wide text-emerald-400"
           >
             Create your account
           </motion.p>
           <motion.h2
             variants={itemVariants}
-            className="text-3xl font-bold text-slate-900"
+            className="text-3xl font-bold text-white"
           >
             Join the bookstore
           </motion.h2>
-          <motion.p variants={itemVariants} className="text-sm text-slate-600">
+          <motion.p variants={itemVariants} className="text-sm text-slate-400">
             Get access to exclusive offers and faster checkout.
           </motion.p>
         </motion.div>
@@ -129,7 +129,7 @@ function Register() {
             >
               <label
                 htmlFor="name"
-                className="text-sm font-medium text-slate-800"
+                className="text-sm font-medium text-slate-300"
               >
                 Name
               </label>
@@ -138,7 +138,7 @@ function Register() {
                 name="name"
                 type="text"
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 placeholder="Full Name"
                 value={form.name}
                 onChange={handleChange}
@@ -152,7 +152,7 @@ function Register() {
             >
               <label
                 htmlFor="email"
-                className="text-sm font-medium text-slate-800"
+                className="text-sm font-medium text-slate-300"
               >
                 Email address
               </label>
@@ -162,7 +162,7 @@ function Register() {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 placeholder="Email address"
                 value={form.email}
                 onChange={handleChange}
@@ -176,7 +176,7 @@ function Register() {
             >
               <label
                 htmlFor="password"
-                className="text-sm font-medium text-slate-800"
+                className="text-sm font-medium text-slate-300"
               >
                 Password
               </label>
@@ -186,7 +186,7 @@ function Register() {
                 type="password"
                 autoComplete="new-password"
                 required
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-sm text-slate-900 shadow-sm focus:border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                className="w-full rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-white shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 placeholder-slate-500 transition-all"
                 placeholder="Password (min 6 characters)"
                 value={form.password}
                 onChange={handleChange}
@@ -196,11 +196,11 @@ function Register() {
 
           <motion.button
             variants={itemVariants}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:cursor-not-allowed disabled:opacity-60 shadow-lg shadow-emerald-500/20"
           >
             {loading ? (
               <motion.span
@@ -216,12 +216,12 @@ function Register() {
 
           <motion.div
             variants={itemVariants}
-            className="text-center text-sm text-slate-600"
+            className="text-center text-sm text-slate-400"
           >
             <p>
               Already have an account?{" "}
               <a
-                className="font-semibold text-slate-900 hover:text-slate-700"
+                className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
                 href="/login"
               >
                 Sign in
