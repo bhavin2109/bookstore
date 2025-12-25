@@ -9,75 +9,62 @@ const ProductCard = ({ book, index = 0, variants, onClick }) => {
   return (
     <motion.article
       variants={variants}
-      whileHover={{ y: -8, scale: 1.02 }}
+      className={`group relative aspect-[2/3] overflow-hidden rounded-lg bg-gray-100 shadow-md hover:shadow-xl transition-all duration-300 ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick}
-      className={`group relative flex h-full flex-col overflow-hidden rounded-lg bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 w-full max-w-full ${onClick ? 'cursor-pointer' : ''}`}
     >
-      {/* Minimal Category Badge - Black and White */}
+      {/* Background Image - Full Cover */}
+      <img
+        src={image || "https://via.placeholder.com/400?text=No+Image"}
+        alt={title}
+        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        loading="lazy"
+      />
+
+      {/* Category Badge - Always Visible (Optional, currently top left) */}
       {category && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: index * 0.05 + 0.2 }}
-          className="absolute left-4 top-4 z-10 rounded-md bg-black px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg"
-        >
+        <div className="absolute left-3 top-3 z-10 rounded bg-black/80 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
           {category}
-        </motion.div>
+        </div>
       )}
 
-      {/* Book Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-white border-b-2 border-black">
-        <img
-          src={image || "https://via.placeholder.com/400?text=No+Image"}
-          alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          loading="lazy"
-        />
-      </div>
+      {/* Hover Overlay with Details */}
+      <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black via-black/80 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div className="transform translate-y-4 transition-transform duration-300 group-hover:translate-y-0">
+          <h3 className="mb-1 line-clamp-2 text-lg font-bold text-white">
+            {title}
+          </h3>
+          
+          {author && (
+            <p className="mb-2 text-sm font-medium text-gray-300">
+              by {author}
+            </p>
+          )}
 
-      {/* Book Info */}
-      <div className="flex flex-1 flex-col p-5 lg:p-6 bg-white">
-        <h3 className="mb-2 line-clamp-2 text-lg lg:text-xl font-bold leading-tight text-black group-hover:text-gray-800 transition-colors">
-          {title}
-        </h3>
-        {author && (
-          <p className="mb-3 text-sm font-semibold text-gray-700">
-            by {author}
-          </p>
-        )}
-        {description && (
-          <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-600 flex-grow">
-            {description}
-          </p>
-        )}
+          {description && (
+            <p className="mb-4 line-clamp-3 text-xs text-gray-400">
+              {description}
+            </p>
+          )}
 
-        {/* Price and Action */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t-2 border-black gap-3">
-          <motion.p
-            className="text-2xl lg:text-3xl font-black text-black"
-            whileHover={{ scale: 1.05 }}
-          >
-            ₹{typeof price === 'number' ? price.toFixed(2) : price}
-          </motion.p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              if (onClick) {
-                // If the card is clickable, we might want this button to do something else or just trigger the card click.
-                // For now, let's allow it to bubble up or stay as "Add to Cart" visual.
-                // If we had a specific add to cart function, we'd stopPropagation here.
-              }
-            }}
-            className="rounded-md bg-black px-5 py-2.5 text-sm font-bold text-white border-2 border-black transition-all duration-200 hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 uppercase tracking-wide"
-          >
-            Add to Cart
-          </motion.button>
+          {/* Price and Action */}
+          <div className="flex items-center justify-between border-t border-white/20 pt-3">
+            <span className="text-xl font-bold text-white">
+              ₹{typeof price === 'number' ? price.toFixed(2) : price}
+            </span>
+            
+            <button
+              className="rounded-full bg-white px-4 py-2 text-xs font-bold text-black transition-colors hover:bg-gray-200"
+              onClick={(e) => {
+                if (onClick) {
+                    // Start propagation handled by parent onClick, or specifically here if needed
+                }
+              }}
+            >
+              View Details
+            </button>
+          </div>
         </div>
       </div>
-
-      {/* Subtle shine effect - Black and White */}
-      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full pointer-events-none"></div>
     </motion.article>
   );
 };

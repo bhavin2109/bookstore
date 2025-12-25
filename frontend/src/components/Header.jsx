@@ -12,9 +12,23 @@ const Header = () => {
   useEffect(() => {
     const readAuth = () => {
       const token = localStorage.getItem("token");
-      const name = localStorage.getItem("userName") || "";
+      let name = localStorage.getItem("userName");
+      
+      // Fallback: try to read from 'user' object if it exists
+      if (!name) {
+          const userStr = localStorage.getItem("user");
+          if (userStr) {
+              try {
+                  const user = JSON.parse(userStr);
+                  name = user.name || user.email; // Fallback to email if name is missing
+              } catch (e) {
+                  // ignore
+              }
+          }
+      }
+      
       setLoggedIn(!!token);
-      setUserName(name);
+      setUserName(name || "");
     };
 
     readAuth();

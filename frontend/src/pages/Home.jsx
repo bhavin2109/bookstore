@@ -1,32 +1,45 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion, useInView, useAnimation, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FAQs from "../components/FAQs";
-import { books } from "../data/books";
+import { getAllProducts } from "../services/productServices";
 
 const Home = () => {
-  const productsRef = useRef(null);
-  const isProductsInView = useInView(productsRef, { once: true, amount: 0.1 });
-  const productsControls = useAnimation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getAllProducts();
+        if (data && data.products) {
+          setProducts(data.products);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (isProductsInView) {
-      productsControls.start("visible");
-    }
-  }, [isProductsInView, productsControls]);
+  }, []);
 
-  // Books for hero carousel
-  const heroBooks = books.slice(0, 6);
+  // Books for hero carousel - usage fallback if empty
+  const heroBooks = products.length > 0 ? products.slice(0, 6) : [];
 
   // Auto-rotate through books with smooth transitions
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || heroBooks.length === 0) return;
 
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % heroBooks.length);
@@ -57,24 +70,28 @@ const Home = () => {
   };
 
   // Show first 4 books on home page
-  const featuredBooks = books.slice(0, 4);
+  const featuredBooks = products.length > 0 ? products.slice(0, 4) : [];
 
   // Book spines background image
   const bookSpinesBg = "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800";
 
   // Get books for stack (show only 3 books behind the active one)
   const getStackedBooks = () => {
+    if (heroBooks.length === 0) return [];
     const stack = [];
     const maxStackSize = 3; // Only 3 books in stack
 
     // Get books after the active one
     for (let i = 1; i <= maxStackSize; i++) {
+        // Ensure accurate index wrapping
       const index = (activeIndex + i) % heroBooks.length;
-      stack.push({
-        book: heroBooks[index],
-        stackPosition: i - 1, // 0, 1, 2
-        originalIndex: index,
-      });
+      if (heroBooks[index]) {
+          stack.push({
+            book: heroBooks[index],
+            stackPosition: i - 1, // 0, 1, 2
+            originalIndex: index,
+          });
+      }
     }
 
     return stack;
@@ -88,6 +105,10 @@ const Home = () => {
     // Resume auto-play after 10 seconds
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
+
+  if (loading) {
+      return <div className="min-h-screen flex items-center justify-center bg-white"><div className="text-xl font-bold">Loading...</div></div>;
+  }
 
   return (
     <div className="relative -mt-16 bg-white pt-16 overflow-x-hidden max-w-full">
@@ -178,7 +199,8 @@ const Home = () => {
             }}
           ></div>
 
-          {/* Main Book + Stack Container */}
+            {heroBooks.length > 0 && (
+          /* Main Book + Stack Container */
           <div
             className="relative z-10 w-full h-full flex items-center justify-center pl-8 lg:pl-16"
             style={{ perspective: '1500px', perspectiveOrigin: 'left center' }}
@@ -186,6 +208,7 @@ const Home = () => {
             <div className="relative w-full max-w-5xl h-full flex items-center">
               {/* Main Book Display */}
               <AnimatePresence mode="wait">
+                {heroBooks[activeIndex] && (
                 <motion.div
                   key={activeIndex}
                   initial={{ opacity: 0, scale: 0.9, x: -50, rotateY: -10 }}
@@ -215,7 +238,7 @@ const Home = () => {
                     className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-white/10"
                   >
                     <motion.img
-                      src={heroBooks[activeIndex].image}
+                      src={heroBooks[activeIndex].image || "https://via.placeholder.com/400?text=No+Image"}
                       alt={heroBooks[activeIndex].title}
                       className="w-full h-auto object-cover"
                       initial={{ scale: 1.1 }}
@@ -247,6 +270,7 @@ const Home = () => {
                       >
                         {heroBooks[activeIndex].description}
                       </motion.p>
+                      {heroBooks[activeIndex].author && (
                       <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -255,9 +279,11 @@ const Home = () => {
                       >
                         BY {heroBooks[activeIndex].author.toUpperCase()}
                       </motion.p>
+                      )}
                     </motion.div>
                   </motion.div>
                 </motion.div>
+                )}
               </AnimatePresence>
 
               {/* Stacked Books - 3 books with proper spacing */}
@@ -334,7 +360,7 @@ const Home = () => {
                           }}
                         >
                           <img
-                            src={book.image}
+                            src={book.image || "https://via.placeholder.com/400?text=No+Image"}
                             alt={book.title}
                             className="w-full h-auto object-cover"
                             style={{ maxHeight: '400px' }}
@@ -348,9 +374,11 @@ const Home = () => {
                             <p className="text-xs text-gray-300 line-clamp-1 mb-1">
                               {book.description}
                             </p>
+                            {book.author && (
                             <p className="text-[10px] text-gray-400 uppercase tracking-wider">
                               BY {book.author.toUpperCase()}
                             </p>
+                            )}
                           </div>
                         </motion.div>
                       </div>
@@ -359,8 +387,11 @@ const Home = () => {
                 })}
               </AnimatePresence>
             </div>
+          </div>
+            )}
 
             {/* Pagination Dots */}
+            {heroBooks.length > 0 && (
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
               {heroBooks.map((_, index) => (
                 <motion.button
@@ -379,7 +410,7 @@ const Home = () => {
                 />
               ))}
             </div>
-          </div>
+            )}
         </motion.div>
 
         {/* Mobile Book Carousel */}
@@ -398,6 +429,7 @@ const Home = () => {
           <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
             <div className="relative w-full max-w-xs">
               <AnimatePresence mode="wait">
+                {heroBooks[activeIndex] && (
                 <motion.div
                   key={activeIndex}
                   initial={{ opacity: 0, scale: 0.9, x: 50 }}
@@ -410,14 +442,16 @@ const Home = () => {
                     Best Selling
                   </div>
                   <img
-                    src={heroBooks[activeIndex].image}
+                    src={heroBooks[activeIndex].image || "https://via.placeholder.com/400?text=No+Image"}
                     alt={heroBooks[activeIndex].title}
                     className="w-full h-auto object-cover rounded-lg shadow-2xl"
                   />
                 </motion.div>
+                )}
               </AnimatePresence>
 
               {/* Mobile Pagination */}
+              {heroBooks.length > 0 && (
               <div className="flex gap-2 justify-center mt-4">
                 {heroBooks.map((_, index) => (
                   <button
@@ -430,6 +464,7 @@ const Home = () => {
                   />
                 ))}
               </div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -453,22 +488,27 @@ const Home = () => {
             </p>
           </motion.div>
 
+          {featuredBooks.length > 0 ? (
           <motion.div
-            ref={productsRef}
             variants={containerVariants}
             initial="hidden"
-            animate={productsControls}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
             className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
           >
             {featuredBooks.map((book, index) => (
               <ProductCard
-                key={book.id}
+                key={book._id || index}
                 book={book}
                 index={index}
                 variants={cardVariants}
+                onClick={() => navigate(`/products/${book._id}`)}
               />
             ))}
           </motion.div>
+          ) : (
+             <div className="text-center text-gray-500 py-10">No featured books found.</div>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

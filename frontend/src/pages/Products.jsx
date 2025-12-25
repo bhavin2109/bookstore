@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllProducts } from "../services/productServices.js";
 import { motion } from "framer-motion";
+import ProductCard from "../components/ProductCard";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -86,71 +87,17 @@ function Products() {
             }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
           >
-            {products.map((product) => (
-              <motion.article
+            {products.map((product, index) => (
+              <ProductCard
                 key={product._id}
+                book={product}
+                index={index}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   show: { opacity: 1, y: 0 },
                 }}
-                whileHover={{ y: -8, scale: 1.02 }}
                 onClick={() => navigate(`/products/${product._id}`)}
-                className="group relative flex flex-col h-full overflow-hidden rounded-lg bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-300 cursor-pointer"
-              >
-                {/* Category Badge */}
-                {product.category && (
-                  <div className="absolute top-4 left-4 z-10 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider shadow-lg">
-                    {product.category}
-                  </div>
-                )}
-
-                {/* Image Container */}
-                <div className="relative aspect-[3/4] overflow-hidden border-b-2 border-black bg-white">
-                  <img
-                    src={product.image || "https://via.placeholder.com/400?text=No+Image"}
-                    alt={product.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="flex flex-1 flex-col p-5 lg:p-6 bg-white">
-                  <h3 className="text-lg lg:text-xl font-bold text-black mb-2 line-clamp-2 leading-tight group-hover:text-gray-800 transition-colors">
-                    {product.title}
-                  </h3>
-
-                  {product.author && (
-                    <p className="text-sm font-semibold text-gray-700 mb-3">
-                      by {product.author}
-                    </p>
-                  )}
-
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-grow leading-relaxed">
-                    {product.description}
-                  </p>
-
-                  {/* Price and Action */}
-                  <div className="mt-auto pt-4 border-t-2 border-black flex items-center justify-between gap-3">
-                    <p className="text-2xl lg:text-3xl font-black text-black">
-                      ₹{product.price}
-                    </p>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/products/${product._id}`);
-                      }}
-                      className="px-5 py-2.5 bg-black text-white text-sm font-bold rounded-md hover:bg-white hover:text-black border-2 border-black transition-all duration-200 uppercase tracking-wide"
-                    >
-                      View
-                    </button>
-                  </div>
-                </div>
-
-                {/* Shine Effect */}
-                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full pointer-events-none"></div>
-              </motion.article>
+              />
             ))}
           </motion.div>
         )}

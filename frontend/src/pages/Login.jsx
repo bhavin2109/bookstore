@@ -36,6 +36,7 @@ const Login = () => {
       if (response.token) {
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("userName", response.user.name);
 
         // Notify other tabs
         window.dispatchEvent(new Event("storage"));
