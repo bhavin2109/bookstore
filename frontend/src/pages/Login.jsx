@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 import { loginUser } from "../services/authServices";
 
 const Login = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -16,15 +16,13 @@ const Login = () => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     if (!form.email || !form.password) {
-      setError("Please enter email and password.");
+      toast.error("Please enter email and password.");
       return;
     }
 
@@ -41,11 +39,12 @@ const Login = () => {
         // Notify other tabs
         window.dispatchEvent(new Event("storage"));
 
+        toast.success("Login successful!");
         navigate("/home");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError(err.message || "Login failed. Please try again.");
+      toast.error(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -65,15 +64,12 @@ const Login = () => {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              {error}
-            </div>
-          )}
-
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-slate-800">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-slate-800"
+              >
                 Email address
               </label>
               <input
@@ -90,7 +86,10 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-slate-800">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-slate-800"
+              >
                 Password
               </label>
               <input

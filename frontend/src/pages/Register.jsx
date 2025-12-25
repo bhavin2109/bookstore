@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { registerUser } from '../services/authServices';
+import { toast } from "react-toastify";
+import { registerUser } from "../services/authServices";
 
 function Register() {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ function Register() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,23 +20,21 @@ function Register() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError(""); // Clear error on input change
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     // Validation
     if (!form.name || !form.email || !form.password) {
-      setError("All fields are required");
+      toast.error("All fields are required");
       setLoading(false);
       return;
     }
 
     if (form.password.length < 6) {
-      setError("Password must be at least 6 characters");
+      toast.error("Password must be at least 6 characters");
       setLoading(false);
       return;
     }
@@ -45,11 +43,11 @@ function Register() {
       await registerUser(form);
       // Store email in localStorage for OTP verification
       localStorage.setItem("registerEmail", form.email);
-      alert("OTP sent to your email for verification.");
+      toast.info("OTP sent to your email for verification.");
       navigate("/verify-otp");
     } catch (error) {
       console.log("Registration Error: ", error);
-      setError(
+      toast.error(
         error.message || error.error || "Registration failed. Please try again."
       );
     } finally {
@@ -111,10 +109,7 @@ function Register() {
           >
             Join the bookstore
           </motion.h2>
-          <motion.p
-            variants={itemVariants}
-            className="text-sm text-slate-600"
-          >
+          <motion.p variants={itemVariants} className="text-sm text-slate-600">
             Get access to exclusive offers and faster checkout.
           </motion.p>
         </motion.div>
@@ -126,25 +121,16 @@ function Register() {
           className="mt-8 space-y-6"
           onSubmit={handleRegister}
         >
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
-              role="alert"
-            >
-              {error}
-            </motion.div>
-          )}
-
           <div className="space-y-4">
             <motion.div
               variants={itemVariants}
               whileFocus={{ scale: 1.02 }}
               className="space-y-2"
             >
-              <label htmlFor="name" className="text-sm font-medium text-slate-800">
+              <label
+                htmlFor="name"
+                className="text-sm font-medium text-slate-800"
+              >
                 Name
               </label>
               <input
@@ -164,7 +150,10 @@ function Register() {
               whileFocus={{ scale: 1.02 }}
               className="space-y-2"
             >
-              <label htmlFor="email" className="text-sm font-medium text-slate-800">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-slate-800"
+              >
                 Email address
               </label>
               <input
@@ -185,7 +174,10 @@ function Register() {
               whileFocus={{ scale: 1.02 }}
               className="space-y-2"
             >
-              <label htmlFor="password" className="text-sm font-medium text-slate-800">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-slate-800"
+              >
                 Password
               </label>
               <input
@@ -228,7 +220,10 @@ function Register() {
           >
             <p>
               Already have an account?{" "}
-              <a className="font-semibold text-slate-900 hover:text-slate-700" href="/login">
+              <a
+                className="font-semibold text-slate-900 hover:text-slate-700"
+                href="/login"
+              >
                 Sign in
               </a>
             </p>

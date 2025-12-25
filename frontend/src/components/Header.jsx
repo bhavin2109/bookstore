@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
@@ -13,22 +14,22 @@ const Header = () => {
     const readAuth = () => {
       const token = localStorage.getItem("token");
       let name = localStorage.getItem("userName");
-      
-      // Fallback: try to read from 'user' object if it exists
-      if (!name) {
-          const userStr = localStorage.getItem("user");
-          if (userStr) {
-              try {
-                  const user = JSON.parse(userStr);
-                  name = user.name || user.email; // Fallback to email if name is missing
-              } catch (e) {
-                  // ignore
-              }
-          }
+      let role = "user";
+
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          if (!name) name = user.name || user.email;
+          if (user.role) role = user.role;
+        } catch {
+          // ignore
+        }
       }
-      
+
       setLoggedIn(!!token);
       setUserName(name || "");
+      setIsAdmin(role === "admin");
     };
 
     readAuth();
@@ -67,7 +68,6 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md max-w-full">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 text-white w-full">
-        
         {/* Logo */}
         <Link to="/home" className="text-lg font-bold tracking-tight">
           BookStore
@@ -120,7 +120,6 @@ const Header = () => {
               {/* Dropdown */}
               {showMenu && (
                 <div className="absolute right-0 mt-2 w-44 rounded-md border border-white/20 bg-slate-950/95 py-1 text-xs shadow-2xl z-[999] backdrop-blur">
-                  
                   {/* Manage Profile */}
                   <button
                     type="button"
@@ -132,6 +131,19 @@ const Header = () => {
                   >
                     Manage Profile
                   </button>
+
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      className="block w-full px-3 py-2 text-left text-white hover:bg-white/10"
+                      onClick={() => {
+                        setShowMenu(false);
+                        navigate("/admin");
+                      }}
+                    >
+                      Admin Dashboard
+                    </button>
+                  )}
 
                   <div className="my-1 h-px bg-white/10" />
 
