@@ -33,6 +33,31 @@ const App = () => {
   const location = useLocation();
   const hideLayout = location.pathname.startsWith("/admin");
 
+  React.useEffect(() => {
+    const path = location.pathname;
+    let title = "Nerdy Enough";
+
+    if (path === "/" || path === "/home") title = "Home | Nerdy Enough";
+    else if (path === "/products") title = "Products | Nerdy Enough";
+    else if (path === "/about-us") title = "About Us | Nerdy Enough";
+    else if (path === "/contact-us") title = "Contact Us | Nerdy Enough";
+    else if (path === "/register") title = "Register | Nerdy Enough";
+    else if (path === "/login") title = "Login | Nerdy Enough";
+    else if (path === "/verify-otp") title = "Verify OTP | Nerdy Enough";
+    else if (path === "/profile") title = "Profile | Nerdy Enough";
+    else if (path.startsWith("/products/"))
+      title = "Product Details | Nerdy Enough";
+    else if (path === "/admin" || path === "/admin/dashboard")
+      title = "Admin Dashboard | Nerdy Enough";
+    else if (path === "/admin/books-management")
+      title = "Books Management | Nerdy Enough";
+    else if (path === "/admin/books/add") title = "Add Book | Nerdy Enough";
+    else if (path.startsWith("/admin/books/edit/"))
+      title = "Edit Book | Nerdy Enough";
+
+    document.title = title;
+  }, [location]);
+
   return (
     <div
       className={`overflow-x-hidden max-w-full ${!hideLayout ? "pt-16" : ""}`}
