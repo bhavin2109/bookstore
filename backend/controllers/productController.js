@@ -1,4 +1,6 @@
 import Products from '../models/Products.js';
+import Users from '../models/User.js';
+import mongoose from 'mongoose';
 
 export const createProduct = async (req, res) => {
     try {
@@ -33,6 +35,11 @@ export const getAllProducts = async (req, res) => {
 export const getSingleProduct = async (req, res) => {
     try {
         const { id } = req.params;
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+             return res.status(404).json({ message: 'Product not found (Invalid ID)' });
+        }
+
         const product = await Products.findById(id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
@@ -68,3 +75,21 @@ export const deleteProduct = async (req, res) => {
         res.status(500).json({ message: 'Error deleting product', error: error.message });
     }
 };
+
+export const productCount = async (req, res) => {
+    try {
+        const count = await Products.countDocuments();
+        res.status(200).json({ count });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};  
+
+export const userCount = async (req, res) => {
+    try {
+        const count = await Users.countDocuments();
+        res.status(200).json({ count });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};  

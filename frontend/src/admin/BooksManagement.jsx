@@ -65,19 +65,19 @@ const BooksManagement = () => {
       <table className="w-full text-left border-collapse relative">
         <thead className="bg-slate-800 text-slate-400 uppercase text-xs">
           <tr>
-            <th className="py-3 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Image
             </th>
-            <th className="py-3 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Title
             </th>
-            <th className="py-3 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Author
             </th>
-            <th className="py-3 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Price
             </th>
-            <th className="py-3 px-4 text-right sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-3 px-4 text-right sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Actions
             </th>
           </tr>

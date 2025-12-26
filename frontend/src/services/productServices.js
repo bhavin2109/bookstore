@@ -68,3 +68,23 @@ export const deleteProduct = async (id, token) => {
     throw error.response?.data || error.message;
   }
 };
+
+// GET PRODUCT COUNT
+export const getProductCount = async () => {
+  try {
+    const response = await API.get("/count");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// GET USER COUNT
+export const getUserCount = async () => {
+  try {
+    const response = await API.get("/user-count");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

@@ -14,6 +14,7 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import AddBook from "./admin/AddBook.jsx";
 import EditBook from "./admin/EditBook.jsx";
 import AdminDashboard from "./admin/AdminDashboard.jsx";
+import ProtectRoute from "./components/ProtectRoute.jsx";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -50,16 +51,18 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/products/:id" element={<ProductDetails />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        {/* Helper redirect for legacy link */}
-        <Route
-          path="/admin/dashboard"
-          element={<Navigate to="/admin" replace />}
-        />
-        <Route path="/admin/books-management" element={<AdminDashboard />} />
-        <Route path="/admin/books/add" element={<AddBook />} />
-        <Route path="/admin/books/edit/:id" element={<EditBook />} />
+        {/* Admin Routes - Protected */}
+        <Route element={<ProtectRoute />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          {/* Helper redirect for legacy link */}
+          <Route
+            path="/admin/dashboard"
+            element={<Navigate to="/admin" replace />}
+          />
+          <Route path="/admin/books-management" element={<AdminDashboard />} />
+          <Route path="/admin/books/add" element={<AddBook />} />
+          <Route path="/admin/books/edit/:id" element={<EditBook />} />
+        </Route>
       </Routes>
       {!hideLayout &&
         !["/login", "/register", "/verify-otp", "/profile"].includes(

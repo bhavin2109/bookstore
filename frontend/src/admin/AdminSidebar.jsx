@@ -28,8 +28,6 @@ const AdminSidebar = () => {
     navigate("/login");
   };
 
-  const navItems = [{ name: "Books", path: "/admin", icon: "📚" }];
-
   const getInitials = (name) => {
     return name ? name.charAt(0).toUpperCase() : "A";
   };
@@ -48,23 +46,32 @@ const AdminSidebar = () => {
 
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-3 space-y-1">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === "/admin"}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                isActive
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              }`
-            }
-          >
-            <span className="text-lg">{item.icon}</span>
-            {item.name}
-          </NavLink>
-        ))}
+        <NavLink
+          to="/admin/dashboard"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`
+          }
+        >
+          <span className="text-lg">📊</span>
+          Dashboard
+        </NavLink>
+        <NavLink
+          to="/admin/books-management"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`
+          }
+        >
+          <span className="text-lg">📚</span>
+          Books
+        </NavLink>
       </nav>
 
       {/* User Info / Dropdown */}
