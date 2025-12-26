@@ -52,10 +52,10 @@ const verifyTransporter = async () => {
     }
 };
 
-// Call verification after a short delay to ensure env vars are loaded
-setTimeout(() => {
-    verifyTransporter();
-}, 1000);
+// Verification is optional and shouldn't block startup
+// setTimeout(() => {
+//     verifyTransporter();
+// }, 1000);
 
 // Export function to get transporter
 export default getTransporter;
