@@ -4,6 +4,10 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import Products from './models/Products.js';
 
+//Import Routes
+import authRoutes from './routes/user.js';
+import productRoutes from './routes/productRoutes.js';
+
 dotenv.config();
 
 // Check environment variables
@@ -19,23 +23,18 @@ connectDB();
 
 const app = express();
 app.use(cors({
-   origin: [
-    "http://localhost:5173",           // local dev
-    "http://localhost:5174",           // local dev alternative
-    "http://localhost:5175",           // local dev alternative
-    "https://bookstore-teal-one.vercel.app" // vercel prod
-  ],
+   origin: "https://nerdsbook.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 
-
-//Import Routes
-import authRoutes from './routes/user.js';
-import productRoutes from './routes/productRoutes.js';
+app.use("/api/products", productRoutes);
 
 app.use('/api/admin/products', productRoutes);
-app.use("/api/products", productRoutes);
+
+
 
 // use Routes
 
