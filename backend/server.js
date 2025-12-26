@@ -21,7 +21,7 @@ const app = express();
 app.use(cors({
    origin: [
     "http://localhost:5173",           // local dev
-    "bookstore-teal-one.vercel.app" // vercel prod
+    "https://bookstore-teal-one.vercel.app" // vercel prod
   ],
   credentials: true
 }));
