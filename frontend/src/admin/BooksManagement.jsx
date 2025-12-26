@@ -61,23 +61,23 @@ const BooksManagement = () => {
   }
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-auto h-[calc(100vh-4rem)] relative shadow-md">
       <table className="w-full text-left border-collapse relative min-w-[800px]">
-        <thead className="bg-slate-800 text-slate-400 uppercase text-xs whitespace-nowrap">
+        <thead className="bg-slate-800 text-white uppercase text-xs font-bold whitespace-nowrap">
           <tr>
-            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
-              Image
+            <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+              Cover
             </th>
-            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
               Title
             </th>
-            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
               Author
             </th>
-            <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
               Price
             </th>
-            <th className="py-3 px-4 text-right sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
+            <th className="py-4 px-4 text-right sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
               Actions
             </th>
           </tr>
