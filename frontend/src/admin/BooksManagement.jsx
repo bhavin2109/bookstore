@@ -63,7 +63,7 @@ const BooksManagement = () => {
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full text-left border-collapse relative min-w-[800px]">
-        <thead className="bg-slate-800 text-slate-400 uppercase text-xs">
+        <thead className="bg-slate-800 text-slate-400 uppercase text-xs whitespace-nowrap">
           <tr>
             <th className="py-3 px-4 sticky top-16 z-30 bg-slate-800 border-b border-slate-700 shadow-sm">
               Image

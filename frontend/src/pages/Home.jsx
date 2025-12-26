@@ -142,7 +142,7 @@ const Home = () => {
               transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
             >
-              Welcome to <span className="text-emerald-400">BookStore</span>
+              Welcome to <span className="text-emerald-400">NerdStore</span>
             </motion.h1>
 
             <motion.p
@@ -164,7 +164,7 @@ const Home = () => {
                 <motion.button
                   whileHover={{ scale: 1.05, x: 5 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-4 rounded-lg transition-all shadow-lg hover:shadow-emerald-500/20"
+                  className="w-full md:w-auto flex items-center justify-center gap-4 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3.5 md:px-8 md:py-4 rounded-lg transition-all shadow-lg hover:shadow-emerald-500/20 text-sm md:text-base"
                 >
                   <span>Go to Collections</span>
                   <motion.svg

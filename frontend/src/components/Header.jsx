@@ -76,7 +76,7 @@ const Header = () => {
           className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors z-50"
           onClick={() => setMobileMenuOpen(false)}
         >
-          Book<span className="text-emerald-400">Store</span>
+          Nerd<span className="text-emerald-400">Store</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -170,14 +170,27 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-slate-300 hover:text-white z-50"
+          className="md:hidden relative z-50 p-2 text-slate-300 hover:text-white transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
         >
-          <span className="sr-only">Open menu</span>
           {mobileMenuOpen ? (
-            <span className="text-2xl">✕</span>
+            <span className="text-2xl font-bold">✕</span>
           ) : (
-            <span className="text-2xl">☰</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-8 h-8"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
           )}
         </button>
 

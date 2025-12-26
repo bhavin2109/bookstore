@@ -96,7 +96,7 @@ function Footer() {
             </div>
           </div>
           <div className="border-t border-white/10 mt-8 pt-8 text-center text-slate-500 text-sm">
-            <p>&copy; 2026 BookStore. All rights reserved.</p>
+            <p>&copy; 2026 NerdStore. All rights reserved.</p>
           </div>
         </div>
       </footer>
