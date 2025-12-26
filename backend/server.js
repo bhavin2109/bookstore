@@ -18,7 +18,13 @@ console.log('  EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing')
 connectDB();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+   origin: [
+    "http://localhost:5173",           // local dev
+    "bookstore-teal-one.vercel.app" // vercel prod
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 
