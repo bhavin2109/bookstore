@@ -203,7 +203,7 @@ const Header = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999] md:hidden"
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-999 md:hidden"
                 />
 
                 {/* Drawer */}
@@ -212,7 +212,7 @@ const Header = () => {
                   animate={{ x: 0 }}
                   exit={{ x: "100%" }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                  className="fixed inset-y-0 right-0 w-64 bg-slate-950 border-l border-white/10 z-[1000] md:hidden flex flex-col shadow-2xl"
+                  className="fixed inset-y-0 right-0 w-64 bg-slate-950 border-l border-white/10 z-1000 md:hidden flex flex-col shadow-2xl"
                 >
                   {/* Close Button Area */}
                   <div className="flex justify-end p-4 border-b border-white/5">
