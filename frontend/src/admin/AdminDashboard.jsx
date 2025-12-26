@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "./AdminSidebar";
 import BooksManagement from "./BooksManagement";
 import DashboardStatistics from "./DashboardStatistics";
@@ -103,7 +103,7 @@ const AdminDashboard = () => {
         >
           <AnimatePresence mode="wait">
             {isBooksView ? (
-              <motion.div
+              <Motion.div
                 key="books"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -111,9 +111,9 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <BooksManagement />
-              </motion.div>
+              </Motion.div>
             ) : (
-              <motion.div
+              <Motion.div
                 key="stats"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <DashboardStatistics stats={stats} loading={loading} />
-              </motion.div>
+              </Motion.div>
             )}
           </AnimatePresence>
         </main>
