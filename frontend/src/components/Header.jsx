@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -71,13 +73,14 @@ const Header = () => {
         {/* Logo */}
         <Link
           to="/home"
-          className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors"
+          className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors z-50"
+          onClick={() => setMobileMenuOpen(false)}
         >
           Book<span className="text-emerald-400">Store</span>
         </Link>
 
-        {/* Nav */}
-        <nav className="flex items-center gap-4 text-sm font-medium">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
           {links.map((link) => (
             <Link
               key={link.to}
@@ -164,6 +167,96 @@ const Header = () => {
             </div>
           )}
         </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2 text-slate-300 hover:text-white z-50"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <span className="sr-only">Open menu</span>
+          {mobileMenuOpen ? (
+            <span className="text-2xl">✕</span>
+          ) : (
+            <span className="text-2xl">☰</span>
+          )}
+        </button>
+
+        {/* Mobile Fullscreen Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 top-0 bg-slate-950/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center space-y-8 md:hidden"
+            >
+              <div className="flex flex-col items-center space-y-6 text-lg font-medium">
+                {links.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-slate-300 hover:text-emerald-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+
+                <div className="w-12 h-px bg-white/10 my-4" />
+
+                {!loggedIn && (
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-8 py-3 rounded-full bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20"
+                  >
+                    Login
+                  </Link>
+                )}
+
+                {loggedIn && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        navigate("/profile");
+                      }}
+                      className="text-slate-300 hover:text-white"
+                    >
+                      My Profile
+                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          navigate("/admin");
+                        }}
+                        className="text-slate-300 hover:text-white"
+                      >
+                        Admin Dashboard
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("userName");
+                        localStorage.removeItem("userEmail");
+                        setLoggedIn(false);
+                        setUserName("");
+                        setMobileMenuOpen(false);
+                        navigate("/login");
+                      }}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );

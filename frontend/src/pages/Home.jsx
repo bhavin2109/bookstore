@@ -118,7 +118,7 @@ const Home = () => {
   return (
     <div className="relative -mt-16 bg-slate-900 pt-16 overflow-x-hidden max-w-full">
       {/* Hero Section - Split Layout */}
-      <section className="relative h-[calc(100vh-4rem)] flex overflow-hidden">
+      <section className="relative min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden">
         {/* Left Section - Welcome Content */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -452,7 +452,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="relative lg:hidden w-full bg-slate-900 overflow-hidden"
+          className="relative lg:hidden w-full flex-1 bg-slate-900 overflow-hidden min-h-[400px]"
         >
           <div
             className="absolute inset-0 bg-cover bg-center opacity-20 blur-md"
@@ -461,7 +461,7 @@ const Home = () => {
             }}
           ></div>
           <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full max-w-xs">
+            <div className="relative w-full max-w-xs md:max-w-md">
               <AnimatePresence mode="wait">
                 {heroBooks[activeIndex] && (
                   <motion.div

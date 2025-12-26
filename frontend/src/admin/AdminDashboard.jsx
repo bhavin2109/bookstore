@@ -12,6 +12,7 @@ const AdminDashboard = () => {
   const location = useLocation();
   const [stats, setStats] = useState({ products: 0, users: 0 });
   const [loading, setLoading] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Determine active view based on URL
   // Default is 'overview' (stats)
@@ -72,14 +73,38 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden">
       {/* Sidebar */}
-      <AdminSidebar />
+      <AdminSidebar
+        isOpen={mobileSidebarOpen}
+        onClose={() => setMobileSidebarOpen(false)}
+      />
 
       {/* Main Content Scroll Container */}
       <div className="flex-1 md:ml-64 transition-all duration-300 h-full overflow-y-auto relative">
         <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-white/5 bg-slate-950/80 px-6 backdrop-blur-md shrink-0">
-          <h1 className="text-xl font-bold text-white">
-            {isBooksView ? "Books Management" : "Admin Dashboard"}
-          </h1>
+          <div className="flex items-center gap-4">
+            <button
+              className="md:hidden text-white hover:text-emerald-400 transition-colors"
+              onClick={() => setMobileSidebarOpen(true)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
+            <h1 className="text-xl font-bold text-white">
+              {isBooksView ? "Books Management" : "Admin Dashboard"}
+            </h1>
+          </div>
           <div className="flex items-center gap-4">
             {isBooksView && (
               <button

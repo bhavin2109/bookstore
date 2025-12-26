@@ -3,7 +3,8 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
-const AdminSidebar = () => {
+// eslint-disable-next-line react/prop-types
+const AdminSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -33,21 +34,91 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-slate-950 border-r border-white/10 min-h-screen fixed left-0 top-0 bottom-0 z-40">
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-64 bg-slate-950 border-r border-white/10 min-h-screen fixed left-0 top-0 bottom-0 z-40">
+        <SidebarContent
+          user={user}
+          getInitials={getInitials}
+          handleLogout={handleLogout}
+          dropdownOpen={dropdownOpen}
+          setDropdownOpen={setDropdownOpen}
+        />
+      </aside>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onClose}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+            />
+            {/* Drawer */}
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-64 bg-slate-950 border-r border-white/10 z-50 md:hidden flex flex-col"
+            >
+              <div className="flex justify-end p-2">
+                <button
+                  onClick={onClose}
+                  className="p-2 text-slate-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+              <SidebarContent
+                user={user}
+                getInitials={getInitials}
+                handleLogout={handleLogout}
+                dropdownOpen={dropdownOpen}
+                setDropdownOpen={setDropdownOpen}
+                onLinkClick={onClose}
+              />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+// Extracted Content Component for reuse
+// eslint-disable-next-line react/prop-types
+const SidebarContent = ({
+  user,
+  getInitials,
+  handleLogout,
+  dropdownOpen,
+  setDropdownOpen,
+  // eslint-disable-next-line react/prop-types
+  onLinkClick,
+}) => {
+  return (
+    <>
       {/* Logo Area */}
-      <div className="flex items-center h-16 px-6 border-b border-white/10">
+      <div className="flex items-center h-16 px-6 border-b border-white/10 shrink-0">
         <Link
           to="/admin"
           className="text-xl font-bold tracking-wider text-white"
+          onClick={onLinkClick}
         >
           BOOKSTORE <span className="text-emerald-400">ADMIN</span>
         </Link>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 py-6 px-3 space-y-1">
+      <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
         <NavLink
           to="/admin/dashboard"
+          onClick={onLinkClick}
           className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
               isActive
@@ -61,6 +132,7 @@ const AdminSidebar = () => {
         </NavLink>
         <NavLink
           to="/admin/books-management"
+          onClick={onLinkClick}
           className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
               isActive
@@ -75,7 +147,7 @@ const AdminSidebar = () => {
       </nav>
 
       {/* User Info / Dropdown */}
-      <div className="p-4 border-t border-white/10 relative">
+      <div className="p-4 border-t border-white/10 relative shrink-0">
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
@@ -119,7 +191,7 @@ const AdminSidebar = () => {
           )}
         </AnimatePresence>
       </div>
-    </aside>
+    </>
   );
 };
 
