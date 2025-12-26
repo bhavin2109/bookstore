@@ -91,12 +91,12 @@ function Footer() {
             </div>
             <div>
               <h3 className="text-lg font-bold mb-4 text-white">Contact</h3>
-              <p className="text-slate-400">Email: info@bookstore.com</p>
-              <p className="text-slate-400">Phone: 1-800-BOOKS</p>
+              <p className="text-slate-400">Email: opbhavin21@gmail.com</p>
+              <p className="text-slate-400">Phone: 9316134234</p>
             </div>
           </div>
           <div className="border-t border-white/10 mt-8 pt-8 text-center text-slate-500 text-sm">
-            <p>&copy; 2026 NerdStore. All rights reserved.</p>
+            <p>&copy; 2026 Nerdy Enough. All rights reserved.</p>
           </div>
         </div>
       </footer>

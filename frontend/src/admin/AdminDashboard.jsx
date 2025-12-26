@@ -80,8 +80,8 @@ const AdminDashboard = () => {
 
       {/* Main Content Scroll Container */}
       <div className="flex-1 md:ml-64 transition-all duration-300 h-full overflow-y-auto relative">
-        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-white/5 bg-slate-950/80 px-6 backdrop-blur-md shrink-0">
-          <div className="flex items-center gap-4">
+        <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-white/5 bg-slate-950/80 px-4 md:px-6 backdrop-blur-md shrink-0">
+          <div className="flex items-center gap-3 md:gap-4">
             <button
               className="md:hidden text-white hover:text-emerald-400 transition-colors"
               onClick={() => setMobileSidebarOpen(true)}
@@ -101,22 +101,22 @@ const AdminDashboard = () => {
                 />
               </svg>
             </button>
-            <h1 className="text-xl font-bold text-white">
+            <h1 className="text-lg md:text-xl font-bold text-white truncate">
               {isBooksView ? "Books Management" : "Admin Dashboard"}
             </h1>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
             {isBooksView && (
               <button
                 onClick={() => navigate("/admin/books/add")}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md font-medium transition-colors text-sm shadow-lg shadow-emerald-500/20"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md font-medium transition-colors text-xs md:text-sm shadow-lg shadow-emerald-500/20 whitespace-nowrap flex items-center gap-2"
               >
-                + Add Book
+                <span className="text-lg leading-none">+</span> Add Book
               </button>
             )}
             <button
               onClick={() => navigate("/home")}
-              className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
+              className="hidden md:block text-sm font-medium text-slate-400 hover:text-white transition-colors"
             >
               View Site ↗
             </button>

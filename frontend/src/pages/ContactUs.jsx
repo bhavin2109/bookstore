@@ -30,11 +30,11 @@ const ContactUs = () => {
   };
 
   const contactInfo = [
-    { title: "Email", content: "info@bookstore.com", icon: "📧" },
-    { title: "Phone", content: "(555) 123-4567", icon: "📞" },
+    { title: "Email", content: "opbhavin21@gmail.com", icon: "📧" },
+    { title: "Phone", content: "9316134234", icon: "📞" },
     {
       title: "Address",
-      content: "123 Book Street, Reading City, RC 12345",
+      content: "Gandhinagar",
       icon: "📍",
     },
   ];

@@ -314,8 +314,9 @@ function AboutUs() {
             className="grid gap-4 sm:grid-cols-2"
           >
             {[
-              { text: "📧 Email: info@bookstore.com" },
-              { text: "📞 Phone: (555) 123-4567" },
+              { text: "📧 Email: opbhavin21@gmail.com" },
+              { text: "📞 Phone: 9316134234" },
+              { text: "📍 Location: Gandhinagar" },
             ].map((contact, index) => (
               <motion.div
                 key={index}

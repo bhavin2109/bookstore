@@ -60,10 +60,30 @@ const AdminSidebar = ({ isOpen, onClose }) => {
             />
             {/* Drawer */}
             <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={{
+                open: {
+                  x: 0,
+                  transition: {
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 200,
+                    staggerChildren: 0.1,
+                  },
+                },
+                closed: {
+                  x: "-100%",
+                  transition: {
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 200,
+                    staggerChildren: 0.05,
+                    staggerDirection: -1,
+                  },
+                },
+              }}
               className="fixed inset-y-0 left-0 w-64 bg-slate-950 border-r border-white/10 z-50 md:hidden flex flex-col"
             >
               <div className="flex justify-end p-2">
@@ -101,53 +121,56 @@ const SidebarContent = ({
   // eslint-disable-next-line react/prop-types
   onLinkClick,
 }) => {
+  const itemVariants = {
+    open: { x: 0, opacity: 1 },
+    closed: { x: -20, opacity: 0 },
+  };
+
   return (
     <>
       {/* Logo Area */}
-      <div className="flex items-center h-16 px-6 border-b border-white/10 shrink-0">
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center h-16 px-6 border-b border-white/10 shrink-0"
+      >
         <Link
           to="/admin"
           className="text-xl font-bold tracking-wider text-white"
           onClick={onLinkClick}
         >
-          BOOKSTORE <span className="text-emerald-400">ADMIN</span>
+          NERDY ENOUGH <span className="text-emerald-400">ADMIN</span>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-        <NavLink
-          to="/admin/dashboard"
-          onClick={onLinkClick}
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
-            }`
-          }
-        >
-          <span className="text-lg">📊</span>
-          Dashboard
-        </NavLink>
-        <NavLink
-          to="/admin/books-management"
-          onClick={onLinkClick}
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
-            }`
-          }
-        >
-          <span className="text-lg">📚</span>
-          Books
-        </NavLink>
+        {["dashboard", "books-management"].map((path) => (
+          <motion.div key={path} variants={itemVariants}>
+            <NavLink
+              to={`/admin/${path}`}
+              onClick={onLinkClick}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`
+              }
+            >
+              <span className="text-lg">
+                {path === "dashboard" ? "📊" : "📚"}
+              </span>
+              {path === "dashboard" ? "Dashboard" : "Books"}
+            </NavLink>
+          </motion.div>
+        ))}
       </nav>
 
       {/* User Info / Dropdown */}
-      <div className="p-4 border-t border-white/10 relative shrink-0">
+      <motion.div
+        variants={itemVariants}
+        className="p-4 border-t border-white/10 relative shrink-0"
+      >
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
@@ -190,7 +213,7 @@ const SidebarContent = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </>
   );
 };

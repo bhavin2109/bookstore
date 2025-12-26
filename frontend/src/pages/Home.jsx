@@ -142,7 +142,7 @@ const Home = () => {
               transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
             >
-              Welcome to <span className="text-emerald-400">NerdStore</span>
+              Welcome to <span className="text-emerald-400">Nerdy Enough</span>
             </motion.h1>
 
             <motion.p
