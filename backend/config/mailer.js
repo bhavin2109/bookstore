@@ -4,7 +4,7 @@ const getTransporter = () => {
     // Check if credentials are valid
     const emailUser = process.env.EMAIL_USER?.trim();
     const emailPass = process.env.EMAIL_PASS?.trim();
-    
+
     // Warn but don't throw immediately, let the caller handle it
     if (!emailUser || !emailPass) {
         console.error('❌ Mailer Error: EMAIL_USER or EMAIL_PASS missing in .env');
@@ -13,16 +13,18 @@ const getTransporter = () => {
 
     // Always create fresh transporter to ensure latest config
     return nodemailer.createTransport({
-        service: 'Gmail',
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
         auth: {
             user: emailUser,
             pass: emailPass,
         },
-        // Increased timeouts for slower connections
-        connectionTimeout: 20000, // 20 seconds
-        greetingTimeout: 20000,   // 20 seconds
-        socketTimeout: 30000,     // 30 seconds
+        connectionTimeout: 20000,
+        greetingTimeout: 20000,
+        socketTimeout: 30000,
     });
+
 };
 
 // Verify transporter configuration (only if credentials are available)
@@ -30,7 +32,7 @@ const verifyTransporter = async () => {
     try {
         const emailUser = process.env.EMAIL_USER?.trim();
         const emailPass = process.env.EMAIL_PASS?.trim();
-        
+
         if (!emailUser || !emailPass) {
             console.warn('⚠️  Email credentials not configured. Email functionality will not work.');
             console.warn('   Please set EMAIL_USER and EMAIL_PASS in your .env file');
