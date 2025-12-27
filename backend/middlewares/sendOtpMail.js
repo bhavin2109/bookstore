@@ -26,15 +26,8 @@ const sendOtpMail = async (req, res, next) => {
         const emailPass = process.env.EMAIL_PASS?.trim();
         
         if (!emailUser || !emailPass) {
-            console.error('❌ Email credentials missing!');
-            console.log('EMAIL_USER:', emailUser ? 'Set' : 'Missing');
-            console.log('EMAIL_PASS:', emailPass ? 'Set' : 'Missing');
-            // For development: log OTP in console if email not configured
-            console.log('⚠️  EMAIL NOT CONFIGURED - OTP for testing:', otp);
-            return res.status(500).json({ 
-                message: 'Email service not configured. Please check server logs for OTP.',
-                otp: process.env.NODE_ENV === 'development' ? otp : undefined
-            });
+            console.error('❌ Email credentials missing! Triggering fallback.');
+            throw new Error('Email credentials not configured');
         }
 
         console.log('📤 Sending email via transporter...');
@@ -42,12 +35,8 @@ const sendOtpMail = async (req, res, next) => {
         try {
             transporter = getTransporter();
         } catch (transporterError) {
-            console.error('❌ Failed to get transporter:', transporterError.message);
-            console.log('⚠️  EMAIL NOT CONFIGURED - OTP for testing:', otp);
-            return res.status(500).json({ 
-                message: 'Email service not configured. Please check server logs for OTP.',
-                otp: process.env.NODE_ENV === 'development' ? otp : undefined
-            });
+             console.error('❌ Failed to get transporter! Triggering fallback.');
+             throw new Error('Transporter configuration failed');
         }
         
         await transporter.sendMail({
