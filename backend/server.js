@@ -18,7 +18,7 @@ console.log('  EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing')
 connectDB();
 
 //Import Routes
-import authRoutes from './routes/user.js';
+import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 
 const app = express();
@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 // Routes
 app.use("/api/products", productRoutes);
 app.use('/api/admin/products', productRoutes);
-app.use('/api/user', authRoutes);
+app.use('/api/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
