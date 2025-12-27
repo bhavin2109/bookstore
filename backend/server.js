@@ -43,7 +43,7 @@ app.use('/api/admin/products', productRoutes);
 
 // use Routes
 
-app.use('/api/auth', authRoutes);
+app.use('/api/user', authRoutes);
 
 
 
