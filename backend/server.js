@@ -6,10 +6,6 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import Products from './models/Products.js';
 
-//Import Routes
-import authRoutes from './routes/user.js';
-import productRoutes from './routes/productRoutes.js';
-
 // Check environment variables
 console.log('🔍 Environment Configuration Check:');
 console.log('  DB:', process.env.DB ? '✅ Set' : '❌ Missing');
@@ -20,6 +16,10 @@ console.log('  EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing')
 
 // Connect to Database
 connectDB();
+
+//Import Routes
+import authRoutes from './routes/user.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 app.use(cors({
