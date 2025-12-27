@@ -1,5 +1,7 @@
-import express from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import Products from './models/Products.js';
@@ -7,8 +9,6 @@ import Products from './models/Products.js';
 //Import Routes
 import authRoutes from './routes/user.js';
 import productRoutes from './routes/productRoutes.js';
-
-dotenv.config();
 
 // Check environment variables
 console.log('🔍 Environment Configuration Check:');

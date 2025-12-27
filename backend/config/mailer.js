@@ -1,33 +1,28 @@
 import nodemailer from 'nodemailer';
 
-// Function to get transporter (lazy initialization)
-let transporter = null;
-
 const getTransporter = () => {
-    // Check if credentials are valid (not undefined and not empty strings)
+    // Check if credentials are valid
     const emailUser = process.env.EMAIL_USER?.trim();
     const emailPass = process.env.EMAIL_PASS?.trim();
     
+    // Warn but don't throw immediately, let the caller handle it
     if (!emailUser || !emailPass) {
-        throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASS in your .env file');
+        console.error('❌ Mailer Error: EMAIL_USER or EMAIL_PASS missing in .env');
+        throw new Error('Email credentials not configured');
     }
 
-    // Create transporter if it doesn't exist
-    if (!transporter) {
-        transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: emailUser,
-                pass: emailPass,
-            },
-            // Add timeouts to prevent hanging
-            connectionTimeout: 10000, // 10 seconds
-            greetingTimeout: 10000,   // 10 seconds
-            socketTimeout: 15000,     // 15 seconds
-        });
-    }
-
-    return transporter;
+    // Always create fresh transporter to ensure latest config
+    return nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: emailUser,
+            pass: emailPass,
+        },
+        // Increased timeouts for slower connections
+        connectionTimeout: 20000, // 20 seconds
+        greetingTimeout: 20000,   // 20 seconds
+        socketTimeout: 30000,     // 30 seconds
+    });
 };
 
 // Verify transporter configuration (only if credentials are available)
