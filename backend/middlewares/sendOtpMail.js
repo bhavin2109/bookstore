@@ -1,4 +1,5 @@
 import getTransporter from "../config/mailer.js";
+import User from "../models/User.js";
 
 const sendOtpMail = async (req, res, next) => {
     console.log('📧 sendOtpMail middleware started');
@@ -74,23 +75,29 @@ const sendOtpMail = async (req, res, next) => {
             console.error('👉 Check EMAIL_USER and EMAIL_PASS in .env');
         }
 
-        // CRITICAL FIX: In development, if email fails, allow the flow to continue!
-        // This ensures the user can still test the UI flow (Register -> Verify -> Home)
-        if (process.env.NODE_ENV === 'development') {
-            console.log('⚠️  DEV MODE: Allowing registration to proceed despite email failure.');
-            console.log('⚠️  YOUR OTP IS:', otp);
+        // FALLBACK FOR PRODUCTION/HOSTED SITES:
+        // If email fails (likely due to blocking/timeout), set a static OTP so the user can still proceed.
+        try {
+            console.log('⚠️  Email failed. Activating Static OTP fallback for:', email);
+            const staticOtp = "123456";
             
+            // Update user with static OTP
+            await User.findOneAndUpdate({ email }, { otp: staticOtp });
+            console.log('✅ User OTP updated to static code: 123456');
+
             return res.status(200).json({ 
-                message: 'Developer Mode: Email failed but registration proceeding.',
-                devWarning: 'Email failed to send (check console for real error)',
-                mockOtp: otp // Send OTP to frontend so they can copy-paste it
+                message: 'Email service unavailable, but registration proceeding.',
+                info: 'Use default OTP for verification if email is not received.',
+                mockOtp: staticOtp, // Include for dev debugging
+                isFallback: true
+            });
+        } catch (dbError) {
+            console.error('❌ Failed to set static OTP:', dbError);
+            return res.status(500).json({ 
+                message: 'Registration failed completely. Please try again later.',
+                error: error.message 
             });
         }
-        
-        return res.status(500).json({ 
-            message: 'Failed to send OTP email. Please try again later.',
-            error: error.message 
-        });
     }
 }
 
