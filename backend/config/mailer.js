@@ -20,6 +20,10 @@ const getTransporter = () => {
                 user: emailUser,
                 pass: emailPass,
             },
+            // Add timeouts to prevent hanging
+            connectionTimeout: 10000, // 10 seconds
+            greetingTimeout: 10000,   // 10 seconds
+            socketTimeout: 15000,     // 15 seconds
         });
     }
 

@@ -69,15 +69,21 @@ const sendOtpMail = async (req, res, next) => {
     }
     catch (error) {
         console.error('❌ Error in sendOtpMail:', error);
-        console.error('Error details:', {
-            message: error.message,
-            code: error.code,
-            response: error.response
-        });
-        // Properly handle error - return response instead of throwing
+        
+        // Log detailed error for debugging
+        if (error.code === 'EAUTH') {
+            console.error('👉 Check EMAIL_USER and EMAIL_PASS in .env');
+        }
+        
+        // In development, we can still "mock" success if email fails, 
+        // by returning the OTP in the response (which front-end doesn't see, but looking at network tab helps)
+        // BUT for a real app, we must fail.
+        
         return res.status(500).json({ 
-            message: 'Failed to send OTP email',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            message: 'Failed to send OTP email. Please try again later.',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+            // In dev, send OTP in response so we can continue testing even if email fails
+            mockOtp: process.env.NODE_ENV === 'development' ? otp : undefined
         });
     }
 }
