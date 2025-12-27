@@ -68,7 +68,7 @@ const register = async (req, res, next) => {
     });
     console.log('✅ User created successfully:', newUser._id);
 
-    req.otpData = { email, otp, type: "Registration" }; // Pass OTP data to next middleware
+    req.otpData = { email, otp, type: "Registration" };
     console.log('📤 Setting req.otpData and calling next()');
     next(); // This should trigger sendOtpMail
   } catch (error) {
@@ -119,12 +119,6 @@ export const verifyOtp = async (req, res) => {
 
     // Generate JWT token
     console.log('🔑 Generating JWT token...');
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      console.error('❌ JWT_SECRET not configured');
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-
     const token = generateToken(user);
     console.log('✅ Token generated successfully');
 
