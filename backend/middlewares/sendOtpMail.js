@@ -70,20 +70,26 @@ const sendOtpMail = async (req, res, next) => {
     catch (error) {
         console.error('❌ Error in sendOtpMail:', error);
         
-        // Log detailed error for debugging
         if (error.code === 'EAUTH') {
             console.error('👉 Check EMAIL_USER and EMAIL_PASS in .env');
         }
-        
-        // In development, we can still "mock" success if email fails, 
-        // by returning the OTP in the response (which front-end doesn't see, but looking at network tab helps)
-        // BUT for a real app, we must fail.
+
+        // CRITICAL FIX: In development, if email fails, allow the flow to continue!
+        // This ensures the user can still test the UI flow (Register -> Verify -> Home)
+        if (process.env.NODE_ENV === 'development') {
+            console.log('⚠️  DEV MODE: Allowing registration to proceed despite email failure.');
+            console.log('⚠️  YOUR OTP IS:', otp);
+            
+            return res.status(200).json({ 
+                message: 'Developer Mode: Email failed but registration proceeding.',
+                devWarning: 'Email failed to send (check console for real error)',
+                mockOtp: otp // Send OTP to frontend so they can copy-paste it
+            });
+        }
         
         return res.status(500).json({ 
             message: 'Failed to send OTP email. Please try again later.',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
-            // In dev, send OTP in response so we can continue testing even if email fails
-            mockOtp: process.env.NODE_ENV === 'development' ? otp : undefined
+            error: error.message 
         });
     }
 }

@@ -54,6 +54,9 @@ app.get('/', (req, res) => {
   res.send('Backend is running 🚀');
 });
 
+// Force restart for env vars to load
+// Updated: 2025-12-27
+
 app.listen(PORT, () => {
   console.log(`Server is running on port: http://localhost:${PORT}`);
 });
