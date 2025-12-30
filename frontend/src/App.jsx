@@ -19,11 +19,13 @@ const Profile = lazy(() => import("./pages/Profile.jsx"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
+const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
 
 // Admin Components Lazy Load
 const AddBook = lazy(() => import("./admin/AddBook.jsx"));
 const EditBook = lazy(() => import("./admin/EditBook.jsx"));
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard.jsx"));
+const AdminOrders = lazy(() => import("./admin/AdminOrders.jsx"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -37,6 +39,7 @@ const App = () => {
   const hideLayout = location.pathname.startsWith("/admin");
 
   React.useEffect(() => {
+    window.scrollTo(0, 0);
     const path = location.pathname;
     let title = "Nerdy Enough";
 
@@ -57,6 +60,8 @@ const App = () => {
     else if (path === "/admin/books/add") title = "Add Book | Nerdy Enough";
     else if (path.startsWith("/admin/books/edit/"))
       title = "Edit Book | Nerdy Enough";
+    else if (path === "/admin/orders") title = "Manage Orders | Nerdy Enough";
+    else if (path === "/my-orders") title = "My Orders | Nerdy Enough";
 
     document.title = title;
   }, [location]);
@@ -95,7 +100,9 @@ const App = () => {
           <Route element={<AuthRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/my-orders" element={<MyOrders />} />
           </Route>
           {/* Admin Routes - Protected */}
           <Route element={<ProtectRoute />}>
@@ -110,7 +117,9 @@ const App = () => {
               element={<AdminDashboard />}
             />
             <Route path="/admin/books/add" element={<AddBook />} />
+            <Route path="/admin/books/add" element={<AddBook />} />
             <Route path="/admin/books/edit/:id" element={<EditBook />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
           </Route>
         </Routes>
       </Suspense>
@@ -122,7 +131,9 @@ const App = () => {
           "/verify-otp",
           "/profile",
           "/cart",
+          "/cart",
           "/checkout",
+          "/my-orders",
         ].includes(location.pathname) && <Footer />}
     </div>
   );

@@ -167,6 +167,17 @@ const Header = () => {
                     Manage Profile
                   </button>
 
+                  <button
+                    type="button"
+                    className="block w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                    onClick={() => {
+                      setShowMenu(false);
+                      navigate("/my-orders");
+                    }}
+                  >
+                    My Orders
+                  </button>
+
                   {isAdmin && (
                     <button
                       type="button"

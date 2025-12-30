@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
+import sendEmail from '../utils/sendEmail.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -30,7 +31,49 @@ const addOrderItems = asyncHandler(async (req, res) => {
             totalPrice
         });
 
+
         const createdOrder = await order.save(); // Save to DB
+
+        // Send Email
+        const message = `
+        <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+            <h2 style="color: #4CAF50;">Thank You for Your Order!</h2>
+            <p>Hi,</p>
+            <p>Your order with ID <strong>${createdOrder._id}</strong> has been placed successfully.</p>
+            <h3>Order Details:</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2; text-align: left;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Quantity</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${createdOrder.orderItems.map(item => `
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;">$${item.price}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <h3>Total Price: $${createdOrder.totalPrice}</h3>
+            <p>We will notify you once your order is shipped.</p>
+            <p>Thanks,<br>Nerdy Enough Team</p>
+        </div>
+        `;
+
+        try {
+            await sendEmail({
+                email: req.user.email,
+                subject: 'Order Confirmation - Nerdy Enough',
+                message
+            });
+        } catch (error) {
+            console.error(error);
+        }
 
         res.status(201).json(createdOrder);
     }
@@ -83,9 +126,37 @@ const getMyOrders = asyncHandler(async (req, res) => {
     res.json(orders);
 });
 
+// @desc    Get all orders
+// @route   GET /api/orders
+// @access  Private/Admin
+const getOrders = asyncHandler(async (req, res) => {
+    const orders = await Order.find({}).populate('user', 'id name');
+    res.json(orders);
+});
+
+// @desc    Update order to delivered
+// @route   PUT /api/orders/:id/deliver
+// @access  Private/Admin
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
 export {
     addOrderItems,
     getOrderById,
     updateOrderToPaid,
-    getMyOrders
+    getMyOrders,
+    getOrders,
+    updateOrderToDelivered
 };

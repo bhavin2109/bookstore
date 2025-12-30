@@ -144,7 +144,7 @@ const SidebarContent = ({
 
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-        {["dashboard", "books-management"].map((path) => (
+        {["dashboard", "books-management", "orders"].map((path) => (
           <motion.div key={path} variants={itemVariants}>
             <NavLink
               to={`/admin/${path}`}
@@ -158,9 +158,13 @@ const SidebarContent = ({
               }
             >
               <span className="text-lg">
-                {path === "dashboard" ? "📊" : "📚"}
+                {path === "dashboard" ? "📊" : path === "orders" ? "📦" : "📚"}
               </span>
-              {path === "dashboard" ? "Dashboard" : "Books"}
+              {path === "dashboard"
+                ? "Dashboard"
+                : path === "orders"
+                ? "Orders"
+                : "Books"}
             </NavLink>
           </motion.div>
         ))}
