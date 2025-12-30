@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import {
   removeFromCart,
   increaseQuantity,
@@ -25,7 +25,7 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center px-4">
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
@@ -58,7 +58,7 @@ const Cart = () => {
           >
             Browse Books
           </Link>
-        </motion.div>
+        </Motion.div>
       </div>
     );
   }
@@ -66,13 +66,13 @@ const Cart = () => {
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <motion.h1
+        <Motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-3xl md:text-4xl font-bold text-white mb-8 border-l-4 border-emerald-500 pl-4"
         >
           Shopping Cart
-        </motion.h1>
+        </Motion.h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items Grid */}
@@ -80,7 +80,7 @@ const Cart = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <AnimatePresence>
                 {cartItems.map((item) => (
-                  <motion.div
+                  <Motion.div
                     key={item.id}
                     layout
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -90,7 +90,7 @@ const Cart = () => {
                   >
                     {/* Image Area - Vertical */}
                     <div className="relative w-full aspect-2/3 overflow-hidden bg-slate-800 border-b border-white/5">
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 z-10" />
+                      <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-transparent to-transparent opacity-60 z-10" />
                       <img
                         src={
                           item.image || "https://via.placeholder.com/300x450"
@@ -100,7 +100,7 @@ const Cart = () => {
                       />
 
                       {/* Price Badge on Image */}
-                      <div className="absolute top-2 right-2 z-20 bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full shadow-lg shadow-emerald-500/20 text-xs shadow-black/50">
+                      <div className="absolute top-2 right-2 z-20 bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full shadow-lg shadow-emerald-500/20 text-xs">
                         ₹{item.price}
                       </div>
 
@@ -131,7 +131,7 @@ const Cart = () => {
                     </div>
 
                     {/* Content Area */}
-                    <div className="p-3 flex flex-col flex-grow bg-slate-950">
+                    <div className="p-3 flex flex-col grow bg-slate-950">
                       <Link
                         to={`/products/${item.id}`}
                         className="block mb-1 group-hover:text-emerald-400 transition-colors"
@@ -182,7 +182,7 @@ const Cart = () => {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </Motion.div>
                 ))}
               </AnimatePresence>
             </div>

@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
 import sendEmail from '../utils/sendEmail.js';
+import Product from '../models/Products.js';
+import User from '../models/User.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -122,7 +124,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 // @route   GET /api/orders/myorders
 // @access  Private
 const getMyOrders = asyncHandler(async (req, res) => {
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user._id, isVisibleToUser: true });
     res.json(orders);
 });
 
@@ -141,6 +143,11 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+        if (!order.isPaid) {
+            res.status(400);
+            throw new Error('Order must be paid before delivery');
+        }
+
         order.isDelivered = true;
         order.deliveredAt = Date.now();
 
@@ -152,11 +159,138 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Hide order from user history
+// @route   PUT /api/orders/:id/hide
+// @access  Private
+const hideOrder = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        if (order.user.toString() !== req.user._id.toString()) {
+            res.status(401);
+            throw new Error('Not authorized to hide this order');
+        }
+
+        order.isVisibleToUser = false;
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
+
+
+// @desc    Cancel order
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelOrder = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        // Enforce 24-hour window
+        const orderTime = new Date(order.createdAt).getTime();
+        const currentTime = Date.now();
+        const hoursDiff = (currentTime - orderTime) / (1000 * 60 * 60);
+
+        if (hoursDiff > 24) {
+            res.status(400);
+            throw new Error('Order cannot be cancelled after 24 hours');
+        }
+
+        if (order.isDelivered) {
+            res.status(400);
+            throw new Error('Cannot cancel a delivered order');
+        }
+
+        order.isCancelled = true;
+        order.cancelledAt = Date.now();
+
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+});
+
+// @desc    Get dashboard stats (Admin)
+// @route   GET /api/orders/stats
+// @access  Private/Admin
+const getDashboardStats = asyncHandler(async (req, res) => {
+    const totalRevenueFn = Order.aggregate([
+        { $match: { isPaid: true, isCancelled: false } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+    ]);
+
+    const pendingOrdersFn = Order.countDocuments({ isDelivered: false, isCancelled: false });
+    const deliveredOrdersFn = Order.countDocuments({ isDelivered: true });
+    const cancelledOrdersFn = Order.countDocuments({ isCancelled: true });
+
+    const productCountFn = Product.countDocuments({});
+    const userCountFn = User.countDocuments({});
+
+    const monthlyRevenueFn = Order.aggregate([
+        {
+            $match: {
+                isPaid: true,
+                isCancelled: false,
+                paidAt: { $exists: true, $ne: null }
+            }
+        },
+        {
+            $group: {
+                _id: { $month: { $toDate: '$paidAt' } },
+                total: { $sum: '$totalPrice' }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    const [
+        revenueResult,
+        pendingOrders,
+        deliveredOrders,
+        cancelledOrders,
+        productCount,
+        userCount,
+        monthlyRevenueResult
+    ] = await Promise.all([
+        totalRevenueFn,
+        pendingOrdersFn,
+        deliveredOrdersFn,
+        cancelledOrdersFn,
+        productCountFn,
+        userCountFn,
+        monthlyRevenueFn
+    ]);
+
+    const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
+
+    // Format monthly revenue for frontend [ { _id: 1, total: 100 }, ... ]
+    // We can just send the result directly
+    const monthlyRevenue = monthlyRevenueResult || [];
+
+    res.json({
+        totalRevenue,
+        pendingOrders,
+        deliveredOrders,
+        cancelledOrders,
+        productCount,
+        userCount,
+        monthlyRevenue
+    });
+});
+
 export {
     addOrderItems,
     getOrderById,
     updateOrderToPaid,
     getMyOrders,
     getOrders,
-    updateOrderToDelivered
+    updateOrderToDelivered,
+    cancelOrder,
+    hideOrder,
+    getDashboardStats
 };

@@ -22,6 +22,20 @@ export const createProduct = async (data, token) => {
   }
 };
 
+// CREATE MANY PRODUCTS
+export const createManyProducts = async (data, token) => {
+  try {
+    const response = await API.post("/bulk", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 // GET ALL PRODUCTS
 export const getAllProducts = async () => {
   try {

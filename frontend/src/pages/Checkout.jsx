@@ -1,26 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { clearCart } from "../../store/cartSlice";
 import orderService from "../services/orderServices";
+
+import OrderSuccessAnimation from "../components/OrderSuccessAnimation";
 
 const Checkout = () => {
   const { items: cartItems } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
+  const [formData, setFormData] = useState(() => {
+    const defaults = {
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+    };
+    // Pre-fill user data if available (lazy initialization)
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return {
+          ...defaults,
+          name: user.username || "",
+          email: user.email || "",
+        };
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    }
+    return defaults;
   });
+  const [showAnimation, setShowAnimation] = useState(false);
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -28,26 +48,11 @@ const Checkout = () => {
   );
 
   useEffect(() => {
-    if (cartItems.length === 0) {
+    if (cartItems.length === 0 && !showAnimation) {
       toast.info("Your cart is empty. Redirecting to store.");
       navigate("/products");
     }
-
-    // Pre-fill user data if available
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        setFormData((prev) => ({
-          ...prev,
-          name: user.username || "", // Adjusted to username based on typical schema
-          email: user.email || "",
-        }));
-      } catch (e) {
-        console.error("Error parsing user data", e);
-      }
-    }
-  }, [cartItems, navigate]);
+  }, [cartItems, navigate, showAnimation]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -98,7 +103,9 @@ const Checkout = () => {
         description: `Order #${createdOrder._id}`,
         order_id: "", // If generating Razorpay Order ID on backend, pass it here. For now, standard checkout.
         handler: async function (response) {
-          // console.log("Payment Result:", response);
+          // Show animation IMMEDIATELY upon payment success callback
+          setShowAnimation(true);
+
           try {
             // 2. Pay Order on Backend
             await orderService.payOrder(createdOrder._id, {
@@ -108,12 +115,15 @@ const Checkout = () => {
               email_address: formData.email,
             });
 
-            dispatch(clearCart());
-            toast.success("Payment successful! Order placed.");
-            navigate("/profile");
+            // dispatch(clearCart()); // Moved to animation completion
+            // toast.success("Payment successful! Order placed."); // Moved to animation
           } catch (error) {
             console.error(error);
-            toast.error("Payment recorded failed on server.");
+            // If backend fails, we might want to alert/log, but animation is already showing success.
+            // Ideally we'd have a way to 'pause' animation or show error, but for "immediate" feedback requirement, this is the tradeoff.
+            toast.error(
+              "Payment recorded failed on server, but payment was successful."
+            );
           }
         },
         prefill: {
@@ -137,22 +147,30 @@ const Checkout = () => {
     }
   };
 
-  if (cartItems.length === 0) return null;
+  if (cartItems.length === 0 && !showAnimation) return null;
 
   return (
     <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+      {showAnimation && (
+        <OrderSuccessAnimation
+          onComplete={() => {
+            dispatch(clearCart());
+            navigate("/my-orders");
+          }}
+        />
+      )}
       <div className="max-w-7xl mx-auto">
-        <motion.h1
+        <Motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-3xl md:text-4xl font-bold text-white mb-8 border-l-4 border-emerald-500 pl-4"
         >
           Checkout
-        </motion.h1>
+        </Motion.h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Shipping Form */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="space-y-6"
@@ -290,10 +308,10 @@ const Checkout = () => {
                 </div>
               </form>
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Order Summary */}
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -313,14 +331,14 @@ const Checkout = () => {
                     key={item.id}
                     className="flex gap-4 items-center bg-slate-900/50 p-3 rounded-lg border border-white/5"
                   >
-                    <div className="w-16 h-20 bg-slate-800 rounded overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-20 bg-slate-800 rounded overflow-hidden shrink-0">
                       <img
                         src={item.image}
                         alt={item.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="flex-grow">
+                    <div className="grow">
                       <h4 className="text-white font-bold text-sm line-clamp-1">
                         {item.title}
                       </h4>
@@ -376,7 +394,7 @@ const Checkout = () => {
                 Secure Payment Processor
               </p>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
       </div>
     </div>

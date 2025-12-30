@@ -1,12 +1,13 @@
 import express from "express";
-import { 
-    createProduct, 
-    getAllProducts, 
-    getSingleProduct, 
-    updateProduct, 
+import {
+    createProduct,
+    createManyProducts,
+    getAllProducts,
+    getSingleProduct,
+    updateProduct,
     deleteProduct,
     productCount,
-    userCount 
+    userCount
 } from "../controllers/productController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
@@ -21,6 +22,7 @@ router.get("/:id", getSingleProduct);
 
 // Protected Routes
 router.post("/", protect, createProduct);
+router.post("/bulk", protect, createManyProducts);
 router.put("/:id", protect, updateProduct);
 router.delete("/:id", protect, deleteProduct);
 

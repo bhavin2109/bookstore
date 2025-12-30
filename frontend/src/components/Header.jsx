@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import SearchBar from "./SearchBar";
 
 import { addToCart } from "../../store/cartSlice";
 import { useDispatch } from "react-redux";
@@ -82,11 +83,16 @@ const Header = () => {
         {/* Logo */}
         <Link
           to="/home"
-          className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors z-50"
+          className="text-xl font-bold tracking-tight hover:text-emerald-400 transition-colors z-50 shrink-0 mr-4"
           onClick={() => setMobileMenuOpen(false)}
         >
           Nerdy <span className="text-emerald-400">Enough</span>
         </Link>
+
+        {/* Search Bar - Desktop */}
+        <div className="hidden md:flex flex-1 max-w-md mx-4">
+          <SearchBar />
+        </div>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-4 text-sm font-medium">

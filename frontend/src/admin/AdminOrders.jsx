@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { status } = useParams();
 
   const fetchOrders = async () => {
     try {
@@ -59,13 +60,53 @@ const AdminOrders = () => {
     }
   };
 
+  // Filter Logic
+  const filteredOrders = orders.filter((order) => {
+    if (status === "pending") return !order.isDelivered && !order.isCancelled;
+    if (status === "delivered") return order.isDelivered;
+    if (status === "cancelled") return order.isCancelled;
+    return true; // Show all if no status or unknown
+  });
+
+  const getTitle = () => {
+    if (status === "pending") return "Pending Orders";
+    if (status === "delivered") return "Delivered Orders";
+    if (status === "cancelled") return "Cancelled Orders";
+    return "All Orders Management";
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-8">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-3xl font-bold text-white">Orders Management</h1>
-          <p className="mt-2 text-sm text-slate-400">
-            A list of all user orders including their details and status.
+    <div className="min-h-screen bg-slate-950 px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-4 bg-slate-950/80 backdrop-blur-md border-b border-white/5 mb-6">
+        <div className="min-w-0 flex-1">
+          {status && (
+            <Link
+              to="/admin/orders"
+              className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-white transition-colors mb-2 group"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                />
+              </svg>
+              Back to All Orders
+            </Link>
+          )}
+          <h1 className="text-3xl font-bold text-white capitalize tracking-tight">
+            {getTitle()}
+          </h1>
+          <p className="mt-1 text-sm text-slate-400 truncate">
+            A list of {status || "all"} user orders including their details and
+            status.
           </p>
         </div>
       </div>
@@ -74,7 +115,7 @@ const AdminOrders = () => {
         <div className="mt-8 flex justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500/30 border-t-emerald-500"></div>
         </div>
-      ) : orders.length === 0 ? (
+      ) : filteredOrders.length === 0 ? (
         <div className="mt-8 rounded-xl border border-white/10 bg-slate-900/50 p-12 text-center backdrop-blur-sm">
           <h2 className="text-xl font-semibold text-white">No orders found</h2>
         </div>
@@ -131,7 +172,7 @@ const AdminOrders = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/10">
-                    {orders.map((order) => (
+                    {filteredOrders.map((order) => (
                       <tr
                         key={order._id}
                         className="hover:bg-white/5 transition-colors"
@@ -161,7 +202,11 @@ const AdminOrders = () => {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm">
-                          {order.isDelivered ? (
+                          {order.isCancelled ? (
+                            <span className="inline-flex items-center rounded-full bg-red-500/10 px-2 py-1 text-xs font-medium text-red-500 border border-red-500/20">
+                              Cancelled
+                            </span>
+                          ) : order.isDelivered ? (
                             <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-1 text-xs font-medium text-blue-400 border border-blue-500/20">
                               Delivered:{" "}
                               {new Date(order.deliveredAt).toLocaleDateString()}
@@ -173,10 +218,20 @@ const AdminOrders = () => {
                           )}
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          {!order.isDelivered && (
+                          {!order.isDelivered && !order.isCancelled && (
                             <button
                               onClick={() => deliverHandler(order._id)}
-                              className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                              disabled={!order.isPaid}
+                              className={`transition-colors ${
+                                order.isPaid
+                                  ? "text-emerald-400 hover:text-emerald-300"
+                                  : "text-slate-600 cursor-not-allowed"
+                              }`}
+                              title={
+                                !order.isPaid
+                                  ? "Order must be paid before delivery"
+                                  : "Mark as Delivered"
+                              }
                             >
                               Mark Delivered
                             </button>

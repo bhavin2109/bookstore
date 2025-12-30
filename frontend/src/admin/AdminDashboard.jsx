@@ -3,21 +3,28 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion as Motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "./AdminSidebar";
 import BooksManagement from "./BooksManagement";
+import AdminOrders from "./AdminOrders";
 import DashboardStatistics from "./DashboardStatistics";
-import { getProductCount, getUserCount } from "../services/productServices";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [stats, setStats] = useState({ products: 0, users: 0 });
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    cancelledOrders: 0,
+    productCount: 0,
+    userCount: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Determine active view based on URL
-  // Default is 'overview' (stats)
-  // '/admin/books-management' -> 'books'
   const isBooksView = location.pathname.includes("books-management");
+  const isOrdersView = location.pathname.includes("orders");
 
   useEffect(() => {
     // Auth Check
@@ -47,17 +54,20 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Only fetch stats if we are on the dashboard view
-    if (!isBooksView) {
+    if (!isBooksView && !isOrdersView) {
       const fetchStats = async () => {
         try {
-          const [productData, userData] = await Promise.all([
-            getProductCount(),
-            getUserCount(),
-          ]);
-          setStats({
-            products: productData.count,
-            users: userData.count,
-          });
+          const token = localStorage.getItem("token");
+          const config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+          const { data } = await axios.get(
+            `http://localhost:5000/api/orders/stats`,
+            config
+          );
+          setStats(data);
         } catch (error) {
           console.error("Error fetching admin stats:", error);
           toast.error("Failed to load dashboard statistics.");
@@ -68,7 +78,7 @@ const AdminDashboard = () => {
 
       fetchStats();
     }
-  }, [isBooksView]);
+  }, [isBooksView, isOrdersView]);
 
   return (
     <div className="flex h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden">
@@ -102,7 +112,21 @@ const AdminDashboard = () => {
               </svg>
             </button>
             <h1 className="text-lg md:text-xl font-bold text-white truncate">
-              {isBooksView ? "Books Management" : "Admin Dashboard"}
+              {isBooksView ? (
+                "Books Management"
+              ) : isOrdersView ? (
+                <span className="capitalize">
+                  Orders
+                  {location.pathname.split("/").pop() !== "orders" && (
+                    <span className="text-slate-400">
+                      {" / "}
+                      {location.pathname.split("/").pop()}
+                    </span>
+                  )}
+                </span>
+              ) : (
+                "Admin Dashboard"
+              )}
             </h1>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
@@ -124,7 +148,9 @@ const AdminDashboard = () => {
         </header>
 
         <main
-          className={`min-h-[calc(100vh-4rem)] ${isBooksView ? "p-0" : "p-6"}`}
+          className={`min-h-[calc(100vh-4rem)] ${
+            isBooksView || isOrdersView ? "p-0" : "p-6"
+          }`}
         >
           <AnimatePresence mode="wait">
             {isBooksView ? (
@@ -136,6 +162,16 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <BooksManagement />
+              </Motion.div>
+            ) : isOrdersView ? (
+              <Motion.div
+                key="orders"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AdminOrders />
               </Motion.div>
             ) : (
               <Motion.div

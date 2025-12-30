@@ -20,6 +20,7 @@ const ProductDetails = lazy(() => import("./pages/ProductDetails.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
+const SearchResults = lazy(() => import("./pages/SearchResults.jsx"));
 
 // Admin Components Lazy Load
 const AddBook = lazy(() => import("./admin/AddBook.jsx"));
@@ -95,7 +96,9 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/search" element={<SearchResults />} />
           {/* Protected User Routes */}
           <Route element={<AuthRoute />}>
             <Route path="/profile" element={<Profile />} />
@@ -119,7 +122,8 @@ const App = () => {
             <Route path="/admin/books/add" element={<AddBook />} />
             <Route path="/admin/books/add" element={<AddBook />} />
             <Route path="/admin/books/edit/:id" element={<EditBook />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/orders" element={<AdminDashboard />} />
+            <Route path="/admin/orders/:status" element={<AdminDashboard />} />
           </Route>
         </Routes>
       </Suspense>
