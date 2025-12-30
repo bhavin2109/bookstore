@@ -20,6 +20,7 @@ connectDB();
 //Import Routes
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 const app = express();
 
@@ -28,7 +29,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
+
     const allowedOrigins = [
       "http://localhost:5173",
       "http://localhost:5174",
@@ -36,12 +37,12 @@ const corsOptions = {
       "https://nerdyenough.vercel.app", // Vercel deployment
       "https://bookstore-rnnf.onrender.com", // Render deployment
     ];
-    
+
     // In production, allow all Vercel deployments
     if (process.env.NODE_ENV === 'production' || origin.includes('vercel.app')) {
       return callback(null, true);
     }
-    
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -67,6 +68,7 @@ app.use((req, res, next) => {
 app.use("/api/products", productRoutes);
 app.use('/api/admin/products', productRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -77,7 +79,7 @@ app.get('/', (req, res) => {
 // 404 handler
 app.use((req, res) => {
   console.log('❌ 404 - Route not found:', req.method, req.path);
-  res.status(404).json({ 
+  res.status(404).json({
     message: 'Route not found',
     path: req.path,
     method: req.method

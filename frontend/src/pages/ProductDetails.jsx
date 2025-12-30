@@ -3,11 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
+import { toast } from "react-toastify";
+
 import { getProductById } from "../services/productServices.js";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/cartSlice";
 
 function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,6 +32,25 @@ function ProductDetails() {
 
     fetchProduct();
   }, [id]);
+
+  const handleAddToCart = () => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      alert("Please login to add to cart");
+      navigate("/login");
+      return;
+    }
+    dispatch(
+      addToCart({
+        id: String(product.id || product._id),
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      })
+    );
+    toast.success("Product added to cart");
+  };
 
   if (loading) {
     return (
@@ -185,6 +209,7 @@ function ProductDetails() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full sm:w-auto px-8 py-4 rounded-lg bg-emerald-500 text-white font-bold text-lg shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all duration-200 uppercase tracking-wide"
+              onClick={handleAddToCart}
             >
               Add to Cart
             </motion.button>

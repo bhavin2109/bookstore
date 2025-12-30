@@ -1,10 +1,15 @@
 import { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
+import { addToCart } from "../../store/cartSlice";
+import { useDispatch } from "react-redux";
+
 const Header = () => {
+  const { items: cartItems } = useSelector((state) => state.cart);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
@@ -12,6 +17,8 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   // Read auth from localStorage
   useEffect(() => {
@@ -92,6 +99,33 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
+
+          {/* Cart Icon */}
+          <Link
+            to="/cart"
+            className="group relative flex items-center justify-center rounded-full p-2 text-slate-300 transition hover:bg-white/5 hover:text-emerald-400"
+            aria-label="Cart"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+              />
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-white shadow-sm">
+                {cartCount}
+              </span>
+            )}
+          </Link>
 
           {!loggedIn && (
             <>
@@ -276,6 +310,33 @@ const Header = () => {
                           </Link>
                         </motion.div>
                       ))}
+                    </div>
+
+                    {/* Cart Link Mobile */}
+                    <div className="flex flex-col space-y-2">
+                      <motion.div
+                        variants={{
+                          open: { x: 0, opacity: 1 },
+                          closed: { x: -20, opacity: 0 },
+                        }}
+                        className="w-full"
+                      >
+                        <Link
+                          to="/cart"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            navigate("/cart");
+                          }}
+                          className="flex w-full items-center justify-between py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all text-lg pl-4 border-l-2 border-transparent hover:border-emerald-500"
+                        >
+                          <span>Cart</span>
+                          {cartCount > 0 && (
+                            <span className="bg-emerald-500 text-white text-sm font-bold px-2 py-0.5 rounded-full mr-4">
+                              {cartCount}
+                            </span>
+                          )}
+                        </Link>
+                      </motion.div>
                     </div>
 
                     <motion.div

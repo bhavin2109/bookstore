@@ -5,6 +5,7 @@ import Footer from "./components/Footer.jsx";
 import ProtectRoute from "./components/ProtectRoute.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AuthRoute from "./components/AuthRoute.jsx";
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -16,6 +17,8 @@ const Login = lazy(() => import("./pages/Login.jsx"));
 const VerifyOtp = lazy(() => import("./pages/VerifyOtp.jsx"));
 const Profile = lazy(() => import("./pages/Profile.jsx"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails.jsx"));
+const Cart = lazy(() => import("./pages/Cart.jsx"));
+const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 
 // Admin Components Lazy Load
 const AddBook = lazy(() => import("./admin/AddBook.jsx"));
@@ -78,6 +81,7 @@ const App = () => {
 
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home />} />
           <Route path="/products" element={<Products />} />
@@ -86,9 +90,13 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/products/:id" element={<ProductDetails />} />
-
+          {/* Protected User Routes */}
+          <Route element={<AuthRoute />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+          </Route>
           {/* Admin Routes - Protected */}
           <Route element={<ProtectRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
@@ -108,9 +116,14 @@ const App = () => {
       </Suspense>
 
       {!hideLayout &&
-        !["/login", "/register", "/verify-otp", "/profile"].includes(
-          location.pathname
-        ) && <Footer />}
+        ![
+          "/login",
+          "/register",
+          "/verify-otp",
+          "/profile",
+          "/cart",
+          "/checkout",
+        ].includes(location.pathname) && <Footer />}
     </div>
   );
 };
