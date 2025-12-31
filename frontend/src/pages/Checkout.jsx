@@ -41,17 +41,18 @@ const Checkout = () => {
     return defaults;
   });
   const [showAnimation, setShowAnimation] = useState(false);
-  const [isVerified, setIsVerified] = useState(true);
-
-  useEffect(() => {
+  const [isVerified] = useState(() => {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        setIsVerified(user.isVerified === true);
-      } catch (e) {}
+        return user.isVerified === true;
+      } catch {
+        return true;
+      }
     }
-  }, []);
+    return true;
+  });
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
