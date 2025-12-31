@@ -1,46 +1,35 @@
 import getTransporter from "../config/mailer.js";
 
 const sendOtpMail = async (req, res, next) => {
-    console.log('📧 sendOtpMail middleware started');
-    console.log('🔍 req.otpData:', req.otpData);
-
-    let email, otp, type;
+    // console.log('📧 sendOtpMail middleware started');
 
     try {
-        // Check if otpData exists
         if (!req.otpData) {
             console.error('❌ req.otpData is missing!');
-            return res.status(500).json({ message: 'OTP data not found' });
+            return res.status(500).json({ message: 'Internal Error: OTP data not generated' });
         }
 
-        email = req.otpData.email;
-        otp = req.otpData.otp;
-        type = req.otpData.type;
+        const { email, otp, type } = req.otpData;
+        const subject = type === "Registration" ? "Your OTP for Registration" : "Your OTP for Password Reset";
 
-        console.log('📬 Preparing to send email to:', email);
-        console.log('🔐 OTP to send:', otp);
-
-        const subject = type === "Registration"
-            ? "Your OTP for Registration"
-            : "Your OTP for Password Reset";
-
-        // Check email configuration
-        const emailUser = process.env.EMAIL_USER?.trim();
-        const emailPass = process.env.EMAIL_PASS?.trim();
+        const emailUser = process.env.EMAIL_USER;
+        const emailPass = process.env.EMAIL_PASS;
 
         if (!emailUser || !emailPass) {
-            console.error('❌ Email credentials missing!');
-            console.error('EMAIL_USER:', emailUser ? 'Set' : 'Missing');
-            console.error('EMAIL_PASS:', emailPass ? 'Set' : 'Missing');
-            console.log('⚠️  OTP (email not configured):', otp);
-            // Allow registration to proceed
-            return next();
+            console.error('❌ Email credentials missing inside middleware');
+            return res.status(503).json({
+                message: "Email service not configured",
+                error: "Server missing email credentials"
+            });
         }
 
-        console.log('📤 Getting transporter...');
         const transporter = getTransporter();
+        if (!transporter) {
+            return res.status(503).json({ message: "Email service unavailable" });
+        }
 
-        console.log('📧 Sending email to:', email);
+        // console.log(`📤 Sending ${type} OTP to: ${email}`);
+
         const info = await transporter.sendMail({
             from: `"Bookstore" <${emailUser}>`,
             to: email,
@@ -62,37 +51,21 @@ const sendOtpMail = async (req, res, next) => {
             `,
         });
 
-        console.log('✅ Email sent successfully!');
-        console.log('Message ID:', info.messageId);
-        console.log('Response:', info.response);
         console.log('---------------------------------------------------');
         console.log(`🚀 [PRODUCTION LOG] OTP Email successfully sent to: ${email}`);
         console.log('---------------------------------------------------');
 
-        next();
+        next(); // Proceed only on success
     }
     catch (error) {
-        console.error('❌ Error in sendOtpMail:', error);
-        console.error('Error code:', error.code);
-        console.error('Error message:', error.message);
+        console.error('❌ FATAL SMTP ERROR:', error.message);
 
-        if (error.code === 'EAUTH') {
-            console.error('👉 Authentication failed. Check EMAIL_USER and EMAIL_PASS');
-            console.error('👉 For Gmail, use App Password (not regular password)');
-            console.error('👉 Enable 2-Step Verification on Google account');
-        }
-
-        if (error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
-            console.error('👉 Connection timeout. Check network/firewall settings');
-        }
-
-        // CRITICAL FIX: Log OTP and allow registration to proceed
-        console.log('⚠️  EMAIL FAILED - OTP for user:', otp);
-        console.log('⚠️  User can check server logs for OTP or contact support');
-
-        // Allow registration to proceed even if email fails
-        console.log('✅ Allowing registration to proceed despite email failure - Check Server Logs for OTP');
-        next();
+        // Return error to client, stopping the chain
+        return res.status(502).json({
+            message: "Failed to send verification email",
+            error: error.message,
+            reason: "SMTP_DELIVERY_FAILED"
+        });
     }
 }
 

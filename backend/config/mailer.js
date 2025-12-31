@@ -1,61 +1,76 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
+import dns from "dns";
+import dotenv from "dotenv";
 
-const getTransporter = () => {
-    // Check if credentials are valid
-    const emailUser = process.env.EMAIL_USER?.trim();
-    const emailPass = process.env.EMAIL_PASS?.trim();
+dotenv.config();
 
-    // Warn but don't throw immediately, let the caller handle it
+// Optimize DNS resolution for cloud environments (prefer IPv4)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
+
+let transporter = null;
+
+const createTransporter = () => {
+    const emailUser = process.env.EMAIL_USER;
+    const emailPass = process.env.EMAIL_PASS;
+
     if (!emailUser || !emailPass) {
-        console.error('❌ Mailer Error: EMAIL_USER or EMAIL_PASS missing in .env');
-        throw new Error('Email credentials not configured');
+        console.warn("⚠️  Email credentials missing in environment variables.");
+        return null;
     }
 
-    // Always create fresh transporter to ensure latest config
+    // Robust configuration for Render + Gmail
     return nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: emailUser,
-    pass: emailPass,
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
-
-
+        host: "smtp.gmail.com",
+        port: 465, // Use 465 (SMTPS) instead of 587 (STARTTLS) for better cloud reliability
+        secure: true, // Must be true for port 465
+        auth: {
+            user: emailUser,
+            pass: emailPass,
+        },
+        tls: {
+            // Do not fail on invalid certs (common wrapper issue in some cloud envs)
+            // But prefer valid certs. Keep rejection true unless specific error.
+            // For Gmail, we can generally trust the cert, but if Render intercepts, 
+            // we might need this false. User had it false. Let's start with safe defaults 
+            // but add specific socket options.
+            rejectUnauthorized: false
+        },
+        // Connection timeouts
+        connectionTimeout: 10000, // 10s
+        socketTimeout: 30000,    // 30s
+    });
 };
 
-// Verify transporter configuration (only if credentials are available)
-const verifyTransporter = async () => {
+// Singleton-ish pattern to avoid recreating
+const getTransporter = () => {
+    if (!transporter) {
+        transporter = createTransporter();
+    }
+    return transporter;
+};
+
+// Verification function to run on startup
+export const verifyTransporter = async () => {
+    const t = getTransporter();
+    if (!t) {
+        console.log("❌ Mailer: configuration invalid (missing creds)");
+        return;
+    }
     try {
-        const emailUser = process.env.EMAIL_USER?.trim();
-        const emailPass = process.env.EMAIL_PASS?.trim();
-
-        if (!emailUser || !emailPass) {
-            console.warn('⚠️  Email credentials not configured. Email functionality will not work.');
-            console.warn('   Please set EMAIL_USER and EMAIL_PASS in your .env file');
-            return;
-        }
-
-        const transport = getTransporter();
-        await transport.verify();
-        console.log('✅ Email transporter is ready to send emails');
+        console.log("⏳ Testing SMTP connection to Gmail...");
+        await t.verify();
+        console.log("✅ SMTP Connection Successful! Ready to send emails.");
     } catch (error) {
-        console.error('❌ Email transporter verification failed:', error.message);
-        if (error.code === 'EAUTH') {
-            console.error('   This usually means:');
-            console.error('   1. Wrong email or password');
-            console.error('   2. For Gmail, you need to use an App Password (not your regular password)');
-            console.error('   3. 2-Step Verification must be enabled on your Google account');
-        }
+        console.error("❌ SMTP Connection Failed:", error.message);
+        console.error("   Hint: Check firewall, port 465 block, or invalid App Password.");
     }
 };
 
-// Verification is optional and shouldn't block startup
+export default getTransporter;
+
+// Auto-run verification on import/startup
 setTimeout(() => {
     verifyTransporter();
-}, 1000);
-
-// Export function to get transporter
-export default getTransporter;
+}, 2000);
