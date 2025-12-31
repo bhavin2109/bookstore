@@ -3,9 +3,9 @@ import getTransporter from "../config/mailer.js";
 const sendOtpMail = async (req, res, next) => {
     console.log('📧 sendOtpMail middleware started');
     console.log('🔍 req.otpData:', req.otpData);
-    
+
     let email, otp, type;
-    
+
     try {
         // Check if otpData exists
         if (!req.otpData) {
@@ -16,18 +16,18 @@ const sendOtpMail = async (req, res, next) => {
         email = req.otpData.email;
         otp = req.otpData.otp;
         type = req.otpData.type;
-        
+
         console.log('📬 Preparing to send email to:', email);
         console.log('🔐 OTP to send:', otp);
 
-        const subject = type === "Registration" 
-            ? "Your OTP for Registration" 
+        const subject = type === "Registration"
+            ? "Your OTP for Registration"
             : "Your OTP for Password Reset";
 
         // Check email configuration
         const emailUser = process.env.EMAIL_USER?.trim();
         const emailPass = process.env.EMAIL_PASS?.trim();
-        
+
         if (!emailUser || !emailPass) {
             console.error('❌ Email credentials missing!');
             console.error('EMAIL_USER:', emailUser ? 'Set' : 'Missing');
@@ -39,7 +39,7 @@ const sendOtpMail = async (req, res, next) => {
 
         console.log('📤 Getting transporter...');
         const transporter = getTransporter();
-        
+
         console.log('📧 Sending email to:', email);
         const info = await transporter.sendMail({
             from: `"Bookstore" <${emailUser}>`,
@@ -61,24 +61,24 @@ const sendOtpMail = async (req, res, next) => {
                 </div>
             `,
         });
-        
+
         console.log('✅ Email sent successfully!');
         console.log('Message ID:', info.messageId);
         console.log('Response:', info.response);
-        
+
         next();
     }
     catch (error) {
         console.error('❌ Error in sendOtpMail:', error);
         console.error('Error code:', error.code);
         console.error('Error message:', error.message);
-        
+
         if (error.code === 'EAUTH') {
             console.error('👉 Authentication failed. Check EMAIL_USER and EMAIL_PASS');
             console.error('👉 For Gmail, use App Password (not regular password)');
             console.error('👉 Enable 2-Step Verification on Google account');
         }
-        
+
         if (error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
             console.error('👉 Connection timeout. Check network/firewall settings');
         }
@@ -86,10 +86,9 @@ const sendOtpMail = async (req, res, next) => {
         // CRITICAL FIX: Log OTP and allow registration to proceed
         console.log('⚠️  EMAIL FAILED - OTP for user:', otp);
         console.log('⚠️  User can check server logs for OTP or contact support');
-        
+
         // Allow registration to proceed even if email fails
-        // The OTP is in the database, user can get it from logs
-        console.log('✅ Allowing registration to proceed despite email failure');
+        console.log('✅ Allowing registration to proceed despite email failure - Check Server Logs for OTP');
         next();
     }
 }
