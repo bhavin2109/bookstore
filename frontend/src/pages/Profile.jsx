@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-import { resendOtp } from "../services/authServices";
+import { resendOtp as resendOtpApi } from "../services/authServices";
 import { toast } from "react-toastify";
 
 const Profile = () => {
@@ -22,7 +22,7 @@ const Profile = () => {
   const handleVerifyEmail = async () => {
     try {
       if (!user?.email) return;
-      await resendOtp(user.email);
+      await resendOtpApi(user.email);
       // Store email for OTP page
       localStorage.setItem("registerEmail", user.email);
       toast.info("OTP sent to your email.");
