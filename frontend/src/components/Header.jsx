@@ -72,7 +72,7 @@ const Header = () => {
 
   const links = [
     { to: "/home", label: "Home" },
-    { to: "/products", label: "Store" },
+    { to: "/books", label: "Store" },
     { to: "/about-us", label: "About Us" },
     { to: "/contact-us", label: "Contact Us" },
   ];

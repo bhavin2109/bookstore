@@ -9,14 +9,14 @@ import AuthRoute from "./components/AuthRoute.jsx";
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home.jsx"));
-const Products = lazy(() => import("./pages/Products.jsx"));
+const Books = lazy(() => import("./pages/Books.jsx"));
 const AboutUs = lazy(() => import("./pages/AboutUs.jsx"));
 const ContactUs = lazy(() => import("./pages/ContactUs.jsx"));
 const Register = lazy(() => import("./pages/Register.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
 const VerifyOtp = lazy(() => import("./pages/VerifyOtp.jsx"));
 const Profile = lazy(() => import("./pages/Profile.jsx"));
-const ProductDetails = lazy(() => import("./pages/ProductDetails.jsx"));
+const BookDetails = lazy(() => import("./pages/BookDetails.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
@@ -45,15 +45,14 @@ const App = () => {
     let title = "Nerdy Enough";
 
     if (path === "/" || path === "/home") title = "Home | Nerdy Enough";
-    else if (path === "/products") title = "Products | Nerdy Enough";
+    else if (path === "/books") title = "Books | Nerdy Enough";
     else if (path === "/about-us") title = "About Us | Nerdy Enough";
     else if (path === "/contact-us") title = "Contact Us | Nerdy Enough";
     else if (path === "/register") title = "Register | Nerdy Enough";
     else if (path === "/login") title = "Login | Nerdy Enough";
     else if (path === "/verify-otp") title = "Verify OTP | Nerdy Enough";
     else if (path === "/profile") title = "Profile | Nerdy Enough";
-    else if (path.startsWith("/products/"))
-      title = "Product Details | Nerdy Enough";
+    else if (path.startsWith("/books/")) title = "Book Details | Nerdy Enough";
     else if (path === "/admin" || path === "/admin/dashboard")
       title = "Admin Dashboard | Nerdy Enough";
     else if (path === "/admin/books-management")
@@ -90,14 +89,14 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/products" element={<Products />} />
+          <Route path="/books" element={<Books />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/search" element={<SearchResults />} />
           {/* Protected User Routes */}
           <Route element={<AuthRoute />}>

@@ -2,32 +2,32 @@ import React, { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import ProductCard from "../components/ProductCard";
+import BookCard from "../components/BookCard";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FAQs from "../components/FAQs";
-import { getAllProducts } from "../services/productServices";
+import { getAllBooks } from "../services/bookServices";
 
 const Home = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [products, setProducts] = useState([]);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchBooks = async () => {
       try {
-        const data = await getAllProducts();
-        if (data && data.products) {
-          setProducts(data.products);
+        const data = await getAllBooks();
+        if (data && data.books) {
+          setBooks(data.books);
         }
       } catch (error) {
-        console.error("Failed to fetch products:", error);
+        console.error("Failed to fetch books:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchBooks();
   }, []);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const Home = () => {
   }, []);
 
   // Books for hero carousel - usage fallback if empty
-  const heroBooks = products.length > 0 ? products.slice(0, 5) : [];
+  const heroBooks = books.length > 0 ? books.slice(0, 5) : [];
 
   // Auto-rotate through books with smooth transitions
   useEffect(() => {
@@ -70,7 +70,7 @@ const Home = () => {
   };
 
   // Show first 4 books on home page
-  const featuredBooks = products.length > 0 ? products.slice(0, 4) : [];
+  const featuredBooks = books.length > 0 ? books.slice(0, 4) : [];
 
   // Book spines background image
   const bookSpinesBg =
@@ -160,7 +160,7 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6, ease: "easeOut" }}
             >
-              <Link to="/products">
+              <Link to="/books">
                 <motion.button
                   whileHover={{ scale: 1.05, x: 5 }}
                   whileTap={{ scale: 0.95 }}
@@ -497,7 +497,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* Featured Products Section */}
+      {/* Featured Books Section */}
       <section className="bg-slate-900 py-20 overflow-x-hidden">
         <div className="mx-auto max-w-7xl px-4 w-full">
           <motion.div
@@ -524,12 +524,12 @@ const Home = () => {
               className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
             >
               {featuredBooks.map((book, index) => (
-                <ProductCard
+                <BookCard
                   key={book._id || index}
                   book={book}
                   index={index}
                   variants={cardVariants}
-                  onClick={() => navigate(`/products/${book._id}`)}
+                  onClick={() => navigate(`/books/${book._id}`)}
                 />
               ))}
             </motion.div>
@@ -546,7 +546,7 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mt-12 text-center"
           >
-            <Link to="/products">
+            <Link to="/books">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}

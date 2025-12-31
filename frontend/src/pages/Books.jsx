@@ -1,46 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllProducts } from "../services/productServices.js";
+import { getAllBooks } from "../services/bookServices.js";
 import { motion } from "framer-motion";
-import ProductCard from "../components/ProductCard";
+import BookCard from "../components/BookCard";
 
-function Products() {
-  const [products, setProducts] = useState([]);
+function Books() {
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchBooks = async () => {
       try {
-        const res = await getAllProducts();
+        const res = await getAllBooks();
 
         // 🛡️ safety check
-        if (res && Array.isArray(res.products)) {
-          setProducts(res.products);
+        if (res && Array.isArray(res.books)) {
+          setBooks(res.books);
         } else {
-          setProducts([]);
+          setBooks([]);
         }
       } catch (err) {
         setError(
-          err?.message || err || "Failed to fetch products. Please try again."
+          err?.message || err || "Failed to fetch books. Please try again."
         );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchBooks();
   }, []);
 
   // ⏳ loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-900">
-        <p className="text-lg font-bold text-emerald-400">
-          Loading products...
-        </p>
+        <p className="text-lg font-bold text-emerald-400">Loading books...</p>
       </div>
     );
   }
@@ -71,14 +69,14 @@ function Products() {
           </p>
         </motion.div>
 
-        {products.length === 0 ? (
+        {books.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
             <p className="text-xl font-medium text-slate-500">
-              No products available at the moment.
+              No books available at the moment.
             </p>
           </motion.div>
         ) : (
@@ -91,16 +89,16 @@ function Products() {
             }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
           >
-            {products.map((product, index) => (
-              <ProductCard
-                key={product._id}
-                book={product}
+            {books.map((book, index) => (
+              <BookCard
+                key={book._id}
+                book={book}
                 index={index}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   show: { opacity: 1, y: 0 },
                 }}
-                onClick={() => navigate(`/products/${product._id}`)}
+                onClick={() => navigate(`/books/${book._id}`)}
               />
             ))}
           </motion.div>
@@ -110,4 +108,4 @@ function Products() {
   );
 }
 
-export default Products;
+export default Books;

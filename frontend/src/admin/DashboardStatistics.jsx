@@ -27,7 +27,7 @@ const DashboardStatistics = ({ stats, loading }) => {
           </p>
           <div className="mt-4 flex items-baseline gap-2">
             <span className="text-3xl font-bold text-white">
-              {loading ? "..." : stats.productCount}
+              {loading ? "..." : stats.bookCount}
             </span>
           </div>
         </div>

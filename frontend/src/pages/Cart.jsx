@@ -53,7 +53,7 @@ const Cart = () => {
             and find your next read!
           </p>
           <Link
-            to="/products"
+            to="/books"
             className="inline-block px-8 py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20 uppercase tracking-wide"
           >
             Browse Books
@@ -133,7 +133,7 @@ const Cart = () => {
                     {/* Content Area */}
                     <div className="p-3 flex flex-col grow bg-slate-950">
                       <Link
-                        to={`/products/${item.id}`}
+                        to={`/books/${item.id}`}
                         className="block mb-1 group-hover:text-emerald-400 transition-colors"
                       >
                         <h3

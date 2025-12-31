@@ -1,39 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { motion } from "framer-motion";
-import ProductCard from "../components/ProductCard";
+import BookCard from "../components/BookCard";
+import { getAllBooks } from "../services/bookServices";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
-  const [products, setProducts] = useState([]);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAndFilterProducts = async () => {
+    const fetchAndFilterBooks = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get("http://localhost:5000/api/products");
-        let allProducts = [];
-        if (Array.isArray(data)) {
-          allProducts = data;
-        } else if (data.products && Array.isArray(data.products)) {
-          allProducts = data.products;
+        const data = await getAllBooks();
+        let allBooks = [];
+        if (data && data.books) {
+          allBooks = data.books;
+        } else if (Array.isArray(data)) {
+          allBooks = data;
         }
 
-        const filtered = allProducts.filter((product) => {
+        const filtered = allBooks.filter((book) => {
           const lowerQuery = query.toLowerCase();
           return (
-            product.title.toLowerCase().includes(lowerQuery) ||
-            product.genre.toLowerCase().includes(lowerQuery) ||
-            (product.author &&
-              product.author.toLowerCase().includes(lowerQuery))
+            book.title.toLowerCase().includes(lowerQuery) ||
+            book.genre.toLowerCase().includes(lowerQuery) ||
+            (book.author && book.author.toLowerCase().includes(lowerQuery))
           );
         });
 
-        setProducts(filtered);
+        setBooks(filtered);
       } catch (error) {
         console.error("Error fetching search results:", error);
       } finally {
@@ -42,9 +41,9 @@ const SearchResults = () => {
     };
 
     if (query) {
-      fetchAndFilterProducts();
+      fetchAndFilterBooks();
     } else {
-      setProducts([]);
+      setBooks([]);
       setLoading(false);
     }
   }, [query]);
@@ -57,8 +56,8 @@ const SearchResults = () => {
           <p className="text-slate-400">
             {loading
               ? "Searching..."
-              : `Found ${products.length} result${
-                  products.length === 1 ? "" : "s"
+              : `Found ${books.length} result${
+                  books.length === 1 ? "" : "s"
                 } for "${query}"`}
           </p>
         </div>
@@ -67,11 +66,11 @@ const SearchResults = () => {
           <div className="flex justify-center py-20">
             <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></div>
           </div>
-        ) : products.length === 0 ? (
+        ) : books.length === 0 ? (
           <div className="text-center py-20 bg-slate-900/50 rounded-2xl border border-white/5">
             <p className="text-xl text-slate-500 mb-4">No matches found</p>
             <button
-              onClick={() => navigate("/products")}
+              onClick={() => navigate("/books")}
               className="text-emerald-400 hover:text-emerald-300 font-medium"
             >
               Browse all books
@@ -87,16 +86,16 @@ const SearchResults = () => {
             }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8"
           >
-            {products.map((product, index) => (
-              <ProductCard
-                key={product._id}
-                book={product}
+            {books.map((book, index) => (
+              <BookCard
+                key={book._id}
+                book={book}
                 index={index}
                 variants={{
                   hidden: { opacity: 0, y: 20 },
                   show: { opacity: 1, y: 0 },
                 }}
-                onClick={() => navigate(`/products/${product._id}`)}
+                onClick={() => navigate(`/books/${book._id}`)}
               />
             ))}
           </motion.div>

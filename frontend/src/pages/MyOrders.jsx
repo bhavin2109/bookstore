@@ -132,7 +132,7 @@ const MyOrders = () => {
               collection!
             </p>
             <Link
-              to="/products"
+              to="/books"
               className="mt-6 inline-block rounded-lg bg-emerald-500 px-6 py-2 font-semibold text-white transition hover:bg-emerald-600 shadow-lg shadow-emerald-500/20"
             >
               Start Shopping

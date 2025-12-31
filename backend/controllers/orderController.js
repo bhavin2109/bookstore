@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/Order.js';
 import sendEmail from '../utils/sendEmail.js';
-import Product from '../models/Products.js';
+import Book from '../models/Book.js';
 import User from '../models/User.js';
 
 // @desc    Create new order
@@ -228,7 +228,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     const deliveredOrdersFn = Order.countDocuments({ isDelivered: true });
     const cancelledOrdersFn = Order.countDocuments({ isCancelled: true });
 
-    const productCountFn = Product.countDocuments({});
+    const bookCountFn = Book.countDocuments({});
     const userCountFn = User.countDocuments({});
 
     const monthlyRevenueFn = Order.aggregate([
@@ -253,7 +253,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
         pendingOrders,
         deliveredOrders,
         cancelledOrders,
-        productCount,
+        bookCount,
         userCount,
         monthlyRevenueResult
     ] = await Promise.all([
@@ -261,7 +261,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
         pendingOrdersFn,
         deliveredOrdersFn,
         cancelledOrdersFn,
-        productCountFn,
+        bookCountFn,
         userCountFn,
         monthlyRevenueFn
     ]);
@@ -277,7 +277,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
         pendingOrders,
         deliveredOrders,
         cancelledOrders,
-        productCount,
+        bookCount,
         userCount,
         monthlyRevenue
     });

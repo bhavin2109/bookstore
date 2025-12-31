@@ -1,13 +1,13 @@
-import Products from '../models/Products.js';
+import Book from '../models/Book.js';
 import Users from '../models/User.js';
 import mongoose from 'mongoose';
 
-export const createProduct = async (req, res) => {
+export const createBook = async (req, res) => {
     try {
         // Enforce strict fields from the request body
         const { title, author, description, price, genre, image } = req.body;
 
-        const product = await Products.create({
+        const book = await Book.create({
             title,
             author,
             description,
@@ -16,29 +16,29 @@ export const createProduct = async (req, res) => {
             image,
             createdBy: req.user._id
         });
-        res.status(201).json({ message: 'Product created successfully', product });
+        res.status(201).json({ message: 'Book created successfully', book });
     } catch (error) {
-        res.status(500).json({ message: 'Error creating product', error: error.message });
+        res.status(500).json({ message: 'Error creating book', error: error.message });
     }
 };
 
-export const createManyProducts = async (req, res) => {
+export const createManyBooks = async (req, res) => {
     try {
-        const products = req.body;
+        const books = req.body;
 
-        if (!Array.isArray(products) || products.length === 0) {
-            return res.status(400).json({ message: 'Input must be a non-empty array of products' });
+        if (!Array.isArray(books) || books.length === 0) {
+            return res.status(400).json({ message: 'Input must be a non-empty array of books' });
         }
 
         // 1. Validate Structure & Filter Invalids (Client-side validation fallback)
-        const validStructureProducts = products.filter(p =>
+        const validStructureBooks = books.filter(p =>
             p.title && p.author && p.price !== undefined && p.description && p.genre && p.image
         );
-        const invalidStructureCount = products.length - validStructureProducts.length;
+        const invalidStructureCount = books.length - validStructureBooks.length;
 
-        if (validStructureProducts.length === 0) {
+        if (validStructureBooks.length === 0) {
             return res.status(400).json({
-                message: 'No valid products found in input. All entries missing required fields.',
+                message: 'No valid books found in input. All entries missing required fields.',
                 importedCount: 0,
                 skippedCount: 0,
                 failedCount: invalidStructureCount
@@ -46,42 +46,42 @@ export const createManyProducts = async (req, res) => {
         }
 
         // 2. Identify and Filter Duplicates (Application Level)
-        const queryConditions = validStructureProducts.map(p => ({
+        const queryConditions = validStructureBooks.map(p => ({
             title: p.title,
             author: p.author
         }));
 
-        let newProducts = validStructureProducts;
+        let newBooks = validStructureBooks;
 
         // Perform DB Duplicate Check
         if (queryConditions.length > 0) {
-            const existingProducts = await Products.find({ $or: queryConditions });
+            const existingBooks = await Book.find({ $or: queryConditions });
 
             const existingSet = new Set(
-                existingProducts.map(p => `${p.title.trim().toLowerCase()}|${p.author.trim().toLowerCase()}`)
+                existingBooks.map(p => `${p.title.trim().toLowerCase()}|${p.author.trim().toLowerCase()}`)
             );
 
-            newProducts = validStructureProducts.filter(p => {
+            newBooks = validStructureBooks.filter(p => {
                 const key = `${p.title.trim().toLowerCase()}|${p.author.trim().toLowerCase()}`;
                 return !existingSet.has(key);
             });
         }
 
-        const duplicateCount = validStructureProducts.length - newProducts.length;
+        const duplicateCount = validStructureBooks.length - newBooks.length;
 
-        if (newProducts.length === 0) {
+        if (newBooks.length === 0) {
             return res.status(200).json({
                 message: `Import finished. Skipped ${duplicateCount} duplicates.${invalidStructureCount ? ` Discarded ${invalidStructureCount} invalid entries.` : ''}`,
                 importedCount: 0,
                 skippedCount: duplicateCount,
                 failedCount: invalidStructureCount,
-                products: []
+                books: []
             });
         }
 
         // 3. Prepare for Insertion
-        const productsWithUser = newProducts.map(product => ({
-            ...product,
+        const booksWithUser = newBooks.map(book => ({
+            ...book,
             createdBy: req.user._id
         }));
 
@@ -89,7 +89,7 @@ export const createManyProducts = async (req, res) => {
         let insertedDocs = [];
         try {
             // ordered: false ensures that if one doc fails (e.g. DB constraint), others still proceed
-            insertedDocs = await Products.insertMany(productsWithUser, { ordered: false });
+            insertedDocs = await Book.insertMany(booksWithUser, { ordered: false });
         } catch (e) {
             // Mongoose 'insertMany' error with ordered: false contains successful docs in insertedDocs
             if (e.insertedDocs) {
@@ -108,7 +108,7 @@ export const createManyProducts = async (req, res) => {
             importedCount: totalImported,
             skippedCount: duplicateCount,
             failedCount: invalidStructureCount,
-            products: insertedDocs
+            books: insertedDocs
         });
 
     } catch (error) {
@@ -116,63 +116,63 @@ export const createManyProducts = async (req, res) => {
     }
 };
 
-export const getAllProducts = async (req, res) => {
+export const getAllBooks = async (req, res) => {
     try {
-        const products = await Products.find().sort({ createdAt: -1 });
+        const books = await Book.find().sort({ createdAt: -1 });
 
-        res.status(200).json({ products });
+        res.status(200).json({ books });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-export const getSingleProduct = async (req, res) => {
+export const getSingleBook = async (req, res) => {
     try {
         const { id } = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ message: 'Product not found (Invalid ID)' });
+            return res.status(404).json({ message: 'Book not found (Invalid ID)' });
         }
 
-        const product = await Products.findById(id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+        const book = await Book.findById(id);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
         }
-        res.status(200).json(product); // Send product directly or wrapped, frontend expects object
+        res.status(200).json(book); // Send book directly or wrapped, frontend expects object
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
-export const updateProduct = async (req, res) => {
+export const updateBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await Products.findByIdAndUpdate(id, req.body, { new: true });
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+        const book = await Book.findByIdAndUpdate(id, req.body, { new: true });
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
         }
-        res.status(200).json(product);
+        res.status(200).json(book);
     } catch (error) {
-        res.status(500).json({ message: 'Error updating product', error: error.message });
+        res.status(500).json({ message: 'Error updating book', error: error.message });
     }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await Products.findByIdAndDelete(id);
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+        const book = await Book.findByIdAndDelete(id);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
         }
-        res.status(200).json({ message: 'Product deleted successfully' });
+        res.status(200).json({ message: 'Book deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Error deleting product', error: error.message });
+        res.status(500).json({ message: 'Error deleting book', error: error.message });
     }
 };
 
-export const productCount = async (req, res) => {
+export const bookCount = async (req, res) => {
     try {
-        const count = await Products.countDocuments();
+        const count = await Book.countDocuments();
         res.status(200).json({ count });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });

@@ -50,7 +50,7 @@ const Checkout = () => {
   useEffect(() => {
     if (cartItems.length === 0 && !showAnimation) {
       toast.info("Your cart is empty. Redirecting to store.");
-      navigate("/products");
+      navigate("/books");
     }
   }, [cartItems, navigate, showAnimation]);
 

@@ -2,14 +2,14 @@ import axios from "axios";
 import { API_URL } from "../config/api";
 
 const API = axios.create({
-  baseURL: `${API_URL}/api/products`,
+  baseURL: `${API_URL}/api/books`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// CREATE PRODUCT
-export const createProduct = async (data, token) => {
+// CREATE BOOK
+export const createBook = async (data, token) => {
   try {
     const response = await API.post("/", data, {
       headers: {
@@ -22,8 +22,8 @@ export const createProduct = async (data, token) => {
   }
 };
 
-// CREATE MANY PRODUCTS
-export const createManyProducts = async (data, token) => {
+// CREATE MANY BOOKS
+export const createManyBooks = async (data, token) => {
   try {
     const response = await API.post("/bulk", data, {
       headers: {
@@ -36,8 +36,8 @@ export const createManyProducts = async (data, token) => {
   }
 };
 
-// GET ALL PRODUCTS
-export const getAllProducts = async () => {
+// GET ALL BOOKS
+export const getAllBooks = async () => {
   try {
     const response = await API.get("/");
     return response.data;
@@ -46,8 +46,8 @@ export const getAllProducts = async () => {
   }
 };
 
-// GET SINGLE PRODUCT
-export const getProductById = async (id) => {
+// GET SINGLE BOOK
+export const getBookById = async (id) => {
   try {
     const response = await API.get(`/${id}`);
     return response.data;
@@ -56,8 +56,8 @@ export const getProductById = async (id) => {
   }
 };
 
-// UPDATE PRODUCT
-export const updateProduct = async (id, data, token) => {
+// UPDATE BOOK
+export const updateBook = async (id, data, token) => {
   try {
     const response = await API.put(`/${id}`, data, {
       headers: {
@@ -70,8 +70,8 @@ export const updateProduct = async (id, data, token) => {
   }
 };
 
-// DELETE PRODUCT
-export const deleteProduct = async (id, token) => {
+// DELETE BOOK
+export const deleteBook = async (id, token) => {
   try {
     const response = await API.delete(`/${id}`, {
       headers: {
@@ -84,8 +84,8 @@ export const deleteProduct = async (id, token) => {
   }
 };
 
-// GET PRODUCT COUNT
-export const getProductCount = async () => {
+// GET BOOK COUNT
+export const getBookCount = async () => {
   try {
     const response = await API.get("/count");
     return response.data;

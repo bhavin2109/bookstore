@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const productSchema = new Schema({
+const bookSchema = new Schema({
     title: {
         type: String,
         required: true,
@@ -23,7 +23,7 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    genre : {
+    genre: {
         type: String,
         required: true
     },
@@ -38,4 +38,4 @@ const productSchema = new Schema({
     }
 });
 
-export default model('Product', productSchema);
+export default model('Book', bookSchema, 'products');

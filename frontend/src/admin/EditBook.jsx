@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getProductById, updateProduct } from "../services/productServices";
+import { getBookById, updateBook } from "../services/bookServices";
 import { toast } from "react-toastify";
 import AdminHeader from "./AdminHeader";
 
@@ -46,27 +46,28 @@ const EditBook = () => {
       }
     };
 
-    const fetchProduct = async () => {
+    const fetchBook = async () => {
       checkAdmin();
 
       try {
-        const product = await getProductById(id);
+        const book = await getBookById(id);
+        const bookData = book.book || book; // Handle if wrapped in { book: ... }
         setFormData({
-          title: product.title,
-          author: product.author,
-          description: product.description,
-          price: product.price,
-          genre: product.genre,
-          image: product.image,
+          title: bookData.title,
+          author: bookData.author,
+          description: bookData.description,
+          price: bookData.price,
+          genre: bookData.genre,
+          image: bookData.image,
         });
       } catch (err) {
         console.error(err);
-        toast.error("Failed to fetch product details.");
+        toast.error("Failed to fetch book details.");
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
+    fetchBook();
   }, [id, navigate]);
 
   const handleChange = (e) => {
@@ -81,7 +82,7 @@ const EditBook = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Not authorized. Please login.");
 
-      await updateProduct(id, formData, token);
+      await updateBook(id, formData, token);
       toast.success("Book updated successfully!");
       navigate("/admin/books-management");
     } catch (error) {

@@ -2,9 +2,9 @@ import React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-const ProductCard = ({ book, variants, onClick }) => {
+const BookCard = ({ book, variants, onClick }) => {
   // Use book or props to safely access data
-  const { title, image, price, category, author, description } = book;
+  const { title, image, price, genre, author, description } = book;
 
   return (
     <motion.article
@@ -22,10 +22,10 @@ const ProductCard = ({ book, variants, onClick }) => {
         loading="lazy"
       />
 
-      {/* Category Badge - Always Visible (Optional, currently top left) */}
-      {category && (
+      {/* Genre Badge - Always Visible (Optional, currently top left) */}
+      {genre && (
         <div className="absolute left-3 top-3 z-10 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-white/10 backdrop-blur-sm shadow-xl">
-          {category}
+          {genre}
         </div>
       )}
 
@@ -70,4 +70,4 @@ const ProductCard = ({ book, variants, onClick }) => {
   );
 };
 
-export default ProductCard;
+export default BookCard;

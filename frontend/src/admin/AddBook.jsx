@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createProduct, createManyProducts } from "../services/productServices";
+import { createBook, createManyBooks } from "../services/bookServices";
 import { toast } from "react-toastify";
 import AdminHeader from "./AdminHeader";
 
@@ -58,7 +58,7 @@ const AddBook = () => {
 
       if (isBulkImport) {
         // Bulk Import
-        const response = await createManyProducts(bulkData, token);
+        const response = await createManyBooks(bulkData, token);
         toast.success(response.message);
       } else {
         // Single Creation
@@ -70,7 +70,7 @@ const AddBook = () => {
           genre: formData.genre,
           image: formData.image,
         };
-        await createProduct(payload, token);
+        await createBook(payload, token);
         toast.success("Book created successfully!");
       }
 

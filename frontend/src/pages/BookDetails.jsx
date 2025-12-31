@@ -5,32 +5,32 @@ import { motion } from "framer-motion";
 
 import { toast } from "react-toastify";
 
-import { getProductById } from "../services/productServices.js";
+import { getBookById } from "../services/bookServices.js";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/cartSlice";
 
-function ProductDetails() {
+function BookDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [product, setProduct] = useState(null);
+  const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchBook = async () => {
       try {
-        const res = await getProductById(id);
-        setProduct(res.product || res);
+        const res = await getBookById(id);
+        setBook(res.book || res); // Assuming API returns { book: ... } or just the book object
       } catch (err) {
-        setError(err?.message || "Failed to fetch product details");
+        setError(err?.message || "Failed to fetch book details");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProduct();
+    fetchBook();
   }, [id]);
 
   const handleAddToCart = () => {
@@ -42,20 +42,20 @@ function ProductDetails() {
     }
     dispatch(
       addToCart({
-        id: String(product.id || product._id),
-        title: product.title,
-        price: product.price,
-        image: product.image,
+        id: String(book.id || book._id),
+        title: book.title,
+        price: book.price,
+        image: book.image,
         quantity: 1,
       })
     );
-    toast.success("Product added to cart");
+    toast.success("Book added to cart");
   };
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-slate-900">
-        <p className="text-lg font-bold text-emerald-400">Loading product...</p>
+        <p className="text-lg font-bold text-emerald-400">Loading book...</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ function ProductDetails() {
     );
   }
 
-  if (!product) return null;
+  if (!book) return null;
 
   return (
     <div className="min-h-screen bg-slate-900 py-8 lg:py-12">
@@ -102,10 +102,9 @@ function ProductDetails() {
             <div className="aspect-3/4 w-full bg-slate-800">
               <img
                 src={
-                  product.image ||
-                  "https://via.placeholder.com/600?text=No+Image"
+                  book.image || "https://via.placeholder.com/600?text=No+Image"
                 }
-                alt={product.title}
+                alt={book.title}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -120,7 +119,7 @@ function ProductDetails() {
               transition={{ delay: 0.3 }}
               className="w-fit px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
             >
-              {product.genre || "Book"}
+              {book.genre || "Book"}
             </motion.span>
 
             {/* Title */}
@@ -130,18 +129,18 @@ function ProductDetails() {
               transition={{ delay: 0.4 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
             >
-              {product.title}
+              {book.title}
             </motion.h1>
 
             {/* Author */}
-            {product.author && (
+            {book.author && (
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
                 className="text-lg font-medium text-slate-400"
               >
-                by {product.author}
+                by {book.author}
               </motion.p>
             )}
 
@@ -153,7 +152,7 @@ function ProductDetails() {
               className="py-6 border-y border-white/10"
             >
               <p className="text-4xl lg:text-5xl font-bold text-emerald-400">
-                ₹{product.price}
+                ₹{book.price}
               </p>
             </motion.div>
 
@@ -168,7 +167,7 @@ function ProductDetails() {
                 About This Book
               </h2>
               <p className="text-slate-400 leading-relaxed text-base whitespace-pre-line">
-                {product.description}
+                {book.description}
               </p>
             </motion.div>
 
@@ -184,7 +183,7 @@ function ProductDetails() {
                   Author
                 </p>
                 <p className="text-slate-400 font-medium text-base">
-                  {product.author || "Unknown Author"}
+                  {book.author || "Unknown Author"}
                 </p>
               </div>
               <div className="space-y-1">
@@ -192,7 +191,7 @@ function ProductDetails() {
                   Published
                 </p>
                 <p className="text-slate-400 font-medium text-base">
-                  {new Date(product.createdAt).toLocaleDateString("en-IN", {
+                  {new Date(book.createdAt).toLocaleDateString("en-IN", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -220,4 +219,4 @@ function ProductDetails() {
   );
 }
 
-export default ProductDetails;
+export default BookDetails;

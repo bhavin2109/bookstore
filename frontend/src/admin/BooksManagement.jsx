@@ -1,34 +1,33 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllProducts, deleteProduct } from "../services/productServices";
+import { getAllBooks, deleteBook } from "../services/bookServices";
 import { toast } from "react-toastify";
 
 const BooksManagement = () => {
-  const [products, setProducts] = useState([]);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Removed error state in favor of toast
 
   const navigate = useNavigate();
 
-  const fetchProducts = async () => {
+  const fetchBooks = async () => {
     try {
       setLoading(true);
-      const res = await getAllProducts();
-      if (res && Array.isArray(res.products)) {
-        setProducts(res.products);
+      const res = await getAllBooks();
+      if (res && Array.isArray(res.books)) {
+        setBooks(res.books);
       } else {
-        setProducts([]);
+        setBooks([]);
       }
     } catch (err) {
-      toast.error(err?.message || err || "Failed to fetch products.");
+      toast.error(err?.message || err || "Failed to fetch books.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchBooks();
   }, []);
 
   const handleDelete = async (id) => {
@@ -39,12 +38,12 @@ const BooksManagement = () => {
           toast.error("You need to be logged in to delete.");
           return;
         }
-        await deleteProduct(id, token);
+        await deleteBook(id, token);
         toast.success("Book deleted successfully");
         // Refresh list
-        fetchProducts();
+        fetchBooks();
       } catch (err) {
-        toast.error(err.message || "Failed to delete product");
+        toast.error(err.message || "Failed to delete book");
       }
     }
   };
@@ -53,9 +52,7 @@ const BooksManagement = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64 bg-slate-900">
-        <p className="text-lg font-bold text-emerald-400">
-          Loading products...
-        </p>
+        <p className="text-lg font-bold text-emerald-400">Loading books...</p>
       </div>
     );
   }
@@ -85,22 +82,22 @@ const BooksManagement = () => {
             </tr>
           </thead>
           <tbody className="bg-slate-800/50">
-            {products.length === 0 ? (
+            {books.length === 0 ? (
               <tr>
                 <td colSpan="5" className="py-4 text-center text-slate-500">
                   No books found.
                 </td>
               </tr>
             ) : (
-              products.map((product) => (
+              books.map((book) => (
                 <tr
-                  key={product._id}
+                  key={book._id}
                   className="border-b border-slate-700 hover:bg-slate-700/50 transition-colors"
                 >
                   <td className="py-3 px-4">
                     <img
-                      src={product.image}
-                      alt={product.title}
+                      src={book.image}
+                      alt={book.title}
                       className="h-24 w-16 object-cover rounded shadow-sm bg-slate-700"
                       onError={(e) => {
                         e.target.style.display = "none";
@@ -108,30 +105,30 @@ const BooksManagement = () => {
                     />
                   </td>
                   <td className="py-3 px-4 font-medium text-white">
-                    {product.title}
+                    {book.title}
                   </td>
                   <td className="py-3 px-4 text-slate-300">
-                    {product.author ? (
-                      product.author
+                    {book.author ? (
+                      book.author
                     ) : (
                       <span className="text-red-500 font-bold">MISSING</span>
                     )}
                   </td>
                   <td className="py-3 px-4 text-emerald-400 font-bold">
-                    ${product.price}
+                    ${book.price}
                   </td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex justify-end gap-3">
                       <button
                         onClick={() =>
-                          navigate(`/admin/books/edit/${product._id}`)
+                          navigate(`/admin/books/edit/${book._id}`)
                         }
                         className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product._id)}
+                        onClick={() => handleDelete(book._id)}
                         className="text-sm font-medium text-red-400 hover:text-red-300 transition-colors"
                       >
                         Delete
@@ -147,21 +144,21 @@ const BooksManagement = () => {
 
       {/* Mobile Card View */}
       <div className="md:hidden space-y-4 p-4 pb-20">
-        {products.length === 0 ? (
+        {books.length === 0 ? (
           <div className="text-center text-slate-500 py-10">
             No books found.
           </div>
         ) : (
-          products.map((product) => (
+          books.map((book) => (
             <div
-              key={product._id}
+              key={book._id}
               className="bg-slate-900 rounded-xl p-4 border border-white/5 shadow-md flex gap-4"
             >
               {/* Image */}
               <div className="shrink-0">
                 <img
-                  src={product.image}
-                  alt={product.title}
+                  src={book.image}
+                  alt={book.title}
                   className="h-32 w-24 object-cover rounded-md shadow-sm bg-slate-700"
                   onError={(e) => {
                     e.target.style.display = "none";
@@ -173,28 +170,28 @@ const BooksManagement = () => {
               <div className="flex-1 flex flex-col justify-between min-w-0">
                 <div>
                   <h3 className="text-white font-bold text-lg leading-tight mb-1 truncate">
-                    {product.title}
+                    {book.title}
                   </h3>
                   <p className="text-slate-400 text-sm mb-2 truncate">
                     by{" "}
-                    {product.author || (
+                    {book.author || (
                       <span className="text-red-500">Unknown</span>
                     )}
                   </p>
                   <p className="text-emerald-400 font-bold text-lg">
-                    ${product.price}
+                    ${book.price}
                   </p>
                 </div>
 
                 <div className="flex gap-3 mt-3 pt-3 border-t border-white/5">
                   <button
-                    onClick={() => navigate(`/admin/books/edit/${product._id}`)}
+                    onClick={() => navigate(`/admin/books/edit/${book._id}`)}
                     className="flex-1 py-1.5 rounded bg-blue-500/10 text-blue-400 text-sm font-medium hover:bg-blue-500/20 transition-colors text-center"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(product._id)}
+                    onClick={() => handleDelete(book._id)}
                     className="flex-1 py-1.5 rounded bg-red-500/10 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-colors text-center"
                   >
                     Delete

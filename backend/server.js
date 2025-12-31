@@ -4,7 +4,6 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
-import Products from './models/Products.js';
 
 // Check environment variables
 console.log('🔍 Environment Configuration Check:');
@@ -19,7 +18,7 @@ connectDB();
 
 //Import Routes
 import userRoutes from './routes/userRoutes.js';
-import productRoutes from './routes/productRoutes.js';
+import bookRoutes from './routes/bookRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 
 const app = express();
@@ -65,8 +64,8 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api/products", productRoutes);
-app.use('/api/admin/products', productRoutes);
+app.use("/api/books", bookRoutes);
+app.use('/api/admin/books', bookRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/orders', orderRoutes);
 

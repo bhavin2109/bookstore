@@ -16,7 +16,7 @@ const AdminDashboard = () => {
     pendingOrders: 0,
     deliveredOrders: 0,
     cancelledOrders: 0,
-    productCount: 0,
+    bookCount: 0,
     userCount: 0,
   });
   const [loading, setLoading] = useState(true);
