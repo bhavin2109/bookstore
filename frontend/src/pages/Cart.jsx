@@ -64,7 +64,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <Motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -76,8 +76,8 @@ const Cart = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items Grid */}
-          <div className="lg:col-span-2 h-[calc(100vh-140px)] overflow-y-auto pr-2 custom-scrollbar">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 lg:h-[calc(100vh-140px)] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <AnimatePresence>
                 {cartItems.map((item) => (
                   <Motion.div

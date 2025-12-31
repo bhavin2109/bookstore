@@ -150,7 +150,7 @@ const Checkout = () => {
   if (cartItems.length === 0 && !showAnimation) return null;
 
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-900 py-8 px-4 sm:px-6 lg:px-8 overflow-x-hidden">
       {showAnimation && (
         <OrderSuccessAnimation
           onComplete={() => {
@@ -199,7 +199,7 @@ const Checkout = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="John Doe"
                     />
                   </div>
@@ -213,7 +213,7 @@ const Checkout = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -229,7 +229,7 @@ const Checkout = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -244,7 +244,7 @@ const Checkout = () => {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                    className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     placeholder="123 Main St, Apt 4B"
                   />
                 </div>
@@ -260,7 +260,7 @@ const Checkout = () => {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
@@ -273,7 +273,7 @@ const Checkout = () => {
                       required
                       value={formData.state}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -289,7 +289,7 @@ const Checkout = () => {
                       required
                       value={formData.zip}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                   <div className="space-y-2">
@@ -302,7 +302,7 @@ const Checkout = () => {
                       required
                       value={formData.country}
                       onChange={handleChange}
-                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
+                      className="w-full bg-slate-900 border border-white/10 rounded-lg px-4 py-3 text-base text-white focus:outline-none focus:border-emerald-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -317,7 +317,7 @@ const Checkout = () => {
             transition={{ delay: 0.2 }}
             className="space-y-6"
           >
-            <div className="bg-slate-950 border border-white/5 rounded-2xl p-6 shadow-xl sticky top-24">
+            <div className="bg-slate-950 border border-white/5 rounded-2xl p-6 shadow-xl lg:sticky lg:top-24">
               <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 text-sm">
                   2
