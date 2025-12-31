@@ -13,17 +13,16 @@ const getTransporter = () => {
 
     // Always create fresh transporter to ensure latest config
     return nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
-        auth: {
-            user: emailUser,
-            pass: emailPass,
-        },
-        connectionTimeout: 20000,
-        greetingTimeout: 20000,
-        socketTimeout: 30000,
-    });
+  service: 'gmail',
+  auth: {
+    user: emailUser,
+    pass: emailPass,
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
+
 
 };
 
@@ -54,9 +53,9 @@ const verifyTransporter = async () => {
 };
 
 // Verification is optional and shouldn't block startup
-// setTimeout(() => {
-//     verifyTransporter();
-// }, 1000);
+setTimeout(() => {
+    verifyTransporter();
+}, 1000);
 
 // Export function to get transporter
 export default getTransporter;
