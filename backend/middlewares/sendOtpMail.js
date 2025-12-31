@@ -65,6 +65,9 @@ const sendOtpMail = async (req, res, next) => {
         console.log('✅ Email sent successfully!');
         console.log('Message ID:', info.messageId);
         console.log('Response:', info.response);
+        console.log('---------------------------------------------------');
+        console.log(`🚀 [PRODUCTION LOG] OTP Email successfully sent to: ${email}`);
+        console.log('---------------------------------------------------');
 
         next();
     }
