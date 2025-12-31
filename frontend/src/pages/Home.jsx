@@ -280,14 +280,6 @@ const Home = () => {
                           >
                             {heroBooks[activeIndex].title}
                           </motion.h3>
-                          <motion.p
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 }}
-                            className="text-sm text-slate-300 mb-1"
-                          >
-                            {heroBooks[activeIndex].description}
-                          </motion.p>
                           {heroBooks[activeIndex].author && (
                             <motion.p
                               initial={{ opacity: 0, y: 10 }}
@@ -403,9 +395,6 @@ const Home = () => {
                                 >
                                   {book.title}
                                 </h3>
-                                <p className="text-xs text-slate-300 line-clamp-1 mb-1">
-                                  {book.description}
-                                </p>
                                 {book.author && (
                                   <p className="text-[10px] text-slate-400 uppercase tracking-wider">
                                     BY {book.author.toUpperCase()}
