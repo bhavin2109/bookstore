@@ -58,9 +58,17 @@ function VerifyOtp() {
     }
   };
 
-  const handleResendOtp = () => {
-    // Redirect back to register to resend OTP
-    navigate("/register");
+  const handleResendOtp = async () => {
+    try {
+      if (!email) {
+        toast.error("No email found to resend OTP.");
+        return;
+      }
+      await resendOtpAPI(email);
+      toast.success("OTP resent successfully!");
+    } catch (error) {
+      toast.error(error.message || "Failed to resend OTP");
+    }
   };
 
   const containerVariants = {

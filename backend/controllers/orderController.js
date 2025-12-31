@@ -18,6 +18,11 @@ const addOrderItems = asyncHandler(async (req, res) => {
         totalPrice
     } = req.body;
 
+    if (!req.user.isVerified) {
+        res.status(403);
+        throw new Error('Please verify your email to place an order.');
+    }
+
     if (orderItems && orderItems.length === 0) {
         res.status(400);
         throw new Error('No order items');

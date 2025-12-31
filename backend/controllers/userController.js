@@ -70,6 +70,22 @@ const register = async (req, res, next) => {
 
     req.otpData = { email, otp, type: "Registration" };
     console.log('📤 Setting req.otpData and calling next()');
+
+    // Generate token for auto-login
+    const token = generateToken(newUser);
+
+    // Attach token/user to request for the response handler
+    req.authData = {
+      token,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        isVerified: newUser.isVerified
+      }
+    };
+
     next(); // This should trigger sendOtpMail
   } catch (error) {
     console.error('❌ Register error:', error);
@@ -140,6 +156,35 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
+export const resendOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User is already verified" });
+    }
+
+    const otp = generateOtp();
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 10 * 60 * 1000;
+    await user.save();
+
+    req.otpData = { email, otp, type: "Registration" };
+    next();
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 // Delete user by email (for testing purposes)
 export const deleteUser = async (req, res) => {
   try {
@@ -183,10 +228,10 @@ export const login = async (req, res) => {
     }
 
     // Check if user is verified
-    if (!user.isVerified) {
-      console.log('❌ User not verified');
-      return res.status(401).json({ message: "Please verify your email first" });
-    }
+    // if (!user.isVerified) {
+    //   console.log('❌ User not verified');
+    //   return res.status(401).json({ message: "Please verify your email first" });
+    // }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);

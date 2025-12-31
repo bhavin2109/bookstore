@@ -1,4 +1,4 @@
-import axios from 'axios';  
+import axios from 'axios';
 import { API_URL } from '../config/api';
 
 const API = axios.create({
@@ -36,6 +36,15 @@ export const verifyOtp = async (data) => {
 export const loginUser = async (data) => {
   try {
     const response = await API.post('/login', data);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const resendOtp = async (email) => {
+  try {
+    const response = await API.post('/resend-otp', { email });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

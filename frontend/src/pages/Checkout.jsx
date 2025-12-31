@@ -41,6 +41,17 @@ const Checkout = () => {
     return defaults;
   });
   const [showAnimation, setShowAnimation] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setIsVerified(user.isVerified === true);
+      } catch (e) {}
+    }
+  }, []);
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -67,6 +78,25 @@ const Checkout = () => {
     }
 
     try {
+      // Check user verification
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (!user.isVerified) {
+          toast.error("Please verify your email to place an order.");
+          // Optional: Redirect to profile or show verification modal
+          // For now, just toast is enough as per requirement "should give verify your email option in profile page"
+          // But let's be helpful and offer a redirect via toast or just let them go to profile manually?
+          // Requirement says "give option to verify your email option in profile page" - implying they go there.
+          // Let's force navigation to profile for better UX? Or just alert.
+          // "and to order something user should be verified"
+
+          // Let's redirect to profile after a short delay or just toast. Toast is safer.
+          setTimeout(() => navigate("/profile"), 2000);
+          return;
+        }
+      }
+
       // 1. Create Order on Backend
       const orderData = {
         orderItems: cartItems.map((item) => ({
@@ -371,9 +401,14 @@ const Checkout = () => {
               <button
                 type="submit"
                 form="checkout-form"
-                className="w-full mt-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-200 uppercase tracking-wide group"
+                className={`w-full mt-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-200 uppercase tracking-wide group ${
+                  isVerified
+                    ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20"
+                    : "bg-slate-700 text-slate-400 cursor-not-allowed"
+                }`}
+                disabled={!isVerified}
               >
-                Place Order
+                {isVerified ? "Place Order" : "Verify Email to Order"}
               </button>
 
               <p className="text-xs text-slate-500 text-center mt-4 flex items-center justify-center gap-2">

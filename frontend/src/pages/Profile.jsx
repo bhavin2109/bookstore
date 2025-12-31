@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
+import { resendOtp } from "../services/authServices";
+import { toast } from "react-toastify";
+
 const Profile = () => {
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
@@ -15,6 +18,19 @@ const Profile = () => {
       return null;
     }
   });
+
+  const handleVerifyEmail = async () => {
+    try {
+      if (!user?.email) return;
+      await resendOtp(user.email);
+      // Store email for OTP page
+      localStorage.setItem("registerEmail", user.email);
+      toast.info("OTP sent to your email.");
+      navigate("/verify-otp");
+    } catch (error) {
+      toast.error(error.message || "Failed to send OTP");
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -89,6 +105,17 @@ const Profile = () => {
                   {user.role || "Member"}
                 </p>
 
+                {/* Verification Status Badge */}
+                <div
+                  className={`mb-6 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                    user.isVerified
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      : "bg-orange-500/10 text-orange-400 border border-orange-500/20"
+                  }`}
+                >
+                  {user.isVerified ? "Verified Account" : "Unverified"}
+                </div>
+
                 <div className="w-full space-y-3">
                   {user.role === "admin" && (
                     <button
@@ -96,6 +123,15 @@ const Profile = () => {
                       className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-emerald-500/20"
                     >
                       <span>⚡</span> Admin Dashboard
+                    </button>
+                  )}
+
+                  {!user.isVerified && (
+                    <button
+                      onClick={handleVerifyEmail}
+                      className="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-orange-500/20"
+                    >
+                      <span>✉️</span> Verify Email
                     </button>
                   )}
                   <button
@@ -119,7 +155,8 @@ const Profile = () => {
             {/* Personal Info Section */}
             <div className="bg-slate-950 rounded-2xl border border-white/10 p-8 shadow-xl">
               <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <span className="text-emerald-400">�</span> Personal Information
+                <span className="text-emerald-400">👤</span> Personal
+                Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
