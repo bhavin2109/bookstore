@@ -1,7 +1,9 @@
 import axios from "axios";
 
+import { API_URL as BASE_URL } from "../config/api";
+
 // Base URL for the API
-const API_URL = "http://localhost:5000/api/orders";
+const API_URL = `${BASE_URL}/api/orders`;
 
 // Create a new order
 const createOrder = async (orderData) => {

@@ -124,7 +124,7 @@ const Checkout = () => {
       const createdOrder = await orderService.createOrder(orderData);
       // console.log("Order Created:", createdOrder);
 
-      const RAZORPAY_KEY = "rzp_test_RwZ8MWEM2Bc67U";
+      const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_TEST_KEY_ID;
 
       const options = {
         key: RAZORPAY_KEY,
