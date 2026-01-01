@@ -9,6 +9,8 @@ import User from '../models/User.js';
 // @route   POST /api/orders
 // @access  Private
 const addOrderItems = asyncHandler(async (req, res) => {
+    console.log(`[ORDER] Creating order for user: ${req.user?._id}`);
+
     const {
         orderItems,
         shippingAddress,
@@ -19,112 +21,118 @@ const addOrderItems = asyncHandler(async (req, res) => {
         totalPrice
     } = req.body;
 
+    // 1. Auth & User Validation
+    if (!req.user) {
+        console.error('[ORDER] Error: User not found in request');
+        res.status(401);
+        throw new Error('Not authorized, user not found');
+    }
+
     if (!req.user.isVerified) {
+        console.warn(`[ORDER] Warning: Unverified user ${req.user._id} attempted order`);
         res.status(403);
         throw new Error('Please verify your email to place an order.');
     }
 
-    if (orderItems && orderItems.length === 0) {
+    // 2. Body Validation
+    if (!orderItems || orderItems.length === 0) {
         res.status(400);
         throw new Error('No order items');
-    } else {
-        const order = new Order({
-            orderItems,
-            user: req.user._id,
-            shippingAddress,
-            paymentMethod,
-            itemsPrice,
-            taxPrice,
-            shippingPrice,
-            totalPrice
-        });
+    }
 
+    if (!shippingAddress || !paymentMethod || totalPrice === undefined) {
+        console.error('[ORDER] Error: Missing required fields', { shippingAddress, paymentMethod, totalPrice });
+        res.status(400);
+        throw new Error('Missing required order fields (Address, Payment Method, or Total Price)');
+    }
 
-        const createdOrder = await order.save(); // Save to DB
+    if (isNaN(totalPrice)) {
+        res.status(400);
+        throw new Error('Invalid total price');
+    }
 
-        // Validate Total Price
-        if (!totalPrice || isNaN(totalPrice)) {
-            res.status(400);
-            throw new Error('Invalid total price calculated');
+    // 3. Create Order Object
+    const order = new Order({
+        orderItems: orderItems.map((x) => ({
+            ...x,
+            product: x.product || x._id, // Handle distinct frontend payloads
+            _id: undefined // Let Mongoose generate ID
+        })),
+        user: req.user._id,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice
+    });
+
+    let createdOrder;
+    try {
+        createdOrder = await order.save();
+        console.log(`[ORDER] DB Order created: ${createdOrder._id}`);
+    } catch (error) {
+        console.error('[ORDER] DB Save Failed:', error);
+        res.status(500);
+        throw new Error('Failed to save order to database: ' + error.message);
+    }
+
+    // 4. Razorpay Integration
+    try {
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+            console.error('[ORDER] Razorpay keys missing in environment variables');
+            // Do not crash, just warn. But for checkout flow, this is critical.
+            throw new Error("Razorpay keys not configured on server");
         }
 
-        // Create Razorpay Order
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET,
+        });
+
         const options = {
             amount: Math.round(totalPrice * 100), // Amount in paise
             currency: 'INR',
             receipt: createdOrder._id.toString(),
+            notes: {
+                userId: req.user._id.toString(),
+                userEmail: req.user.email
+            }
         };
 
-        try {
-            if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-                throw new Error("Razorpay keys not configured on server");
-            }
+        const razorpayOrder = await razorpay.orders.create(options);
+        console.log(`[ORDER] Razorpay order created: ${razorpayOrder.id}`);
 
-            // Initialize Razorpay lazily to avoid startup crashes if env vars are missing
-            const razorpay = new Razorpay({
-                key_id: process.env.RAZORPAY_KEY_ID,
-                key_secret: process.env.RAZORPAY_KEY_SECRET,
-            });
+        // 5. Send Confirmation Email (Async - don't block response)
+        const message = `
+        <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+            <h2 style="color: #4CAF50;">Order Placed Successfully!</h2>
+            <p>Hi ${req.user.name},</p>
+            <p>Your order ID: <strong>${createdOrder._id}</strong>.</p>
+            <p>Total: $${createdOrder.totalPrice}</p>
+            <p>We'll notify you when it ships!</p>
+        </div>
+        `;
 
-            const razorpayOrder = await razorpay.orders.create(options);
+        sendEmail({
+            email: req.user.email,
+            subject: 'Order Confirmation - Nerdy Enough',
+            message
+        }).catch(err => console.error('[ORDER] Email send failed:', err));
 
-            // Send Email
-            const message = `
-            <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
-                <h2 style="color: #4CAF50;">Thank You for Your Order!</h2>
-                <p>Hi,</p>
-                <p>Your order with ID <strong>${createdOrder._id}</strong> has been placed successfully.</p>
-                <h3>Order Details:</h3>
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <thead>
-                        <tr style="background-color: #f2f2f2; text-align: left;">
-                            <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Quantity</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${createdOrder.orderItems.map(item => `
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">$${item.price}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-                <h3>Total Price: $${createdOrder.totalPrice}</h3>
-                <p>We will notify you once your order is shipped.</p>
-                <p>Thanks,<br>Nerdy Enough Team</p>
-            </div>
-            `;
+        // 6. Success Response
+        res.status(201).json({
+            ...createdOrder._doc,
+            razorpayOrderId: razorpayOrder.id,
+            razorpayAmount: razorpayOrder.amount,
+            razorpayCurrency: razorpayOrder.currency
+        });
 
-            try {
-                await sendEmail({
-                    email: req.user.email,
-                    subject: 'Order Confirmation - Nerdy Enough',
-                    message
-                });
-            } catch (error) {
-                console.error(error);
-            }
-
-            res.status(201).json({
-                ...createdOrder._doc,
-                razorpayOrderId: razorpayOrder.id,
-                razorpayAmount: razorpayOrder.amount,
-                razorpayCurrency: razorpayOrder.currency
-            });
-
-        } catch (error) {
-            console.error("Razorpay Order Creation Failed:", error);
-            // If Razorpay fails, we technically still have a DB order. 
-            // Should we delete it? Or just return error?
-            // For now, let's keep the order but inform frontend. 
-            // Or better, failed payment flow.
-            res.status(500);
-            throw new Error('Failed to initiate payment with Razorpay: ' + error.message);
-        }
+    } catch (error) {
+        console.error("[ORDER] Razorpay/Post-Process Failed:", error);
+        // If money hasn't moved, we might want to return 500 but keep the order as 'Pending Payment'
+        res.status(500);
+        throw new Error('Order saved but payment initiation failed: ' + error.message);
     }
 });
 
