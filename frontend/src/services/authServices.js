@@ -50,3 +50,12 @@ export const resendOtp = async (email) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const googleLogin = async (token) => {
+  try {
+    const response = await API.post('/google', { token });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

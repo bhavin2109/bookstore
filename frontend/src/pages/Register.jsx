@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { registerUser } from "../services/authServices";
+import { registerUser, googleLogin } from "../services/authServices";
+import { GoogleLogin } from "@react-oauth/google";
 
 function Register() {
   const navigate = useNavigate();
@@ -66,6 +67,23 @@ function Register() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await googleLogin(credentialResponse.credential);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+        // Dispatch storage event to notify other components
+        window.dispatchEvent(new Event("storage"));
+        toast.success("Account created via Google! 🎉");
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Google Login error:", err);
+      toast.error(err.message || "Google Sign-Up failed.");
     }
   };
 
@@ -278,6 +296,23 @@ function Register() {
                 </a>
               </p>
             </motion.div>
+            
+            <motion.div variants={itemVariants} className="my-6 flex items-center">
+                <div className="h-px flex-1 bg-slate-800" />
+                <span className="px-4 text-xs text-slate-500 uppercase">Or sign up with</span>
+                <div className="h-px flex-1 bg-slate-800" />
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex justify-center">
+                <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Google Sign-Up Failed")}
+                    theme="filled_black"
+                    shape="pill"
+                    text="signup_with"
+                />
+            </motion.div>
+
           </motion.form>
         )}
       </motion.div>

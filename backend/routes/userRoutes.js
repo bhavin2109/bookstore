@@ -1,6 +1,6 @@
 import express from 'express';
 import sendOtpMail from '../middlewares/sendOtpMail.js';
-import { register, verifyOtp, deleteUser, login, resendOtp } from '../controllers/userController.js';
+import { register, verifyOtp, deleteUser, login, resendOtp, googleAuthLogin } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -19,6 +19,7 @@ router.post('/resend-otp', resendOtp, sendOtpMail, (req, res) => {
 
 router.post('/verify-otp', verifyOtp);
 router.post('/login', login);
+router.post('/google', googleAuthLogin);
 
 // DELETE route for testing - remove in production
 router.delete('/delete-user', deleteUser);

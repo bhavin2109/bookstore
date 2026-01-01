@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: function () { return this.authProvider === 'local'; },
     },
     otp: {
       type: String,
@@ -25,6 +25,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    avatar: {
+      type: String,
+      default: "",
     },
     isVerified: {
       type: Boolean,

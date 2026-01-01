@@ -20,6 +20,7 @@ connectDB();
 import userRoutes from './routes/userRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import chatRoutes from './routes/chat.routes.js';
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use("/api/books", bookRoutes);
 app.use('/api/admin/books', bookRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/chat', chatRoutes);
 
 const PORT = process.env.PORT || 5000;
 

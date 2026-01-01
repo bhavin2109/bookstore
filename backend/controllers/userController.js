@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (user) => {
   const jwtSecret = process.env.JWT_SECRET;
@@ -259,6 +261,70 @@ export const login = async (req, res) => {
   } catch (error) {
     console.error('❌ Login error:', error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const googleAuthLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Google token is required" });
+    }
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const { name, email, picture } = ticket.getPayload();
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // If user exists, update/link info if needed
+      if (user.authProvider === "local") {
+        // Optional: you could merge accounts or just allow login
+        // For now, we update the avatar if missing
+        if (!user.avatar && picture) {
+          user.avatar = picture;
+          await user.save();
+        }
+      }
+    } else {
+      console.log('✨ Creating NEW Google user:', email);
+      user = await User.create({
+        name,
+        email,
+        avatar: picture,
+        authProvider: "google",
+        isVerified: true, // Auto-verified
+        role: "user"
+      });
+      console.log('✅ New user created with role:', user.role);
+    }
+
+    console.log(`🔐 Google Login for ${email} | Role: ${user.role}`);
+
+    const jwtToken = generateToken(user);
+
+    res.status(200).json({
+      message: "Google login successful",
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+        avatar: user.avatar,
+        authProvider: user.authProvider
+      }
+    });
+
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    res.status(401).json({ message: "Google authentication failed", error: error.message });
   }
 };
 

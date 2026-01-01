@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { loginUser } from "../services/authServices";
+import { loginUser, googleLogin } from "../services/authServices";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -47,6 +48,24 @@ const Login = () => {
       toast.error(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await googleLogin(credentialResponse.credential);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("userName", response.user.name);
+        // Dispatch storage event to notify other components
+        window.dispatchEvent(new Event("storage"));
+        toast.success("Google login successful! 🚀");
+        navigate("/home");
+      }
+    } catch (err) {
+      console.error("Google Login error:", err);
+      toast.error(err.message || "Google Login failed.");
     }
   };
 
@@ -131,6 +150,23 @@ const Login = () => {
             </a>
           </p>
         </form>
+
+        <div className="my-6 flex items-center">
+          <div className="h-px flex-1 bg-slate-800" />
+          <span className="px-4 text-xs text-slate-500 uppercase">
+            Or continue with
+          </span>
+          <div className="h-px flex-1 bg-slate-800" />
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => toast.error("Google Login Failed")}
+            theme="filled_black"
+            shape="pill"
+          />
+        </div>
       </motion.div>
     </div>
   );
