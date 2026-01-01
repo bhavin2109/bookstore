@@ -1,8 +1,10 @@
-import asyncHandler from 'express-async-handler';
-import Order from '../models/Order.js';
-import sendEmail from '../utils/sendEmail.js';
-import Book from '../models/Book.js';
-import User from '../models/User.js';
+import Razorpay from 'razorpay';
+
+// Initialize Razorpay
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -41,48 +43,73 @@ const addOrderItems = asyncHandler(async (req, res) => {
 
         const createdOrder = await order.save(); // Save to DB
 
-        // Send Email
-        const message = `
-        <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
-            <h2 style="color: #4CAF50;">Thank You for Your Order!</h2>
-            <p>Hi,</p>
-            <p>Your order with ID <strong>${createdOrder._id}</strong> has been placed successfully.</p>
-            <h3>Order Details:</h3>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                <thead>
-                    <tr style="background-color: #f2f2f2; text-align: left;">
-                        <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
-                        <th style="padding: 10px; border: 1px solid #ddd;">Quantity</th>
-                        <th style="padding: 10px; border: 1px solid #ddd;">Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${createdOrder.orderItems.map(item => `
-                        <tr>
-                            <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd;">$${item.price}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-            <h3>Total Price: $${createdOrder.totalPrice}</h3>
-            <p>We will notify you once your order is shipped.</p>
-            <p>Thanks,<br>Nerdy Enough Team</p>
-        </div>
-        `;
+        // Create Razorpay Order
+        const options = {
+            amount: Math.round(totalPrice * 100), // Amount in paise
+            currency: 'INR',
+            receipt: createdOrder._id.toString(),
+        };
 
         try {
-            await sendEmail({
-                email: req.user.email,
-                subject: 'Order Confirmation - Nerdy Enough',
-                message
-            });
-        } catch (error) {
-            console.error(error);
-        }
+            const razorpayOrder = await razorpay.orders.create(options);
 
-        res.status(201).json(createdOrder);
+            // Send Email
+            const message = `
+            <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+                <h2 style="color: #4CAF50;">Thank You for Your Order!</h2>
+                <p>Hi,</p>
+                <p>Your order with ID <strong>${createdOrder._id}</strong> has been placed successfully.</p>
+                <h3>Order Details:</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2; text-align: left;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">Product</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Quantity</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${createdOrder.orderItems.map(item => `
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.name}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.qty}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">$${item.price}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <h3>Total Price: $${createdOrder.totalPrice}</h3>
+                <p>We will notify you once your order is shipped.</p>
+                <p>Thanks,<br>Nerdy Enough Team</p>
+            </div>
+            `;
+
+            try {
+                await sendEmail({
+                    email: req.user.email,
+                    subject: 'Order Confirmation - Nerdy Enough',
+                    message
+                });
+            } catch (error) {
+                console.error(error);
+            }
+
+            res.status(201).json({
+                ...createdOrder._doc,
+                razorpayOrderId: razorpayOrder.id,
+                razorpayAmount: razorpayOrder.amount,
+                razorpayCurrency: razorpayOrder.currency
+            });
+
+        } catch (error) {
+            console.error("Razorpay Order Creation Failed:", error);
+            // If Razorpay fails, we technically still have a DB order. 
+            // Should we delete it? Or just return error?
+            // For now, let's keep the order but inform frontend. 
+            // Or better, failed payment flow.
+            res.status(500);
+            throw new Error('Failed to initiate payment with Razorpay: ' + error.message);
+        }
     }
 });
 
