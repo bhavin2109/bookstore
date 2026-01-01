@@ -1,10 +1,9 @@
+import asyncHandler from 'express-async-handler';
 import Razorpay from 'razorpay';
-
-// Initialize Razorpay
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+import Order from '../models/Order.js';
+import sendEmail from '../utils/sendEmail.js';
+import Book from '../models/Book.js';
+import User from '../models/User.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -51,6 +50,12 @@ const addOrderItems = asyncHandler(async (req, res) => {
         };
 
         try {
+            // Initialize Razorpay lazily to avoid startup crashes if env vars are missing
+            const razorpay = new Razorpay({
+                key_id: process.env.RAZORPAY_KEY_ID,
+                key_secret: process.env.RAZORPAY_KEY_SECRET,
+            });
+
             const razorpayOrder = await razorpay.orders.create(options);
 
             // Send Email
