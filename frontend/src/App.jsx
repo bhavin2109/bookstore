@@ -95,7 +95,6 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/search" element={<SearchResults />} />
           {/* Protected User Routes */}
