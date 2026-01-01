@@ -42,6 +42,12 @@ const addOrderItems = asyncHandler(async (req, res) => {
 
         const createdOrder = await order.save(); // Save to DB
 
+        // Validate Total Price
+        if (!totalPrice || isNaN(totalPrice)) {
+            res.status(400);
+            throw new Error('Invalid total price calculated');
+        }
+
         // Create Razorpay Order
         const options = {
             amount: Math.round(totalPrice * 100), // Amount in paise
@@ -50,6 +56,10 @@ const addOrderItems = asyncHandler(async (req, res) => {
         };
 
         try {
+            if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+                throw new Error("Razorpay keys not configured on server");
+            }
+
             // Initialize Razorpay lazily to avoid startup crashes if env vars are missing
             const razorpay = new Razorpay({
                 key_id: process.env.RAZORPAY_KEY_ID,
