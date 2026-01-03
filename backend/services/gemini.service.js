@@ -11,8 +11,8 @@ let model;
 // Initialize Gemini Model
 if (apiKey) {
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-1.5-pro as requested
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    // Using gemini-1.5-flash for better speed/quota on free tier
+    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 } else {
     console.warn("⚠️ GEMINI_API_KEY is missing in environment variables.");
 }
@@ -40,8 +40,9 @@ export const generateGeminiReply = async (message) => {
         // Log the raw error for debugging purposes
         console.error("❌ Gemini Service Error:", error);
 
-        // If it's a rate limit/quota error, rethrow it so the controller can handle it (429)
-        if (error.message && error.message.includes("429")) {
+        // Check for common rate limit / quota patterns in error response
+        const errorMsg = error.message || "";
+        if (errorMsg.includes("429") || errorMsg.includes("Quota") || errorMsg.includes("Too Many Requests")) {
             const rateLimitError = new Error("Too many requests (Gemini Quota Exceeded).");
             rateLimitError.status = 429;
             throw rateLimitError;

@@ -6,6 +6,7 @@ import ProtectRoute from "./components/ProtectRoute.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthRoute from "./components/AuthRoute.jsx";
+import Chatbot from "./components/Chatbot.jsx";
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -82,6 +83,7 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
+      <Chatbot />
       {!hideLayout && <Header />}
 
       <Suspense fallback={<LoadingSpinner />}>

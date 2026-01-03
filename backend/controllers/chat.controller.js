@@ -34,6 +34,13 @@ export const chatHandler = async (req, res) => {
 
         // General Server Error
         console.error("🔥 Chat Controller Error:", error);
+        // Return 503 if it looks like an overload that didn't catch as 429
+        if (error.message && (error.message.includes("503") || error.message.includes("Overloaded"))) {
+            return res.status(503).json({
+                error: "AI Service is temporarily overloaded. Please try again."
+            });
+        }
+
         return res.status(500).json({
             error: "An internal server error occurred."
         });
