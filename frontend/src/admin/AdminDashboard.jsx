@@ -6,6 +6,7 @@ import BooksManagement from "./BooksManagement";
 import AdminOrders from "./AdminOrders";
 
 import RoleRequests from "./RoleRequests";
+import AdminReviews from "./AdminReviews";
 import DashboardStatistics from "./DashboardStatistics";
 import { toast } from "react-toastify";
 import axiosInstance from "../api/axios";
@@ -28,6 +29,7 @@ const AdminDashboard = () => {
   const isBooksView = location.pathname.includes("books-management");
   const isOrdersView = location.pathname.includes("orders");
   const isRoleRequestsView = location.pathname.includes("role-requests");
+  const isReviewsView = location.pathname.includes("reviews");
 
   useEffect(() => {
     // Auth Check
@@ -75,7 +77,7 @@ const AdminDashboard = () => {
 
       fetchStats();
     }
-  }, [isBooksView, isOrdersView, isRoleRequestsView]);
+  }, [isBooksView, isOrdersView, isRoleRequestsView, isReviewsView]);
 
   return (
     <div className="flex h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden">
@@ -123,6 +125,8 @@ const AdminDashboard = () => {
                 </span>
               ) : isRoleRequestsView ? (
                 "Role Requests"
+              ) : isReviewsView ? (
+                "Reviews Management"
               ) : (
                 "Admin Dashboard"
               )}
@@ -148,7 +152,9 @@ const AdminDashboard = () => {
 
         <main
           className={`min-h-[calc(100vh-4rem)] ${
-            isBooksView || isOrdersView || isRoleRequestsView ? "p-0" : "p-6"
+            isBooksView || isOrdersView || isRoleRequestsView || isReviewsView
+              ? "p-0"
+              : "p-6"
           }`}
         >
           <AnimatePresence mode="wait">
@@ -181,6 +187,16 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <RoleRequests />
+              </Motion.div>
+            ) : isReviewsView ? (
+              <Motion.div
+                key="reviews"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AdminReviews />
               </Motion.div>
             ) : (
               <Motion.div

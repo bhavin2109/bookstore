@@ -211,4 +211,107 @@ export const userCount = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
+};
+
+export const createBookReview = async (req, res) => {
+    try {
+        const { rating, comment } = req.body;
+        const book = await Book.findById(req.params.id);
+
+        if (book) {
+            const alreadyReviewed = book.reviews.find(
+                (r) => r.user.toString() === req.user._id.toString()
+            );
+
+            if (alreadyReviewed) {
+                return res.status(400).json({ message: 'Product already reviewed' });
+            }
+
+            const review = {
+                name: req.user.name,
+                rating: Number(rating),
+                comment,
+                user: req.user._id,
+                userImage: req.user.profileImage // Assuming user object has profileImage
+            };
+
+            book.reviews.push(review);
+
+            book.numReviews = book.reviews.length;
+
+            book.rating =
+                book.reviews.reduce((acc, item) => item.rating + acc, 0) /
+                book.reviews.length;
+
+            await book.save();
+            res.status(201).json({ message: 'Review added' });
+        } else {
+            res.status(404).json({ message: 'Book not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding review', error: error.message });
+    }
+};
+
+export const deleteBookReview = async (req, res) => {
+    try {
+        const { id, reviewId } = req.params;
+        const book = await Book.findById(id);
+
+        if (book) {
+            book.reviews = book.reviews.filter(
+                (r) => r._id.toString() !== reviewId
+            );
+
+            book.numReviews = book.reviews.length;
+
+            if (book.numReviews === 0) {
+                book.rating = 0;
+            } else {
+                book.rating =
+                    book.reviews.reduce((acc, item) => item.rating + acc, 0) /
+                    book.reviews.length;
+            }
+
+            await book.save();
+            res.status(200).json({ message: 'Review deleted' });
+        } else {
+            res.status(404).json({ message: 'Book not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting review', error: error.message });
+    }
+};
+
+export const getAllReviews = async (req, res) => {
+    try {
+        // Aggregate all reviews from all books.
+        // This might be expensive for huge datasets but fine for now.
+        // A better approach for production would be a separate Review collection.
+        // But following the single-collection schema approach:
+        const books = await Book.find({ 'reviews.0': { $exists: true } }).select('title reviews');
+
+        let allReviews = [];
+        books.forEach(book => {
+            book.reviews.forEach(review => {
+                allReviews.push({
+                    _id: review._id,
+                    bookId: book._id,
+                    bookTitle: book.title,
+                    user: review.user,
+                    name: review.name,
+                    rating: review.rating,
+                    comment: review.comment,
+                    createdAt: review.createdAt
+                });
+            });
+        });
+
+        // Sort by newest
+        allReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        res.status(200).json(allReviews);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching reviews', error: error.message });
+    }
 };  

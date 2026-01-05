@@ -82,3 +82,33 @@ export const getUserCount = async () => {
     throw error.response?.data || error.message;
   }
 };
+// CREATE REVIEW
+export const createReview = async (id, reviewData) => {
+  try {
+    const response = await API.post(`/api/books/${id}/reviews`, reviewData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// DELETE REVIEW (Admin)
+export const deleteReview = async (bookId, reviewId) => {
+  try {
+    // Note: The route is /:id/reviews/:reviewId
+    const response = await API.delete(`/api/books/${bookId}/reviews/${reviewId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// GET ALL REVIEWS (Admin)
+export const getAllReviews = async () => {
+  try {
+    const response = await API.get("/api/books/reviews/all");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

@@ -53,6 +53,7 @@ const EditBook = lazy(() => import("./admin/EditBook.jsx"));
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard.jsx"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders.jsx"));
 const RoleRequests = lazy(() => import("./admin/RoleRequests.jsx"));
+const AdminReviews = lazy(() => import("./admin/AdminReviews.jsx"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -190,7 +191,8 @@ const App = () => {
             <Route path="/admin/books/edit/:id" element={<EditBook />} />
             <Route path="/admin/orders" element={<AdminDashboard />} />
             <Route path="/admin/orders/:status" element={<AdminDashboard />} />
-            <Route path="/admin/role-requests" element={<RoleRequests />} />
+            <Route path="/admin/role-requests" element={<AdminDashboard />} />
+            <Route path="/admin/reviews" element={<AdminDashboard />} />
           </Route>
         </Routes>
       </Suspense>

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 
 import { toast } from "react-toastify";
 
-import { getBookById } from "../services/bookServices.js";
+import { getBookById, createReview } from "../services/bookServices.js";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/cartSlice";
 
@@ -18,11 +19,21 @@ function BookDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Review State
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [refreshReviews, setRefreshReviews] = useState(false);
+
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const res = await getBookById(id);
-        setBook(res.book || res); // Assuming API returns { book: ... } or just the book object
+        setBook(res.book || res);
       } catch (err) {
         setError(err?.message || "Failed to fetch book details");
       } finally {
@@ -31,12 +42,11 @@ function BookDetails() {
     };
 
     fetchBook();
-  }, [id]);
+  }, [id, refreshReviews]);
 
   const handleAddToCart = () => {
-    const user = localStorage.getItem("user");
     if (!user) {
-      alert("Please login to add to cart");
+      toast.error("Please login to add to cart");
       navigate("/login");
       return;
     }
@@ -50,6 +60,27 @@ function BookDetails() {
       })
     );
     toast.success("Book added to cart");
+  };
+
+  const submitReviewHandler = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please login to write a review");
+      navigate("/login");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await createReview(id, { rating, comment });
+      toast.success("Review submitted successfully");
+      setComment("");
+      setRating(5);
+      setRefreshReviews((prev) => !prev);
+    } catch (err) {
+      toast.error(err?.message || "Error submitting review");
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   if (loading) {
@@ -122,15 +153,36 @@ function BookDetails() {
               {book.genre || "Book"}
             </motion.span>
 
-            {/* Title */}
-            <motion.h1
+            {/* Title & Rating */}
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight"
             >
-              {book.title}
-            </motion.h1>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-2">
+                {book.title}
+              </h1>
+              <div className="flex items-center gap-2">
+                <div className="flex text-emerald-400">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star
+                      key={s}
+                      size={20}
+                      fill={s <= (book.rating || 0) ? "currentColor" : "none"}
+                      strokeWidth={2}
+                      className={
+                        s <= (book.rating || 0)
+                          ? "text-emerald-400"
+                          : "text-slate-600"
+                      }
+                    />
+                  ))}
+                </div>
+                <span className="text-slate-400 text-sm">
+                  ({book.numReviews || 0} reviews)
+                </span>
+              </div>
+            </motion.div>
 
             {/* Author */}
             {book.author && (
@@ -214,6 +266,135 @@ function BookDetails() {
             </motion.button>
           </div>
         </motion.div>
+
+        {/* Reviews Section */}
+        <div className="mt-16 border-t border-white/10 pt-16">
+          <h2 className="text-2xl font-bold text-white mb-8">Reviews</h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Review List */}
+            <div className="space-y-6">
+              {book.reviews && book.reviews.length > 0 ? (
+                book.reviews.map((review) => (
+                  <div
+                    key={review._id}
+                    className="bg-slate-800/50 p-6 rounded-xl border border-white/5"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">
+                          {review.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">
+                            {review.name}
+                          </p>
+                          <div className="flex text-emerald-400 text-sm">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                size={14}
+                                fill={
+                                  i < review.rating ? "currentColor" : "none"
+                                }
+                                className={
+                                  i < review.rating
+                                    ? "text-emerald-400"
+                                    : "text-slate-600"
+                                }
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-slate-500 text-xs">
+                        {new Date(review.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      {review.comment}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-slate-400 bg-slate-800/30 p-8 rounded-xl border border-white/5 text-center">
+                  No reviews yet. Be the first to review!
+                </div>
+              )}
+            </div>
+
+            {/* Write a Review */}
+            <div className="bg-slate-800 p-8 rounded-2xl border border-white/10 h-fit">
+              <h3 className="text-xl font-bold text-white mb-6">
+                Write a Review
+              </h3>
+              {user ? (
+                <form onSubmit={submitReviewHandler} className="space-y-6">
+                  <div>
+                    <label className="block text-slate-400 text-sm font-medium mb-2">
+                      Rating
+                    </label>
+                    <div className="flex gap-2">
+                      {[1, 2, 3, 4, 5].map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setRating(s)}
+                          className="focus:outline-none transition-transform hover:scale-110"
+                        >
+                          <Star
+                            size={32}
+                            fill={s <= rating ? "#10b981" : "none"}
+                            className={
+                              s <= rating
+                                ? "text-emerald-500"
+                                : "text-slate-600"
+                            }
+                            strokeWidth={1.5}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-400 text-sm font-medium mb-2">
+                      Comment
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-slate-600"
+                      placeholder="Share your thoughts about this book..."
+                      required
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submittingReview ? "Submitting..." : "Submit Review"}
+                  </button>
+                </form>
+              ) : (
+                <div className="text-center py-8 space-y-4">
+                  <p className="text-slate-400">
+                    Please login to write a review.
+                  </p>
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="px-6 py-2 border border-emerald-500 text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition-colors font-medium"
+                  >
+                    Login Here
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

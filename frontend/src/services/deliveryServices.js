@@ -52,3 +52,12 @@ export const verifyDeliveryOtp = async (orderId, otp) => {
         throw error.response?.data || error.message;
     }
 };
+
+export const getAllDeliveryPartners = async () => {
+    try {
+        const response = await API.get("/api/delivery/admin/partners");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
