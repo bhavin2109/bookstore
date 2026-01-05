@@ -338,6 +338,27 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     });
 });
 
+
+// @desc    Assign order to delivery partner
+// @route   PUT /api/orders/:id/assign
+// @access  Private/Admin
+const assignDeliveryPartner = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { deliveryPartnerId } = req.body;
+
+    const order = await Order.findById(id);
+    if (!order) {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+
+    order.deliveryPartner = deliveryPartnerId;
+    order.deliveryStatus = 'pending';
+    await order.save();
+
+    res.json({ message: 'Delivery Partner assigned', order });
+});
+
 export {
     addOrderItems,
     getOrderById,
@@ -347,5 +368,6 @@ export {
     updateOrderToDelivered,
     cancelOrder,
     hideOrder,
-    getDashboardStats
+    getDashboardStats,
+    assignDeliveryPartner
 };

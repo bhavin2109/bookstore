@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
+
 import { NavLink, Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
-// eslint-disable-next-line react/prop-types
 const AdminSidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -111,14 +111,13 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 };
 
 // Extracted Content Component for reuse
-// eslint-disable-next-line react/prop-types
 const SidebarContent = ({
   user,
   getInitials,
   handleLogout,
   dropdownOpen,
   setDropdownOpen,
-  // eslint-disable-next-line react/prop-types
+
   onLinkClick,
 }) => {
   const itemVariants = {
@@ -144,30 +143,40 @@ const SidebarContent = ({
 
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-        {["dashboard", "books-management", "orders"].map((path) => (
-          <motion.div key={path} variants={itemVariants}>
-            <NavLink
-              to={`/admin/${path}`}
-              onClick={onLinkClick}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`
-              }
-            >
-              <span className="text-lg">
-                {path === "dashboard" ? "📊" : path === "orders" ? "📦" : "📚"}
-              </span>
-              {path === "dashboard"
-                ? "Dashboard"
-                : path === "orders"
-                ? "Orders"
-                : "Books"}
-            </NavLink>
-          </motion.div>
-        ))}
+        {["dashboard", "books-management", "orders", "role-requests"].map(
+          (path) => (
+            <motion.div key={path} variants={itemVariants}>
+              <NavLink
+                to={`/admin/${path}`}
+                onClick={onLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`
+                }
+              >
+                <span className="text-lg">
+                  {path === "dashboard"
+                    ? "📊"
+                    : path === "orders"
+                    ? "📦"
+                    : path === "role-requests"
+                    ? "👥"
+                    : "📚"}
+                </span>
+                {path === "dashboard"
+                  ? "Dashboard"
+                  : path === "orders"
+                  ? "Orders"
+                  : path === "role-requests"
+                  ? "Role Requests"
+                  : "Books"}
+              </NavLink>
+            </motion.div>
+          )
+        )}
       </nav>
 
       {/* User Info / Dropdown */}

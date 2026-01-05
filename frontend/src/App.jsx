@@ -6,7 +6,12 @@ import ProtectRoute from "./components/ProtectRoute.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AuthRoute from "./components/AuthRoute.jsx";
+
+import SellerRoute from "./components/SellerRoute.jsx";
+import DeliveryRoute from "./components/DeliveryRoute.jsx";
 import Chatbot from "./components/Chatbot.jsx";
+import SellerLayout from "./layouts/SellerLayout.jsx";
+import DeliveryLayout from "./layouts/DeliveryLayout.jsx";
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -22,12 +27,32 @@ const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
 const SearchResults = lazy(() => import("./pages/SearchResults.jsx"));
+const SellerDashboard = lazy(() => import("./seller/SellerDashboard.jsx"));
+const SellerProducts = lazy(() => import("./seller/SellerProducts.jsx"));
+const SellerAddBook = lazy(() => import("./seller/SellerAddBook.jsx"));
+const SellerEditBook = lazy(() => import("./seller/SellerEditBook.jsx"));
+const SellerShopSettings = lazy(() =>
+  import("./seller/SellerShopSettings.jsx")
+);
+const SellerOrders = lazy(() => import("./seller/SellerOrders.jsx"));
+const Shop = lazy(() => import("./seller/Shop.jsx"));
+const SellerRegistration = lazy(() => import("./pages/SellerRegistration.jsx"));
+const DeliveryRegistration = lazy(() =>
+  import("./pages/DeliveryRegistration.jsx")
+);
+const DeliveryDashboard = lazy(() =>
+  import("./delivery/DeliveryDashboard.jsx")
+);
+const DeliveryJobs = lazy(() => import("./delivery/DeliveryJobs.jsx"));
+const DeliveryHistory = lazy(() => import("./delivery/DeliveryHistory.jsx"));
+const DeliveryProfile = lazy(() => import("./delivery/DeliveryProfile.jsx"));
 
 // Admin Components Lazy Load
 const AddBook = lazy(() => import("./admin/AddBook.jsx"));
 const EditBook = lazy(() => import("./admin/EditBook.jsx"));
 const AdminDashboard = lazy(() => import("./admin/AdminDashboard.jsx"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders.jsx"));
+const RoleRequests = lazy(() => import("./admin/RoleRequests.jsx"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -38,7 +63,10 @@ const LoadingSpinner = () => (
 
 const App = () => {
   const location = useLocation();
-  const hideLayout = location.pathname.startsWith("/admin");
+  const hideLayout =
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/seller") ||
+    location.pathname.startsWith("/delivery");
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -106,7 +134,45 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/my-orders" element={<MyOrders />} />
+            <Route
+              path="/seller-registration"
+              element={<SellerRegistration />}
+            />
+            <Route
+              path="/delivery-registration"
+              element={<DeliveryRegistration />}
+            />
           </Route>
+
+          {/* Seller Routes - Protected */}
+          <Route element={<SellerRoute />}>
+            <Route element={<SellerLayout />}>
+              <Route path="/seller" element={<SellerDashboard />} />
+              <Route path="/seller/products" element={<SellerProducts />} />
+              <Route path="/seller/add-product" element={<SellerAddBook />} />
+              <Route
+                path="/seller/edit-product/:id"
+                element={<SellerEditBook />}
+              />
+              <Route path="/seller/shop" element={<SellerShopSettings />} />
+              <Route path="/seller/orders" element={<SellerOrders />} />
+            </Route>
+          </Route>
+
+          {/* Delivery Routes - Protected */}
+          <Route element={<DeliveryRoute />}>
+            <Route element={<DeliveryLayout />}>
+              <Route path="/delivery" element={<DeliveryDashboard />} />
+              <Route path="/delivery/jobs" element={<DeliveryJobs />} />
+              <Route path="/delivery/history" element={<DeliveryHistory />} />
+              <Route path="/delivery/profile" element={<DeliveryProfile />} />
+            </Route>
+          </Route>
+
+          <Route path="/shop/:slug" element={<Shop />} />
           {/* Admin Routes - Protected */}
           <Route element={<ProtectRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
@@ -124,6 +190,7 @@ const App = () => {
             <Route path="/admin/books/edit/:id" element={<EditBook />} />
             <Route path="/admin/orders" element={<AdminDashboard />} />
             <Route path="/admin/orders/:status" element={<AdminDashboard />} />
+            <Route path="/admin/role-requests" element={<RoleRequests />} />
           </Route>
         </Routes>
       </Suspense>

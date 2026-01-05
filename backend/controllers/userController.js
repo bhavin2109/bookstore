@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Seller from "../models/Seller.js";
+import DeliveryPartner from "../models/DeliveryPartner.js";
 import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -325,6 +327,126 @@ export const googleAuthLogin = async (req, res) => {
   } catch (error) {
     console.error("Google Auth Error:", error);
     res.status(401).json({ message: "Google authentication failed", error: error.message });
+  }
+};
+
+export const requestRole = async (req, res) => {
+  try {
+    const { role, shopDetails, deliveryDetails } = req.body;
+    if (!["seller", "delivery"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role request" });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.roleRequestStatus === "pending") {
+      return res.status(400).json({ message: "You already have a pending request" });
+    }
+
+    user.roleRequest = role;
+    user.roleRequestStatus = "pending";
+
+    if (role === "seller" && shopDetails) {
+      user.shopDetails = shopDetails;
+    }
+    if (role === "delivery" && deliveryDetails) {
+      user.deliveryDetails = deliveryDetails;
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: "Role request submitted successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getRoleRequests = async (req, res) => {
+  try {
+    const users = await User.find({ roleRequestStatus: "pending" }).select("-password");
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const updateRoleRequest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // 'approved' or 'rejected'
+
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.roleRequestStatus !== "pending") {
+      return res.status(400).json({ message: "Request is not pending" });
+    }
+
+    if (status === "approved") {
+      user.role = user.roleRequest; // Upgrade role
+      user.roleRequestStatus = "approved";
+
+      // Create specific profile
+      if (user.role === "seller") {
+        const existingSeller = await Seller.findOne({ user: user._id });
+        if (!existingSeller) {
+          await Seller.create({
+            user: user._id,
+            storeName: user.shopDetails?.shopName || `${user.name}'s Store`,
+            storeDescription: user.shopDetails?.shopDescription || "",
+            slug: (user.shopDetails?.shopName || user.name).toLowerCase().replace(/\s+/g, '-') + '-' + Math.floor(Math.random() * 1000)
+          });
+        }
+      } else if (user.role === "delivery") {
+        const existingPartner = await DeliveryPartner.findOne({ user: user._id });
+        if (!existingPartner) {
+          await DeliveryPartner.create({
+            user: user._id,
+            vehicleType: user.deliveryDetails?.vehicleType || 'Bike',
+            vehicleNumber: user.deliveryDetails?.vehicleNumber || 'Unknown'
+          });
+        }
+      }
+
+    } else {
+      user.roleRequestStatus = "rejected";
+      user.roleRequest = undefined; // Reset request
+    }
+
+    await user.save();
+    res.status(200).json({ message: `Request ${status}`, user });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified,
+      roleRequest: user.roleRequest,
+      roleRequestStatus: user.roleRequestStatus,
+      avatar: user.avatar,
+      authProvider: user.authProvider,
+      shopDetails: user.shopDetails,
+      deliveryDetails: user.deliveryDetails
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

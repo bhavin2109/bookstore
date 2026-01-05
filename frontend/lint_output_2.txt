@@ -1,0 +1,19 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Projects\bookstore\frontend\src\admin\AdminSidebar.jsx
+    7:1  error  Definition for rule 'react/prop-types' was not found  react/prop-types
+  115:1  error  Definition for rule 'react/prop-types' was not found  react/prop-types
+  122:3  error  Definition for rule 'react/prop-types' was not found  react/prop-types
+  123:3  error  Definition for rule 'react/prop-types' was not found  react/prop-types
+
+C:\Projects\bookstore\frontend\src\components\Header.jsx
+  9:10  error  'useDispatch' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\Profile.jsx
+  13:7  error  Fast refresh only works when a file has exports. Move your component(s) to a separate file  react-refresh/only-export-components
+
+Γ£û 6 problems (6 errors, 0 warnings)
+

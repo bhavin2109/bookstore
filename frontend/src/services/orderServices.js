@@ -6,7 +6,7 @@ import { API_URL as BASE_URL } from "../config/api";
 const API_URL = `${BASE_URL}/api/orders`;
 
 // Create a new order
-const createOrder = async (orderData) => {
+export const createOrder = async (orderData) => {
     const token = localStorage.getItem("token");
 
     const config = {
@@ -21,7 +21,7 @@ const createOrder = async (orderData) => {
 };
 
 // Get order details by ID
-const getOrderById = async (id) => {
+export const getOrderById = async (id) => {
     const token = localStorage.getItem("token");
 
     const config = {
@@ -35,7 +35,7 @@ const getOrderById = async (id) => {
 };
 
 // Pay for order (update status)
-const payOrder = async (orderId, paymentResult) => {
+export const payOrder = async (orderId, paymentResult) => {
     const token = localStorage.getItem("token");
 
     const config = {
@@ -54,7 +54,7 @@ const payOrder = async (orderId, paymentResult) => {
 };
 
 // Get logged-in user's orders
-const getMyOrders = async () => {
+export const getMyOrders = async () => {
     const token = localStorage.getItem("token");
 
     const config = {
@@ -67,11 +67,31 @@ const getMyOrders = async () => {
     return response.data;
 };
 
+// Assign delivery partner
+export const assignOrder = async (orderId, deliveryPartnerId) => {
+    const token = localStorage.getItem("token");
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    };
+
+    const response = await axios.put(
+        `${API_URL}/${orderId}/assign`,
+        { deliveryPartnerId },
+        config
+    );
+    return response.data;
+};
+
 const orderService = {
     createOrder,
     getOrderById,
     payOrder,
     getMyOrders,
+    assignOrder,
 };
 
 export default orderService;

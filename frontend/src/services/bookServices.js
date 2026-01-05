@@ -1,21 +1,12 @@
-import axios from "axios";
-import { API_URL } from "../config/api";
+import axiosInstance from "../api/axios";
 
-const API = axios.create({
-  baseURL: `${API_URL}/api/books`,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// Using the centralized instance
+const API = axiosInstance;
 
 // CREATE BOOK
-export const createBook = async (data, token) => {
+export const createBook = async (data) => {
   try {
-    const response = await API.post("/", data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await API.post("/api/books/", data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -23,13 +14,9 @@ export const createBook = async (data, token) => {
 };
 
 // CREATE MANY BOOKS
-export const createManyBooks = async (data, token) => {
+export const createManyBooks = async (data) => {
   try {
-    const response = await API.post("/bulk", data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await API.post("/api/books/bulk", data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -39,7 +26,7 @@ export const createManyBooks = async (data, token) => {
 // GET ALL BOOKS
 export const getAllBooks = async () => {
   try {
-    const response = await API.get("/");
+    const response = await API.get("/api/books/");
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -49,7 +36,7 @@ export const getAllBooks = async () => {
 // GET SINGLE BOOK
 export const getBookById = async (id) => {
   try {
-    const response = await API.get(`/${id}`);
+    const response = await API.get(`/api/books/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -57,13 +44,9 @@ export const getBookById = async (id) => {
 };
 
 // UPDATE BOOK
-export const updateBook = async (id, data, token) => {
+export const updateBook = async (id, data) => {
   try {
-    const response = await API.put(`/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await API.put(`/api/books/${id}`, data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -71,13 +54,9 @@ export const updateBook = async (id, data, token) => {
 };
 
 // DELETE BOOK
-export const deleteBook = async (id, token) => {
+export const deleteBook = async (id) => {
   try {
-    const response = await API.delete(`/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await API.delete(`/api/books/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -87,7 +66,7 @@ export const deleteBook = async (id, token) => {
 // GET BOOK COUNT
 export const getBookCount = async () => {
   try {
-    const response = await API.get("/count");
+    const response = await API.get("/api/books/count");
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -97,7 +76,7 @@ export const getBookCount = async () => {
 // GET USER COUNT
 export const getUserCount = async () => {
   try {
-    const response = await API.get("/user-count");
+    const response = await API.get("/api/books/user-count");
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

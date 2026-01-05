@@ -6,19 +6,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchBar from "./SearchBar";
 
-import { addToCart } from "../../store/cartSlice";
-import { useDispatch } from "react-redux";
-
 const Header = () => {
   const { items: cartItems } = useSelector((state) => state.cart);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSeller, setIsSeller] = useState(false);
+  const [isDelivery, setIsDelivery] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   // Read auth from localStorage
@@ -41,7 +40,10 @@ const Header = () => {
 
       setLoggedIn(!!token);
       setUserName(name || "");
+      setUserName(name || "");
       setIsAdmin(role === "admin");
+      setIsSeller(role === "seller");
+      setIsDelivery(role === "delivery");
     };
 
     readAuth();
@@ -194,6 +196,32 @@ const Header = () => {
                       }}
                     >
                       Admin Dashboard
+                    </button>
+                  )}
+
+                  {isSeller && (
+                    <button
+                      type="button"
+                      className="block w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                      onClick={() => {
+                        setShowMenu(false);
+                        navigate("/seller");
+                      }}
+                    >
+                      Seller Dashboard
+                    </button>
+                  )}
+
+                  {isDelivery && (
+                    <button
+                      type="button"
+                      className="block w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                      onClick={() => {
+                        setShowMenu(false);
+                        navigate("/delivery");
+                      }}
+                    >
+                      Delivery Partner
                     </button>
                   )}
 
@@ -415,6 +443,44 @@ const Header = () => {
                               className="block w-full text-left py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all text-lg pl-4 border-l-2 border-emerald-500/50 hover:border-emerald-500"
                             >
                               Admin Dashboard
+                            </button>
+                          </motion.div>
+                        )}
+
+                        {isSeller && (
+                          <motion.div
+                            variants={{
+                              open: { x: 0, opacity: 1 },
+                              closed: { x: -20, opacity: 0 },
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                navigate("/seller");
+                              }}
+                              className="block w-full text-left py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all text-lg pl-4 border-l-2 border-emerald-500/50 hover:border-emerald-500"
+                            >
+                              Seller Dashboard
+                            </button>
+                          </motion.div>
+                        )}
+
+                        {isDelivery && (
+                          <motion.div
+                            variants={{
+                              open: { x: 0, opacity: 1 },
+                              closed: { x: -20, opacity: 0 },
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                navigate("/delivery");
+                              }}
+                              className="block w-full text-left py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all text-lg pl-4 border-l-2 border-emerald-500/50 hover:border-emerald-500"
+                            >
+                              Delivery Partner
                             </button>
                           </motion.div>
                         )}

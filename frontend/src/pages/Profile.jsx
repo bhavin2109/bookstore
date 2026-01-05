@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-import { resendOtp as resendOtpApi } from "../services/authServices";
+import {
+  resendOtp as resendOtpApi,
+  requestRole,
+  getProfile,
+} from "../services/authServices";
 import { toast } from "react-toastify";
-
-const Profile = () => {
+// eslint-disable-next-line react-refresh/only-export-components
+export default function Profile() {
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(() => {
     try {
       const userStr = localStorage.getItem("user");
@@ -34,10 +37,34 @@ const Profile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token || !user) {
+    if (!token) {
       navigate("/login");
+      return;
     }
-  }, [navigate, user]);
+
+    const fetchProfile = async () => {
+      try {
+        const userData = await getProfile();
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+      }
+    };
+    fetchProfile();
+  }, [navigate]);
+
+  const handleRoleRequest = async (role) => {
+    try {
+      if (!confirm(`Are you sure you want to become a ${role}?`)) return;
+      const res = await requestRole(role);
+      toast.success(res.message);
+      setUser(res.user);
+      localStorage.setItem("user", JSON.stringify(res.user));
+    } catch (error) {
+      toast.error(error.message || "Failed to request role");
+    }
+  };
 
   if (!user) {
     return (
@@ -186,6 +213,63 @@ const Profile = () => {
               </div>
             </div>
 
+            {/* Role Management Section */}
+            <div className="bg-slate-950 rounded-2xl border border-white/10 p-8 shadow-xl">
+              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <span className="text-emerald-400">💼</span> Join Our Team
+              </h3>
+
+              {user.roleRequestStatus === "pending" ? (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
+                  <p className="text-yellow-400 font-medium">
+                    Your request to become a{" "}
+                    <span className="font-bold uppercase">
+                      {user.roleRequest}
+                    </span>{" "}
+                    is currently pending approval.
+                  </p>
+                </div>
+              ) : user.role === "user" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => navigate("/seller-registration")}
+                    className="flex flex-col items-center justify-center p-6 bg-slate-900 hover:bg-slate-800 border border-white/10 rounded-xl transition-all group"
+                  >
+                    <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+                      🏪
+                    </span>
+                    <span className="font-bold text-white">
+                      Become a Seller
+                    </span>
+                    <span className="text-xs text-slate-400 mt-1">
+                      Start selling your books
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => navigate("/delivery-registration")}
+                    className="flex flex-col items-center justify-center p-6 bg-slate-900 hover:bg-slate-800 border border-white/10 rounded-xl transition-all group"
+                  >
+                    <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+                      🚚
+                    </span>
+                    <span className="font-bold text-white">
+                      Become a Delivery Partner
+                    </span>
+                    <span className="text-xs text-slate-400 mt-1">
+                      Earn by delivering orders
+                    </span>
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 text-center">
+                  <p className="text-emerald-400 font-medium">
+                    You are a registered{" "}
+                    <span className="font-bold uppercase">{user.role}</span>.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Recent Activity or Placeholder */}
             <div className="bg-slate-950 rounded-2xl border border-white/10 p-8 shadow-xl opacity-60">
               <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -200,6 +284,4 @@ const Profile = () => {
       </div>
     </div>
   );
-};
-
-export default Profile;
+}

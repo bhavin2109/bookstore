@@ -26,4 +26,21 @@ export const adminOnly = (req, res, next) => {
     } else {
         res.status(401).json({ message: 'Not authorized, admin only' });
     }
+};
+
+
+export const sellerOnly = (req, res, next) => {
+    if (req.user && (req.user.role === 'seller' || req.user.role === 'admin')) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized, seller only' });
+    }
+}
+
+export const deliveryOnly = (req, res, next) => {
+    if (req.user && (req.user.role === 'delivery' || req.user.role === 'admin')) {
+        next();
+    } else {
+        res.status(401).json({ message: 'Not authorized, delivery partner only' });
+    }
 }

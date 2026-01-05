@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { verifyOtp as verifyOtpAPI } from "../services/authServices";
+import {
+  verifyOtp as verifyOtpAPI,
+  resendOtp as resendOtpAPI,
+} from "../services/authServices";
 
 function VerifyOtp() {
   const navigate = useNavigate();

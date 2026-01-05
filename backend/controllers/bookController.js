@@ -1,11 +1,19 @@
 import Book from '../models/Book.js';
 import Users from '../models/User.js';
+import Seller from '../models/Seller.js';
 import mongoose from 'mongoose';
 
 export const createBook = async (req, res) => {
     try {
         // Enforce strict fields from the request body
         const { title, author, description, price, genre, image } = req.body;
+
+        let sellerId = undefined;
+        if (req.user && req.user.role === 'seller') {
+            const sellerProfile = await Seller.findOne({ user: req.user._id });
+            if (!sellerProfile) return res.status(403).json({ message: 'Seller profile not found' });
+            sellerId = sellerProfile._id;
+        }
 
         const book = await Book.create({
             title,
@@ -14,7 +22,8 @@ export const createBook = async (req, res) => {
             price,
             genre,
             image,
-            createdBy: req.user._id
+            createdBy: req.user._id,
+            seller: sellerId
         });
         res.status(201).json({ message: 'Book created successfully', book });
     } catch (error) {
@@ -147,9 +156,17 @@ export const getSingleBook = async (req, res) => {
 export const updateBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const book = await Book.findByIdAndUpdate(id, req.body, { new: true });
+        let query = { _id: id };
+
+        if (req.user && req.user.role === 'seller') {
+            const seller = await Seller.findOne({ user: req.user._id });
+            if (!seller) return res.status(403).json({ message: 'Seller profile not found' });
+            query.seller = seller._id;
+        }
+
+        const book = await Book.findOneAndUpdate(query, req.body, { new: true });
         if (!book) {
-            return res.status(404).json({ message: 'Book not found' });
+            return res.status(404).json({ message: 'Book not found or not authorized' });
         }
         res.status(200).json(book);
     } catch (error) {
@@ -160,9 +177,17 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
     try {
         const { id } = req.params;
-        const book = await Book.findByIdAndDelete(id);
+        let query = { _id: id };
+
+        if (req.user && req.user.role === 'seller') {
+            const seller = await Seller.findOne({ user: req.user._id });
+            if (!seller) return res.status(403).json({ message: 'Seller profile not found' });
+            query.seller = seller._id;
+        }
+
+        const book = await Book.findOneAndDelete(query);
         if (!book) {
-            return res.status(404).json({ message: 'Book not found' });
+            return res.status(404).json({ message: 'Book not found or not authorized' });
         }
         res.status(200).json({ message: 'Book deleted successfully' });
     } catch (error) {

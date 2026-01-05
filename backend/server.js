@@ -3,7 +3,10 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+
 import connectDB from './config/db.js';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 // Check environment variables
 console.log('🔍 Environment Configuration Check:');
@@ -21,8 +24,11 @@ import userRoutes from './routes/userRoutes.js';
 import bookRoutes from './routes/bookRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import chatRoutes from './routes/chat.routes.js';
+import sellerRoutes from './routes/sellerRoutes.js';
+import deliveryRoutes from './routes/deliveryRoutes.js';
 
 const app = express();
+const httpServer = createServer(app);
 
 // CORS configuration - allow all origins in production for Vercel
 const corsOptions = {
@@ -38,12 +44,7 @@ const corsOptions = {
       "https://bookstore-rnnf.onrender.com", // Render deployment
     ];
 
-    // In production, allow all Vercel deployments
-    if (process.env.NODE_ENV === 'production' || origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
       callback(null, true);
     } else {
       callback(null, true); // Allow all for now
@@ -53,6 +54,32 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200
 };
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Simplify for socket since we have cors middleware
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log(`Socket Connected: ${socket.id}`);
+
+  socket.on("join_order", (orderId) => {
+    socket.join(orderId);
+    console.log(`User/Partner joined order room: ${orderId}`);
+  });
+
+  socket.on("location_update", (data) => {
+    // data: { orderId, location: { lat, lng } }
+    io.to(data.orderId).emit("location_update", data.location);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Socket Disconnected");
+  });
+});
+
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
@@ -69,7 +96,10 @@ app.use("/api/books", bookRoutes);
 app.use('/api/admin/books', bookRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/orders', orderRoutes);
+
 app.use('/api/chat', chatRoutes);
+app.use('/api/sellers', sellerRoutes);
+app.use('/api/delivery', deliveryRoutes);
 
 const PORT = process.env.PORT || 5000;
 
@@ -87,7 +117,7 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port: http://localhost:${PORT}`);
 });
 

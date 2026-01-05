@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../api/axios";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import TrackingMap from "../components/TrackingMap";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -16,10 +18,7 @@ const MyOrders = () => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const { data } = await axios.get(
-        "http://localhost:5000/api/orders/myorders",
-        config
-      );
+      const { data } = await axiosInstance.get("/api/orders/myorders", config);
       setOrders(data);
     } catch (error) {
       toast.error(
@@ -40,15 +39,12 @@ const MyOrders = () => {
     if (window.confirm("Remove this order from your history?")) {
       try {
         const token = localStorage.getItem("token");
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        await axios.put(
-          `http://localhost:5000/api/orders/${id}/hide`,
+        await axiosInstance.put(
+          `/api/orders/${id}/hide`,
           {},
-          config
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         toast.success("Order removed from history");
         setOrders((prev) => prev.filter((order) => order._id !== id));
@@ -66,15 +62,12 @@ const MyOrders = () => {
     if (window.confirm("Are you sure you want to cancel this order?")) {
       try {
         const token = localStorage.getItem("token");
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        await axios.put(
-          `http://localhost:5000/api/orders/${id}/cancel`,
+        await axiosInstance.put(
+          `/api/orders/${id}/cancel`,
           {},
-          config
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         toast.success("Order cancelled successfully");
         fetchOrders(); // Refresh to update status
@@ -268,7 +261,34 @@ const MyOrders = () => {
                         )}{" "}
                         items
                       </p>
+                      <p className="mt-2 text-sm text-slate-400">
+                        {order.orderItems.reduce(
+                          (acc, item) => acc + item.quantity,
+                          0
+                        )}{" "}
+                        items
+                      </p>
                     </div>
+
+                    {/* Live Tracking Map */}
+                    {order.deliveryStatus === "out_for_delivery" && (
+                      <div className="mt-4 mb-2">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                          </span>
+                          <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
+                            Live Delivery Tracking
+                          </span>
+                        </div>
+                        <TrackingMap orderId={order._id} />
+                        <p className="text-xs text-slate-500 mt-2 text-center">
+                          Your order is on the way! Watch the delivery partner
+                          approach.
+                        </p>
+                      </div>
+                    )}
 
                     {/* Footer */}
                     <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">

@@ -6,6 +6,14 @@ const orderSchema = mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    seller: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Seller'
+    },
+    deliveryPartner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DeliveryPartner'
+    },
     orderItems: [
         {
             title: { type: String, required: true },
@@ -70,6 +78,14 @@ const orderSchema = mongoose.Schema({
         type: Boolean,
         required: true,
         default: true
+    },
+    deliveryStatus: {
+        type: String,
+        enum: ['pending', 'out_for_delivery', 'delivered'],
+        default: 'pending'
+    },
+    deliveryOtp: {
+        type: String
     }
 }, {
     timestamps: true

@@ -4,9 +4,11 @@ import { motion as Motion, AnimatePresence } from "framer-motion";
 import AdminSidebar from "./AdminSidebar";
 import BooksManagement from "./BooksManagement";
 import AdminOrders from "./AdminOrders";
+
+import RoleRequests from "./RoleRequests";
 import DashboardStatistics from "./DashboardStatistics";
-import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../api/axios";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +27,7 @@ const AdminDashboard = () => {
   // Determine active view based on URL
   const isBooksView = location.pathname.includes("books-management");
   const isOrdersView = location.pathname.includes("orders");
+  const isRoleRequestsView = location.pathname.includes("role-requests");
 
   useEffect(() => {
     // Auth Check
@@ -54,20 +57,14 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Only fetch stats if we are on the dashboard view
-    if (!isBooksView && !isOrdersView) {
+    if (!isBooksView && !isOrdersView && !isRoleRequestsView) {
       const fetchStats = async () => {
         try {
           const token = localStorage.getItem("token");
-          const config = {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          };
-          const { data } = await axios.get(
-            `http://localhost:5000/api/orders/stats`,
-            config
-          );
-          setStats(data);
+          const res = await axiosInstance.get(`/api/orders/stats`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setStats(res.data);
         } catch (error) {
           console.error("Error fetching admin stats:", error);
           toast.error("Failed to load dashboard statistics.");
@@ -78,7 +75,7 @@ const AdminDashboard = () => {
 
       fetchStats();
     }
-  }, [isBooksView, isOrdersView]);
+  }, [isBooksView, isOrdersView, isRoleRequestsView]);
 
   return (
     <div className="flex h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden">
@@ -124,6 +121,8 @@ const AdminDashboard = () => {
                     </span>
                   )}
                 </span>
+              ) : isRoleRequestsView ? (
+                "Role Requests"
               ) : (
                 "Admin Dashboard"
               )}
@@ -149,7 +148,7 @@ const AdminDashboard = () => {
 
         <main
           className={`min-h-[calc(100vh-4rem)] ${
-            isBooksView || isOrdersView ? "p-0" : "p-6"
+            isBooksView || isOrdersView || isRoleRequestsView ? "p-0" : "p-6"
           }`}
         >
           <AnimatePresence mode="wait">
@@ -172,6 +171,16 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <AdminOrders />
+              </Motion.div>
+            ) : isRoleRequestsView ? (
+              <Motion.div
+                key="role-requests"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                <RoleRequests />
               </Motion.div>
             ) : (
               <Motion.div

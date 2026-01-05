@@ -1,16 +1,10 @@
-import axios from 'axios';
-import { API_URL } from '../config/api';
+import axiosInstance from '../api/axios';
 
-const API = axios.create({
-  baseURL: API_URL + '/api/user',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const API = axiosInstance;
 
 export const registerUser = async (data) => {
   try {
-    const response = await API.post('/register', {
+    const response = await API.post('/api/user/register', {
       name: data.name || data.username,
       email: data.email,
       password: data.password,
@@ -23,7 +17,7 @@ export const registerUser = async (data) => {
 
 export const verifyOtp = async (data) => {
   try {
-    const response = await API.post('/verify-otp', {
+    const response = await API.post('/api/user/verify-otp', {
       email: data.email,
       otp: data.otp,
     });
@@ -35,7 +29,7 @@ export const verifyOtp = async (data) => {
 
 export const loginUser = async (data) => {
   try {
-    const response = await API.post('/login', data);
+    const response = await API.post('/api/user/login', data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -44,7 +38,7 @@ export const loginUser = async (data) => {
 
 export const resendOtp = async (email) => {
   try {
-    const response = await API.post('/resend-otp', { email });
+    const response = await API.post('/api/user/resend-otp', { email });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -53,7 +47,46 @@ export const resendOtp = async (email) => {
 
 export const googleLogin = async (token) => {
   try {
-    const response = await API.post('/google', { token });
+    const response = await API.post('/api/user/google', { token });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    const response = await API.get('/api/user/profile');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const requestRole = async (role) => {
+  try {
+    const response = await API.post('/api/user/request-role', { role });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getRoleRequests = async () => {
+  try {
+    const response = await API.get('/api/user/admin/role-requests');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateRoleRequest = async (id, status) => {
+  try {
+    const response = await API.put(
+      `/api/user/admin/role-requests/${id}`,
+      { status }
+    );
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

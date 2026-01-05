@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "seller", "delivery"],
       default: "user",
     },
     authProvider: {
@@ -38,6 +38,25 @@ const userSchema = new mongoose.Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    roleRequest: {
+      type: String,
+      enum: ["seller", "delivery"],
+    },
+    roleRequestStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: null,
+    },
+    shopDetails: {
+      shopName: String,
+      shopDescription: String,
+      shopAddress: String,
+    },
+    deliveryDetails: {
+      vehicleType: String,
+      vehicleNumber: String,
+      licenseNumber: String,
     },
   },
   { timestamps: true }
