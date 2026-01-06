@@ -31,7 +31,56 @@ import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 const app = express();
 const httpServer = createServer(app);
 
-// ... (CORS and Socket setup remains same) ...
+// CORS configuration - allow all origins in production for Vercel
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+      "https://nerdyenough.vercel.app", // Vercel deployment
+      "https://bookstore-rnnf.onrender.com", // Render deployment
+    ];
+
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Simplify for socket since we have cors middleware
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log(`Socket Connected: ${socket.id}`);
+
+  socket.on("join_order", (orderId) => {
+    socket.join(orderId);
+    console.log(`User/Partner joined order room: ${orderId}`);
+  });
+
+  socket.on("location_update", (data) => {
+    // data: { orderId, location: { lat, lng } }
+    io.to(data.orderId).emit("location_update", data.location);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Socket Disconnected");
+  });
+});
+
 
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
@@ -67,4 +116,3 @@ app.use(errorHandler);
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port: http://localhost:${PORT}`);
 });
-
