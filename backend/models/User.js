@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       type: Date,
     },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
     role: {
       type: String,
       enum: ["user", "admin", "seller", "delivery"],

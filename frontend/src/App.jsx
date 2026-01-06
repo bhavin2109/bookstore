@@ -22,6 +22,8 @@ const ContactUs = lazy(() => import("./pages/ContactUs.jsx"));
 const Register = lazy(() => import("./pages/Register.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
 const VerifyOtp = lazy(() => import("./pages/VerifyOtp.jsx"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.jsx"));
 const Profile = lazy(() => import("./pages/Profile.jsx"));
 const BookDetails = lazy(() => import("./pages/BookDetails.jsx"));
 const Cart = lazy(() => import("./pages/Cart.jsx"));
@@ -136,6 +138,8 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/terms" element={<TermsAndConditions />} />

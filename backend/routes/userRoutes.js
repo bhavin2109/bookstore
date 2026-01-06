@@ -1,6 +1,6 @@
 import express from 'express';
 import sendOtpMail from '../middlewares/sendOtpMail.js';
-import { register, verifyOtp, deleteUser, login, resendOtp, googleAuthLogin, requestRole, getRoleRequests, updateRoleRequest, getUserProfile, toggleWishlist, getWishlist, addAddress, removeAddress, updateAddress, getUserAddresses } from '../controllers/userController.js';
+import { register, verifyOtp, deleteUser, login, resendOtp, googleAuthLogin, requestRole, getRoleRequests, updateRoleRequest, getUserProfile, toggleWishlist, getWishlist, addAddress, removeAddress, updateAddress, getUserAddresses, forgotPassword, resetPassword } from '../controllers/userController.js';
 import { protect, adminOnly } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -22,6 +22,10 @@ router.post('/verify-otp', verifyOtp);
 router.post('/login', login);
 router.post('/login', login);
 router.post('/google', googleAuthLogin);
+
+// Password Reset Routes
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:token', resetPassword);
 
 // Role Management Routes
 router.post('/request-role', protect, requestRole);

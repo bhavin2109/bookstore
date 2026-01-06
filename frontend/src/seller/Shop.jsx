@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getStoreBySlug } from "../services/sellerServices";
+import { getPublicShop } from "../services/sellerServices";
 import { toast } from "react-toastify";
 
 const Shop = () => {
@@ -12,7 +12,7 @@ const Shop = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getStoreBySlug(slug);
+        const res = await getPublicShop(slug);
         setData(res);
       } catch {
         toast.error("Store not found");

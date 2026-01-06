@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getSingleBook, updateBook } from "../services/bookServices";
+import { getBookById, updateBook } from "../services/bookServices";
 import { toast } from "react-toastify";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -22,7 +22,7 @@ const SellerEditBook = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const book = await getSingleBook(id);
+        const book = await getBookById(id);
         setFormData({
           title: book.title,
           author: book.author,

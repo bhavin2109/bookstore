@@ -36,6 +36,29 @@ export const loginUser = async (data) => {
   }
 };
 
+export const logout = () => {
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await API.post('/api/user/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const resetPassword = async (token, password) => {
+  try {
+    const response = await API.post(`/api/user/reset-password/${token}`, { password });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const resendOtp = async (email) => {
   try {
     const response = await API.post('/api/user/resend-otp', { email });
