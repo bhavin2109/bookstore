@@ -127,9 +127,44 @@ export const createManyBooks = async (req, res) => {
 
 export const getAllBooks = async (req, res) => {
     try {
-        const books = await Book.find().sort({ createdAt: -1 });
+        const { keyword, genre, priceMin, priceMax, rating, page = 1, limit = 12 } = req.query;
 
-        res.status(200).json({ books });
+        let query = {};
+
+        if (keyword) {
+            query.$or = [
+                { title: { $regex: keyword, $options: 'i' } },
+                { author: { $regex: keyword, $options: 'i' } },
+                { description: { $regex: keyword, $options: 'i' } }
+            ];
+        }
+
+        if (genre) {
+            query.genre = genre;
+        }
+
+        if (priceMin || priceMax) {
+            query.price = {};
+            if (priceMin) query.price.$gte = Number(priceMin);
+            if (priceMax) query.price.$lte = Number(priceMax);
+        }
+
+        if (rating) {
+            query.rating = { $gte: Number(rating) };
+        }
+
+        const count = await Book.countDocuments(query);
+        const books = await Book.find(query)
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        res.status(200).json({
+            books,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            totalBooks: count
+        });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }

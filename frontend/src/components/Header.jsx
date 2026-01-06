@@ -108,6 +108,28 @@ const Header = () => {
             </Link>
           ))}
 
+          {/* Wishlist Icon */}
+          <Link
+            to="/wishlist"
+            className="group relative flex items-center justify-center rounded-full p-2 text-slate-300 transition hover:bg-white/5 hover:text-emerald-400"
+            aria-label="Wishlist"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+              />
+            </svg>
+          </Link>
+
           {/* Cart Icon */}
           <Link
             to="/cart"
@@ -355,6 +377,28 @@ const Header = () => {
                           </Link>
                         </motion.div>
                       ))}
+                    </div>
+
+                    {/* Wishlist Link Mobile */}
+                    <div className="flex flex-col space-y-2">
+                      <motion.div
+                        variants={{
+                          open: { x: 0, opacity: 1 },
+                          closed: { x: -20, opacity: 0 },
+                        }}
+                        className="w-full"
+                      >
+                        <Link
+                          to="/wishlist"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            navigate("/wishlist");
+                          }}
+                          className="flex w-full items-center justify-between py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-all text-lg pl-4 border-l-2 border-transparent hover:border-emerald-500"
+                        >
+                          <span>Wishlist</span>
+                        </Link>
+                      </motion.div>
                     </div>
 
                     {/* Cart Link Mobile */}

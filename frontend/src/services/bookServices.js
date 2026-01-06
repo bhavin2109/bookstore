@@ -24,9 +24,9 @@ export const createManyBooks = async (data) => {
 };
 
 // GET ALL BOOKS
-export const getAllBooks = async () => {
+export const getAllBooks = async (params) => {
   try {
-    const response = await API.get("/api/books/");
+    const response = await API.get("/api/books/", { params });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

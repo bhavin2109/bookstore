@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
+import AddressBook from "../components/AddressBook";
 
 import {
   resendOtp as resendOtpApi,
@@ -270,15 +271,8 @@ export default function Profile() {
               )}
             </div>
 
-            {/* Recent Activity or Placeholder */}
-            <div className="bg-slate-950 rounded-2xl border border-white/10 p-8 shadow-xl opacity-60">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <span className="text-emerald-400">🕒</span> Recent Activity
-              </h3>
-              <p className="text-slate-500 text-sm italic">
-                No recent activity to show.
-              </p>
-            </div>
+            {/* Address Book */}
+            <AddressBook />
           </motion.div>
         </div>
       </div>

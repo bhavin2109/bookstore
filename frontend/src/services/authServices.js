@@ -92,3 +92,59 @@ export const updateRoleRequest = async (id, status) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Wishlist Services
+export const toggleWishlist = async (bookId) => {
+  try {
+    const response = await API.post('/api/user/wishlist', { bookId });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getWishlist = async () => {
+  try {
+    const response = await API.get('/api/user/wishlist');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Address Services
+export const addAddress = async (address) => {
+  try {
+    const response = await API.post('/api/user/address', address);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const removeAddress = async (addressId) => {
+  try {
+    const response = await API.delete(`/api/user/address/${addressId}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateAddress = async (addressId, address) => {
+  try {
+    const response = await API.put(`/api/user/address/${addressId}`, address);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getUserAddresses = async () => {
+  try {
+    const response = await API.get('/api/user/address');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

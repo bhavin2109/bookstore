@@ -277,6 +277,51 @@ function AboutUs() {
             ))}
           </motion.div>
         </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="rounded-3xl bg-slate-950 p-10 border border-white/10"
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-center md:text-left">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Legal Information
+              </h2>
+              <p className="text-slate-400 max-w-xl">
+                We believe in transparency. Review our policies to understand
+                how we operate and protect your rights.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a
+                href="/terms"
+                className="px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors text-sm font-medium"
+              >
+                Terms
+              </a>
+              <a
+                href="/privacy"
+                className="px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors text-sm font-medium"
+              >
+                Privacy
+              </a>
+              <a
+                href="/refund"
+                className="px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors text-sm font-medium"
+              >
+                Refunds
+              </a>
+              <a
+                href="/disclaimer"
+                className="px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors text-sm font-medium"
+              >
+                Disclaimer
+              </a>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <motion.section

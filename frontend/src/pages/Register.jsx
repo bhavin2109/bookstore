@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
@@ -20,6 +20,8 @@ function Register() {
     window.scrollTo(0, 0);
   }, []);
 
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -37,6 +39,14 @@ function Register() {
 
     if (form.password.length < 6) {
       toast.error("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+
+    if (!agreedToTerms) {
+      toast.error(
+        "You must agree to the Terms & Conditions and Privacy Policy"
+      );
       setLoading(false);
       return;
     }
@@ -262,6 +272,57 @@ function Register() {
               </motion.div>
             </div>
 
+            <motion.div
+              variants={itemVariants}
+              className="flex items-start gap-3"
+            >
+              <div className="flex items-center h-5">
+                <input
+                  id="terms"
+                  name="terms"
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900"
+                />
+              </div>
+              <label htmlFor="terms" className="text-sm text-slate-400">
+                I agree to the{" "}
+                <Link
+                  to="/terms"
+                  target="_blank"
+                  className="text-emerald-400 hover:underline"
+                >
+                  Terms & Conditions
+                </Link>
+                ,{" "}
+                <Link
+                  to="/privacy"
+                  target="_blank"
+                  className="text-emerald-400 hover:underline"
+                >
+                  Privacy Policy
+                </Link>
+                ,{" "}
+                <Link
+                  to="/refund"
+                  target="_blank"
+                  className="text-emerald-400 hover:underline"
+                >
+                  Refund Policy
+                </Link>{" "}
+                and{" "}
+                <Link
+                  to="/disclaimer"
+                  target="_blank"
+                  className="text-emerald-400 hover:underline"
+                >
+                  Disclaimer
+                </Link>
+                .
+              </label>
+            </motion.div>
+
             <motion.button
               variants={itemVariants}
               whileHover={{ scale: 1.02 }}
@@ -296,23 +357,27 @@ function Register() {
                 </a>
               </p>
             </motion.div>
-            
-            <motion.div variants={itemVariants} className="my-6 flex items-center">
-                <div className="h-px flex-1 bg-slate-800" />
-                <span className="px-4 text-xs text-slate-500 uppercase">Or sign up with</span>
-                <div className="h-px flex-1 bg-slate-800" />
+
+            <motion.div
+              variants={itemVariants}
+              className="my-6 flex items-center"
+            >
+              <div className="h-px flex-1 bg-slate-800" />
+              <span className="px-4 text-xs text-slate-500 uppercase">
+                Or sign up with
+              </span>
+              <div className="h-px flex-1 bg-slate-800" />
             </motion.div>
 
             <motion.div variants={itemVariants} className="flex justify-center">
-                <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() => toast.error("Google Sign-Up Failed")}
-                    theme="filled_black"
-                    shape="pill"
-                    text="signup_with"
-                />
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error("Google Sign-Up Failed")}
+                theme="filled_black"
+                shape="pill"
+                text="signup_with"
+              />
             </motion.div>
-
           </motion.form>
         )}
       </motion.div>

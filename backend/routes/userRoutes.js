@@ -1,6 +1,6 @@
 import express from 'express';
 import sendOtpMail from '../middlewares/sendOtpMail.js';
-import { register, verifyOtp, deleteUser, login, resendOtp, googleAuthLogin, requestRole, getRoleRequests, updateRoleRequest, getUserProfile } from '../controllers/userController.js';
+import { register, verifyOtp, deleteUser, login, resendOtp, googleAuthLogin, requestRole, getRoleRequests, updateRoleRequest, getUserProfile, toggleWishlist, getWishlist, addAddress, removeAddress, updateAddress, getUserAddresses } from '../controllers/userController.js';
 import { protect, adminOnly } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -28,6 +28,16 @@ router.post('/request-role', protect, requestRole);
 router.get('/profile', protect, getUserProfile);
 router.get('/admin/role-requests', protect, adminOnly, getRoleRequests);
 router.put('/admin/role-requests/:id', protect, adminOnly, updateRoleRequest);
+
+// Wishlist Management
+router.post('/wishlist', protect, toggleWishlist);
+router.get('/wishlist', protect, getWishlist);
+
+// Address Management
+router.post('/address', protect, addAddress);
+router.delete('/address/:addressId', protect, removeAddress);
+router.put('/address/:addressId', protect, updateAddress);
+router.get('/address', protect, getUserAddresses);
 
 // DELETE route for testing - remove in production
 router.delete('/delete-user', deleteUser);

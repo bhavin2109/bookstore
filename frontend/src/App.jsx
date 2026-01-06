@@ -14,6 +14,7 @@ import SellerLayout from "./layouts/SellerLayout.jsx";
 import DeliveryLayout from "./layouts/DeliveryLayout.jsx";
 
 // Lazy Load Pages
+// Lazy Load Pages
 const Home = lazy(() => import("./pages/Home.jsx"));
 const Books = lazy(() => import("./pages/Books.jsx"));
 const AboutUs = lazy(() => import("./pages/AboutUs.jsx"));
@@ -27,6 +28,15 @@ const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const MyOrders = lazy(() => import("./pages/MyOrders.jsx"));
 const SearchResults = lazy(() => import("./pages/SearchResults.jsx"));
+const Wishlist = lazy(() => import("./pages/Wishlist.jsx"));
+
+// Legal Pages
+const TermsAndConditions = lazy(() =>
+  import("./pages/legal/TermsAndConditions.jsx")
+);
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy.jsx"));
+const RefundPolicy = lazy(() => import("./pages/legal/RefundPolicy.jsx"));
+const Disclaimer = lazy(() => import("./pages/legal/Disclaimer.jsx"));
 const SellerDashboard = lazy(() => import("./seller/SellerDashboard.jsx"));
 const SellerProducts = lazy(() => import("./seller/SellerProducts.jsx"));
 const SellerAddBook = lazy(() => import("./seller/SellerAddBook.jsx"));
@@ -128,6 +138,10 @@ const App = () => {
           <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/refund" element={<RefundPolicy />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
           {/* Protected User Routes */}
           <Route element={<AuthRoute />}>
             <Route path="/profile" element={<Profile />} />
@@ -146,6 +160,7 @@ const App = () => {
               path="/delivery-registration"
               element={<DeliveryRegistration />}
             />
+            <Route path="/wishlist" element={<Wishlist />} />
           </Route>
 
           {/* Seller Routes - Protected */}

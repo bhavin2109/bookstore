@@ -5,6 +5,7 @@ import { motion as Motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { clearCart } from "../../store/cartSlice";
 import orderService from "../services/orderServices";
+import { getUserAddresses } from "../services/authServices";
 
 import OrderSuccessAnimation from "../components/OrderSuccessAnimation";
 
@@ -65,6 +66,26 @@ const Checkout = () => {
       navigate("/books");
     }
   }, [cartItems, navigate, showAnimation]);
+
+  const [savedAddresses, setSavedAddresses] = useState([]);
+
+  useEffect(() => {
+    getUserAddresses()
+      .then(setSavedAddresses)
+      .catch((err) => console.error("Failed to load addresses", err));
+  }, []);
+
+  const fillAddress = (addr) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: addr.street,
+      city: addr.city,
+      state: addr.state,
+      zip: addr.zip,
+      country: addr.country,
+    }));
+    toast.info("Address applied!");
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -228,6 +249,37 @@ const Checkout = () => {
                 onSubmit={handlePayment}
                 className="space-y-4"
               >
+                {savedAddresses.length > 0 && (
+                  <div className="mb-6 bg-slate-900/50 p-4 rounded-xl border border-white/5">
+                    <h3 className="text-white text-sm font-bold mb-3 uppercase tracking-wider text-slate-400">
+                      Saved Addresses
+                    </h3>
+                    <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
+                      {savedAddresses.map((addr) => (
+                        <button
+                          key={addr._id}
+                          type="button"
+                          onClick={() => fillAddress(addr)}
+                          className="bg-slate-950 border border-white/10 p-3 rounded-lg text-sm text-left hover:border-emerald-500 hover:bg-emerald-500/10 min-w-[220px] transition-all group shrink-0"
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-bold text-white group-hover:text-emerald-400 transition-colors">
+                              {addr.city}
+                            </span>
+                            {addr.isDefault && (
+                              <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded uppercase font-bold">
+                                Default
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-slate-400 text-xs line-clamp-2">
+                            {addr.street}, {addr.state} {addr.zip}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-300">

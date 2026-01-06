@@ -450,4 +450,106 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
+// Wishlist Management
+export const toggleWishlist = async (req, res) => {
+  try {
+    const { bookId } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const index = user.wishlist.indexOf(bookId);
+    if (index === -1) {
+      user.wishlist.push(bookId);
+      await user.save();
+      return res.status(200).json({ message: "Added to wishlist", wishlist: user.wishlist });
+    } else {
+      user.wishlist.splice(index, 1);
+      await user.save();
+      return res.status(200).json({ message: "Removed from wishlist", wishlist: user.wishlist });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("wishlist");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.wishlist);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Address Management
+export const addAddress = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const newAddress = req.body;
+    if (newAddress.isDefault) {
+      user.addresses.forEach(addr => addr.isDefault = false);
+    }
+
+    user.addresses.push(newAddress);
+    await user.save();
+    res.status(201).json({ message: "Address added", addresses: user.addresses });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const removeAddress = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.addresses = user.addresses.filter(addr => addr._id.toString() !== req.params.addressId);
+    await user.save();
+    res.status(200).json({ message: "Address removed", addresses: user.addresses });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const updateAddress = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const { addressId } = req.params;
+    const updatedData = req.body;
+
+    const address = user.addresses.id(addressId);
+    if (!address) return res.status(404).json({ message: "Address not found" });
+
+    if (updatedData.isDefault) {
+      user.addresses.forEach(addr => addr.isDefault = false);
+    }
+
+    Object.assign(address, updatedData);
+    await user.save();
+    res.status(200).json({ message: "Address updated", addresses: user.addresses });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const getUserAddresses = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.status(200).json(user.addresses);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
 export { register };

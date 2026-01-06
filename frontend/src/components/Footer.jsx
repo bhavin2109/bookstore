@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -17,75 +18,91 @@ function Footer() {
               <h3 className="text-lg font-bold mb-4 text-white">Quick Links</h3>
               <ul className="text-slate-400 space-y-2">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/home"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/books"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     Books
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/about-us"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/contact-us"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-lg font-bold mb-4 text-white">
-                Customer Service
+                Legal & Support
               </h3>
               <ul className="text-slate-400 space-y-2">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/terms"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Terms & Conditions
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/privacy"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/refund"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Refund Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/disclaimer"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Disclaimer
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/about-us"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     FAQ
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Shipping Info
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Returns
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/contact-us"
                     className="hover:text-emerald-400 transition-colors"
                   >
                     Support
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
