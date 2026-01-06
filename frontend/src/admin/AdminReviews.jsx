@@ -35,127 +35,89 @@ const AdminReviews = () => {
   };
 
   return (
-    <div className="w-full h-[calc(100vh-4rem)] overflow-auto bg-slate-950 px-4 sm:px-6 lg:px-8 py-8 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white tracking-tight">
-          Review Management
-        </h1>
-        <p className="text-slate-400 mt-1">
-          Manage user reviews for all products.
-        </p>
-      </div>
-
+    <div className="w-full h-[calc(100vh-4rem)] overflow-auto relative">
       {loading ? (
-        <div className="mt-8 flex justify-center">
+        <div className="flex justify-center items-center h-64">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-emerald-500/30 border-t-emerald-500"></div>
         </div>
       ) : reviews.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-white/10 bg-slate-900/50 p-12 text-center backdrop-blur-sm">
-          <h2 className="text-xl font-semibold text-white">No reviews found</h2>
-        </div>
+        <div className="p-8 text-center text-slate-500">No reviews found.</div>
       ) : (
-        <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900/50 backdrop-blur-sm shadow-xl">
-                <table className="min-w-full divide-y divide-white/10">
-                  <thead className="bg-white/5">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-white sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm"
-                      >
-                        Date
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-white sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm"
-                      >
-                        User
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-white sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm"
-                      >
-                        Product
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-white sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm"
-                      >
-                        Rating
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-white sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm"
-                      >
-                        Comment
-                      </th>
-                      <th
-                        scope="col"
-                        className="py-3.5 pl-3 pr-4 sm:pr-6 sticky top-0 z-20 bg-slate-900 border-b border-white/10 shadow-sm text-right"
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/10">
-                    {reviews.map((review) => (
-                      <tr
-                        key={review._id}
-                        className="hover:bg-white/5 transition-colors"
-                      >
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-300">
-                          {new Date(review.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-white font-medium">
-                          {review.name}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-emerald-400">
-                          {review.bookTitle}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm">
-                          <div className="flex text-emerald-400">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                size={14}
-                                fill={
-                                  i < review.rating ? "currentColor" : "none"
-                                }
-                                className={
-                                  i < review.rating
-                                    ? "text-emerald-400"
-                                    : "text-slate-600"
-                                }
-                              />
-                            ))}
-                          </div>
-                        </td>
-                        <td
-                          className="px-3 py-4 text-sm text-slate-300 max-w-xs truncate"
-                          title={review.comment}
-                        >
-                          {review.comment}
-                        </td>
-                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <button
-                            onClick={() =>
-                              handleDelete(review.bookId, review._id)
-                            }
-                            className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-500/10 rounded-lg"
-                            title="Delete Review"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <div className="min-w-[1000px]">
+          <table className="w-full text-left border-collapse relative">
+            <thead className="bg-slate-800 text-white uppercase text-xs font-bold whitespace-nowrap">
+              <tr>
+                <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  Date
+                </th>
+                <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  User
+                </th>
+                <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  Product
+                </th>
+                <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  Rating
+                </th>
+                <th className="py-4 px-4 sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  Comment
+                </th>
+                <th className="py-4 px-4 text-right sticky top-0 z-20 bg-slate-800 border-b border-slate-700 shadow-sm">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-slate-800/50">
+              {reviews.map((review) => (
+                <tr
+                  key={review._id}
+                  className="border-b border-slate-700 hover:bg-slate-700/50 transition-colors"
+                >
+                  <td className="py-3 px-4 text-sm text-slate-300">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-white font-medium">
+                    {review.name}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-emerald-400 font-mono">
+                    {review.bookTitle}
+                  </td>
+                  <td className="py-3 px-4 text-sm">
+                    <div className="flex text-emerald-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={14}
+                          fill={i < review.rating ? "currentColor" : "none"}
+                          className={
+                            i < review.rating
+                              ? "text-emerald-400"
+                              : "text-slate-600"
+                          }
+                        />
+                      ))}
+                    </div>
+                  </td>
+                  <td
+                    className="py-3 px-4 text-sm text-slate-300 max-w-xs truncate"
+                    title={review.comment}
+                  >
+                    {review.comment}
+                  </td>
+                  <td className="py-3 px-4 text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleDelete(review.bookId, review._id)}
+                      className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-500/10 rounded-lg inline-flex items-center gap-1"
+                      title="Delete Review"
+                    >
+                      <Trash2 size={16} />
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
