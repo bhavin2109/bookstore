@@ -150,10 +150,6 @@ const App = () => {
           <Route element={<AuthRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/my-orders" element={<MyOrders />} />
-            <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/my-orders" element={<MyOrders />} />
             <Route
@@ -205,7 +201,6 @@ const App = () => {
               path="/admin/books-management"
               element={<AdminDashboard />}
             />
-            <Route path="/admin/books/add" element={<AddBook />} />
             <Route path="/admin/books/add" element={<AddBook />} />
             <Route path="/admin/books/edit/:id" element={<EditBook />} />
             <Route path="/admin/orders" element={<AdminDashboard />} />

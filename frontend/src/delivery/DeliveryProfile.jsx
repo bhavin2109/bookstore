@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getMyDeliveryProfile } from "../services/deliveryServices";
 import { toast } from "react-toastify";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const DeliveryProfile = () => {

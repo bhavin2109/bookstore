@@ -1,0 +1,59 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+C:\Projects\bookstore\frontend\src\delivery\DeliveryDashboard.jsx
+  8:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\delivery\DeliveryHistory.jsx
+  4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\delivery\DeliveryJobs.jsx
+  9:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\delivery\DeliveryProfile.jsx
+  4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\layouts\DeliveryLayout.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\layouts\SellerLayout.jsx
+  3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\Books.jsx
+  4:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\DeliveryRegistration.jsx
+  5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\ForgotPassword.jsx
+  5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\Profile.jsx
+  12:1  warning  Unused eslint-disable directive (no problems were reported from 'react-refresh/only-export-components')
+
+C:\Projects\bookstore\frontend\src\pages\ResetPassword.jsx
+  5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\SellerRegistration.jsx
+  5:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\legal\Disclaimer.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\legal\PrivacyPolicy.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\legal\RefundPolicy.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\pages\legal\TermsAndConditions.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+C:\Projects\bookstore\frontend\src\seller\SellerOrders.jsx
+  2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+
+Γ£û 17 problems (16 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

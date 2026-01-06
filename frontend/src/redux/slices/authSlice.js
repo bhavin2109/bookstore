@@ -50,7 +50,7 @@ const authSlice = createSlice({
             .addCase(register.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(register.fulfilled, (state, action) => {
+            .addCase(register.fulfilled, (state) => {
                 state.isLoading = false;
                 state.isSuccess = true;
                 // Registration typically doesn't auto-login or provide token immediately if OTP required

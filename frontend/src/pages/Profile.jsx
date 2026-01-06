@@ -6,11 +6,9 @@ import AddressBook from "../components/AddressBook";
 
 import {
   resendOtp as resendOtpApi,
-  requestRole,
   getProfile,
 } from "../services/authServices";
 import { toast } from "react-toastify";
-// eslint-disable-next-line react-refresh/only-export-components
 export default function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(() => {
@@ -54,18 +52,6 @@ export default function Profile() {
     };
     fetchProfile();
   }, [navigate]);
-
-  const handleRoleRequest = async (role) => {
-    try {
-      if (!confirm(`Are you sure you want to become a ${role}?`)) return;
-      const res = await requestRole(role);
-      toast.success(res.message);
-      setUser(res.user);
-      localStorage.setItem("user", JSON.stringify(res.user));
-    } catch (error) {
-      toast.error(error.message || "Failed to request role");
-    }
-  };
 
   if (!user) {
     return (

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
-const SellerLayout = () => {
+const links = [
+  { to: "/seller", label: "Dashboard", icon: "📊" },
+  { to: "/seller/products", label: "My Products", icon: "📚" },
+  { to: "/seller/orders", label: "Orders", icon: "📦" },
+  { to: "/seller/shop", label: "Shop Profile", icon: "🏪" },
+];
+
+const Sidebar = ({ mobile = false, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const links = [
-    { to: "/seller", label: "Dashboard", icon: "📊" },
-    { to: "/seller/products", label: "My Products", icon: "📚" },
-    { to: "/seller/orders", label: "Orders", icon: "📦" },
-    { to: "/seller/shop", label: "Shop Profile", icon: "🏪" },
-  ];
-
-  const Sidebar = ({ mobile = false }) => (
+  return (
     <div
       className={`h-full bg-slate-950 border-r border-white/10 flex flex-col ${
         mobile ? "w-64" : "w-64 h-full hidden md:flex"
@@ -26,10 +26,7 @@ const SellerLayout = () => {
           <h2 className="text-xl font-bold text-white">Seller Hub</h2>
         </div>
         {mobile && (
-          <button
-            onClick={() => setMobileSidebarOpen(false)}
-            className="text-slate-400 hover:text-white"
-          >
+          <button onClick={onClose} className="text-slate-400 hover:text-white">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -53,7 +50,7 @@ const SellerLayout = () => {
           <Link
             key={link.to}
             to={link.to}
-            onClick={() => mobile && setMobileSidebarOpen(false)}
+            onClick={mobile ? onClose : undefined}
             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
               location.pathname === link.to
                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-lg shadow-emerald-500/5"
@@ -76,6 +73,11 @@ const SellerLayout = () => {
       </div>
     </div>
   );
+};
+
+const SellerLayout = () => {
+  const location = useLocation();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-slate-900 text-white selection:bg-emerald-500/30 overflow-hidden">
@@ -100,7 +102,7 @@ const SellerLayout = () => {
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
               className="fixed inset-y-0 left-0 z-50 md:hidden h-full"
             >
-              <Sidebar mobile />
+              <Sidebar mobile onClose={() => setMobileSidebarOpen(false)} />
             </motion.div>
           </>
         )}
@@ -143,5 +145,4 @@ const SellerLayout = () => {
     </div>
   );
 };
-
 export default SellerLayout;

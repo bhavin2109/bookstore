@@ -20,7 +20,6 @@ router.post('/resend-otp', resendOtp, sendOtpMail, (req, res) => {
 
 router.post('/verify-otp', verifyOtp);
 router.post('/login', login);
-router.post('/login', login);
 router.post('/google', googleAuthLogin);
 
 // Password Reset Routes

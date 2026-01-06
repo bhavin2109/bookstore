@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import {
@@ -53,7 +54,7 @@ export default function AddressBook() {
       const res = await removeAddress(addressId);
       setAddresses(res.addresses);
       toast.success("Address removed");
-    } catch (error) {
+    } catch {
       toast.error("Failed to remove address");
     }
   };

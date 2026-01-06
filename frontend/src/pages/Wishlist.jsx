@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { getWishlist, toggleWishlist } from "../services/authServices";
 import BookCard from "../components/BookCard";
@@ -30,7 +31,7 @@ export default function Wishlist() {
       await toggleWishlist(bookId);
       setWishlist((prev) => prev.filter((book) => book._id !== bookId));
       toast.success("Removed from wishlist");
-    } catch (error) {
+    } catch {
       toast.error("Failed to remove from wishlist");
     }
   };

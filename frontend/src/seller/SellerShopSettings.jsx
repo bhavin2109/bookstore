@@ -4,6 +4,7 @@ import {
   updateSellerProfile,
 } from "../services/sellerServices";
 import { toast } from "react-toastify";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const SellerShopSettings = () => {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { toggleWishlist } from "../services/authServices";
 import { toast } from "react-toastify";
@@ -22,7 +23,7 @@ const BookCard = ({ book, variants, onClick, isWishlistPage, onRemove }) => {
       await toggleWishlist(_id);
       setLiked(!liked);
       toast.success(liked ? "Removed from wishlist" : "Added to wishlist");
-    } catch (err) {
+    } catch {
       toast.error("Failed to update wishlist");
     }
   };

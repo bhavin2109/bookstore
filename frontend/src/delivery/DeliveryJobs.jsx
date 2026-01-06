@@ -6,6 +6,7 @@ import {
 } from "../services/deliveryServices";
 import { toast } from "react-toastify";
 import TrackingMap from "../components/TrackingMap";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const DeliveryJobs = () => {
