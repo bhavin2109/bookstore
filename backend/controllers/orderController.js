@@ -40,6 +40,13 @@ const addOrderItems = asyncHandler(async (req, res) => {
         throw new Error('No order items');
     }
 
+    // Validate valid product IDs in items
+    const hasInvalidItems = orderItems.some(item => !item.product && !item._id && !item.id);
+    if (hasInvalidItems) {
+        res.status(400);
+        throw new Error('One or more order items are missing a valid Product ID');
+    }
+
     if (!shippingAddress || !paymentMethod || totalPrice === undefined) {
         console.error('[ORDER] Error: Missing required fields', { shippingAddress, paymentMethod, totalPrice });
         res.status(400);
@@ -55,7 +62,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
     const order = new Order({
         orderItems: orderItems.map((x) => ({
             ...x,
-            product: x.product || x._id, // Handle distinct frontend payloads
+            product: x.product || x._id || x.id, // Handle distinct frontend payloads (item.id, item._id, or item.product)
             _id: undefined // Let Mongoose generate ID
         })),
         user: req.user._id,
@@ -73,6 +80,10 @@ const addOrderItems = asyncHandler(async (req, res) => {
         console.log(`[ORDER] DB Order created: ${createdOrder._id}`);
     } catch (error) {
         console.error('[ORDER] DB Save Failed:', error);
+        if (error.name === 'ValidationError') {
+            res.status(400);
+            throw new Error('Validation Failed: ' + error.message);
+        }
         res.status(500);
         throw new Error('Failed to save order to database: ' + error.message);
     }
