@@ -3,6 +3,7 @@ import {
   getMyAssignedOrders,
   updateDeliveryStatus,
   verifyDeliveryOtp,
+  resendDeliveryOtp,
 } from "../services/deliveryServices";
 import { toast } from "react-toastify";
 import TrackingMap from "../components/TrackingMap";
@@ -55,6 +56,15 @@ const DeliveryJobs = () => {
       fetchOrders();
     } catch (error) {
       toast.error(error.message || "Invalid OTP");
+    }
+  };
+
+  const handleResendOtp = async (orderId) => {
+    try {
+      await resendDeliveryOtp(orderId);
+      toast.info("OTP has been resent to the customer!");
+    } catch (error) {
+      toast.error(error.message || "Failed to resend OTP");
     }
   };
 
@@ -140,7 +150,7 @@ const DeliveryJobs = () => {
                             type="text"
                             placeholder="Enter OTP"
                             className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-center text-white tracking-widest font-mono focus:border-emerald-500 outline-none"
-                            maxLength={4}
+                            maxLength={6}
                             value={otpInput}
                             onChange={(e) => setOtpInput(e.target.value)}
                           />
@@ -149,6 +159,12 @@ const DeliveryJobs = () => {
                             className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded transition-colors"
                           >
                             Verify & Complete
+                          </button>
+                          <button
+                            onClick={() => handleResendOtp(order._id)}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded transition-colors"
+                          >
+                            Resend OTP
                           </button>
                           <button
                             onClick={() => setVerifyingId(null)}

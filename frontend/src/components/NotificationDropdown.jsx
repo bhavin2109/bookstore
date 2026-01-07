@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Bell } from "lucide-react";
-import axios from "axios";
+import axiosInstance from "../api/axios";
 import { setNotifications, markRead } from "../redux/slices/notificationSlice";
 
 const NotificationDropdown = () => {
@@ -15,10 +15,13 @@ const NotificationDropdown = () => {
   const fetchNotifications = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const { data } = await axios.get("/api/notifications", config);
+      const { data } = await axiosInstance.get("/api/notifications", config);
       dispatch(setNotifications(data));
     } catch (error) {
-      console.error("Failed to fetch notifications");
+      console.error(
+        "Failed to fetch notifications:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -30,7 +33,7 @@ const NotificationDropdown = () => {
   const handleRead = async (id) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.put(`/api/notifications/${id}/read`, {}, config);
+      await axiosInstance.put(`/api/notifications/${id}/read`, {}, config);
       dispatch(markRead(id));
     } catch (error) {
       console.error("Failed to mark read");

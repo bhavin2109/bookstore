@@ -5,6 +5,7 @@ import sendEmail from '../utils/sendEmail.js';
 import Book from '../models/Book.js';
 import User from '../models/User.js';
 import Notification from '../models/Notification.js';
+import DeliveryPartner from '../models/DeliveryPartner.js';
 import sendSMS from '../utils/sendSMS.js';
 import Otp from '../models/Otp.js';
 

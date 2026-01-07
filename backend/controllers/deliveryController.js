@@ -263,6 +263,85 @@ export const completeDelivery = async (req, res) => {
             relatedId: order._id
         });
 
+        const message = `
+            <h1>Order Delivered! 🎉</h1>
+            <p>Hi ${order.user.name},</p>
+            <p>Your order <strong>#${order._id}</strong> has been successfully delivered.</p>
+            <p>Thank you for shopping with Nerdy Enough!</p>
+        `;
+
+        try {
+            await sendEmail({
+                email: order.user.email,
+                subject: 'Order Delivered - Nerdy Enough',
+                message
+            });
+            await sendSMS({
+                phone: order.shippingAddress.phone || '0000000000',
+                message: `Order #${order._id.toString().slice(-6)} has been delivered. Thank you!`
+            });
+        } catch (error) {
+            console.error("Failed to notify user of delivery:", error);
+        }
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+}
+// Resend Delivery OTP
+export const resendDeliveryOtp = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner) return res.status(404).json({ message: "Delivery profile not found" });
+
+        const order = await Order.findOne({ _id: id, deliveryPartner: partner._id }).populate('user', 'name email');
+        if (!order) return res.status(404).json({ message: "Order not found" });
+
+        if (order.deliveryStatus !== 'out_for_delivery') {
+            return res.status(400).json({ message: "Order must be Out for Delivery to resend OTP" });
+        }
+
+        // Generate New OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Invalidate old OTPs for this order/type
+        await Otp.deleteMany({ orderId: id, type: 'delivery_confirmation' });
+
+        await Otp.create({
+            orderId: order._id,
+            recipientEmail: order.user.email,
+            code: otpCode,
+            type: 'delivery_confirmation'
+        });
+
+        // Send OTP via Email
+        const message = `
+            <h1>Delivery OTP Resent 🚚</h1>
+            <p>Hi ${order.user.name},</p>
+            <p>Here is your new OTP for order delivery verification:</p>
+            <h2 style="color: #2F855A; letter-spacing: 5px;">${otpCode}</h2>
+            <p>Please share this with the delivery partner.</p>
+        `;
+
+        try {
+            await sendEmail({
+                email: order.user.email,
+                subject: 'Resent Delivery OTP - Nerdy Enough',
+                message
+            });
+            await sendSMS({
+                phone: order.shippingAddress.phone || '0000000000',
+                message: `Resent OTP: Order #${order._id.toString().slice(-6)} delivery code is ${otpCode}`
+            });
+        } catch (error) {
+            console.error("Failed to resend Notification:", error);
+        }
+
+        console.log(`[OTP] Resent Order ${id} Delivery OTP: ${otpCode}`);
+        res.json({ message: "OTP has been resent to the customer" });
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

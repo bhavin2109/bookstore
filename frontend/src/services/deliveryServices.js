@@ -61,3 +61,12 @@ export const getAllDeliveryPartners = async () => {
         throw error.response?.data || error.message;
     }
 };
+
+export const resendDeliveryOtp = async (orderId) => {
+    try {
+        const response = await API.post(`/api/delivery/orders/${orderId}/resend-otp`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};

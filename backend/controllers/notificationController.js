@@ -5,10 +5,17 @@ import Notification from "../models/Notification.js";
 // @route   GET /api/notifications
 // @access  Protected
 const getNotifications = asyncHandler(async (req, res) => {
-    const notifications = await Notification.find({ recipient: req.user._id })
-        .sort({ createdAt: -1 })
-        .limit(50);
-    res.json(notifications);
+    console.log("🔔 getNotifications called for user:", req.user?._id);
+    try {
+        const notifications = await Notification.find({ recipient: req.user._id })
+            .sort({ createdAt: -1 })
+            .limit(50);
+        console.log("🔔 Found notifications count:", notifications.length);
+        res.json(notifications);
+    } catch (error) {
+        console.error("🔔 Error in getNotifications:", error);
+        throw error;
+    }
 });
 
 // @desc    Mark notification as read

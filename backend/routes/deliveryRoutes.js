@@ -6,7 +6,8 @@ import {
     updateOrderDeliveryStatus,
     completeDelivery,
     getAllDeliveryPartners,
-    acceptDeliveryAssignment
+    acceptDeliveryAssignment,
+    resendDeliveryOtp
 } from '../controllers/deliveryController.js';
 import { protect, deliveryOnly, adminOnly } from '../middlewares/authMiddleware.js';
 
@@ -19,5 +20,6 @@ router.get('/orders', protect, deliveryOnly, getMyOrders);
 router.put('/orders/:id/accept', protect, deliveryOnly, acceptDeliveryAssignment);
 router.put('/orders/:id/status', protect, deliveryOnly, updateOrderDeliveryStatus);
 router.post('/orders/:id/verify', protect, deliveryOnly, completeDelivery);
+router.post('/orders/:id/resend-otp', protect, deliveryOnly, resendDeliveryOtp);
 
 export default router;
