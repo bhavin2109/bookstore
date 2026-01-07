@@ -36,7 +36,7 @@ const NotificationDropdown = () => {
       await axiosInstance.put(`/api/notifications/${id}/read`, {}, config);
       dispatch(markRead(id));
     } catch (error) {
-      console.error("Failed to mark read");
+      console.error("Failed to mark read", error);
     }
   };
 
