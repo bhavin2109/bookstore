@@ -1,5 +1,6 @@
 import Seller from "../models/Seller.js";
 import Book from "../models/Book.js";
+import Order from "../models/Order.js";
 
 // Get current seller profile
 export const getMe = async (req, res) => {
@@ -58,6 +59,20 @@ export const getMyProducts = async (req, res) => {
         }
         const books = await Book.find({ seller: seller._id });
         res.json(books);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Get seller orders
+export const getSellerOrders = async (req, res) => {
+    try {
+        const seller = await Seller.findOne({ user: req.user._id });
+        if (!seller) {
+            return res.status(404).json({ message: "Seller profile not found" });
+        }
+        const orders = await Order.find({ seller: seller._id }).populate("user", "name email").sort({ createdAt: -1 });
+        res.json(orders);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

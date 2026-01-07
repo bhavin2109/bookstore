@@ -81,9 +81,16 @@ const orderSchema = mongoose.Schema({
     },
     deliveryStatus: {
         type: String,
-        enum: ['pending', 'out_for_delivery', 'delivered'],
-        default: 'pending'
+        enum: ['placed', 'packed_by_seller', 'assigned_to_delivery', 'dispatched', 'out_for_delivery', 'delivered', 'cancelled'],
+        default: 'placed'
     },
+    timeline: [
+        {
+            status: { type: String },
+            timestamp: { type: Date, default: Date.now },
+            description: { type: String }
+        }
+    ],
     deliveryOtp: {
         type: String
     }

@@ -4,7 +4,7 @@ const API = axiosInstance;
 
 export const getMyDeliveryProfile = async () => {
     try {
-        const response = await API.get("/api/delivery/profile");
+        const response = await API.get("/api/delivery/me");
         return response.data;
     } catch (error) {
         throw error.response?.data || error.message;
@@ -13,7 +13,7 @@ export const getMyDeliveryProfile = async () => {
 
 export const updateDeliveryProfile = async (data) => {
     try {
-        const response = await API.put("/api/delivery/profile", data);
+        const response = await API.put("/api/delivery/me", data);
         return response.data;
     } catch (error) {
         throw error.response?.data || error.message;
@@ -44,7 +44,7 @@ export const updateDeliveryStatus = async (orderId, status) => {
 export const verifyDeliveryOtp = async (orderId, otp) => {
     try {
         const response = await API.post(
-            `/api/delivery/orders/${orderId}/verify-otp`,
+            `/api/delivery/orders/${orderId}/verify`,
             { otp }
         );
         return response.data;

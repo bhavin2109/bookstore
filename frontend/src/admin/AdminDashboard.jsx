@@ -8,6 +8,8 @@ import AdminOrders from "./AdminOrders";
 import RoleRequests from "./RoleRequests";
 import AdminReviews from "./AdminReviews";
 import DashboardStatistics from "./DashboardStatistics";
+import ChatInterface from "../components/ChatInterface";
+import NotificationDropdown from "../components/NotificationDropdown";
 import { toast } from "react-toastify";
 import axiosInstance from "../api/axios";
 
@@ -30,6 +32,7 @@ const AdminDashboard = () => {
   const isOrdersView = location.pathname.includes("orders");
   const isRoleRequestsView = location.pathname.includes("role-requests");
   const isReviewsView = location.pathname.includes("reviews");
+  const isChatView = location.pathname.includes("chat");
 
   useEffect(() => {
     // Auth Check
@@ -77,7 +80,13 @@ const AdminDashboard = () => {
 
       fetchStats();
     }
-  }, [isBooksView, isOrdersView, isRoleRequestsView, isReviewsView]);
+  }, [
+    isBooksView,
+    isOrdersView,
+    isRoleRequestsView,
+    isReviewsView,
+    isChatView,
+  ]);
 
   return (
     <div className="flex h-screen bg-slate-950 text-white selection:bg-emerald-500/30 overflow-hidden">
@@ -133,6 +142,7 @@ const AdminDashboard = () => {
             </h1>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
+            <NotificationDropdown />
             {isBooksView && (
               <button
                 onClick={() => navigate("/admin/books/add")}
@@ -197,6 +207,17 @@ const AdminDashboard = () => {
                 transition={{ duration: 0.3 }}
               >
                 <AdminReviews />
+              </Motion.div>
+            ) : isChatView ? (
+              <Motion.div
+                key="chat"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="h-full p-4"
+              >
+                <ChatInterface />
               </Motion.div>
             ) : (
               <Motion.div

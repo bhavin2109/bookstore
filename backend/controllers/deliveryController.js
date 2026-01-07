@@ -1,5 +1,9 @@
 import DeliveryPartner from "../models/DeliveryPartner.js";
 import Order from "../models/Order.js";
+import Otp from "../models/Otp.js";
+import sendEmail from "../utils/sendEmail.js";
+import sendSMS from "../utils/sendSMS.js";
+import Notification from "../models/Notification.js";
 
 // Admin: Get all delivery partners
 export const getAllDeliveryPartners = async (req, res) => {
@@ -48,47 +52,154 @@ export const updateProfile = async (req, res) => {
 // Get orders assigned to me
 export const getMyOrders = async (req, res) => {
     try {
-        // Find orders where deliveryPartner is current user
-        // Note: We need to make sure we link using user ID or Partner ID.
-        // In userController when creating partner, we just create the profile.
-        // In Order model, deliveryPartner is ref to 'User' or 'DeliveryPartner'?
-        // The implementation plan said "ref User/Seller ... DeliveryPartner (ref)". 
-        // Order model update in Step 0 showed `deliveryPartner: { type: Schema.Types.ObjectId, ref: 'User' }` usually?
-        // Let's check Order model again to be sure. Assumed ref to User for authentication simplicity.
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner) return res.status(404).json({ message: "Delivery profile not found" });
 
-        const orders = await Order.find({ deliveryPartner: req.user._id })
+        const orders = await Order.find({ deliveryPartner: partner._id })
             .populate('user', 'name email address')
-            .populate('items.product', 'title image price')
+            .populate('orderItems.product', 'title image price')
             .sort({ createdAt: -1 });
 
         res.json(orders);
+    } catch (err) {
+        console.error("Error in getMyOrders:", err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
+// Accept Delivery Assignment (Verify OTP)
+export const acceptDeliveryAssignment = async (req, res) => {
+    try {
+        const { id } = req.params; // Order ID
+        const { otp } = req.body;
+
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner) return res.status(404).json({ message: "Delivery profile not found" });
+
+        const order = await Order.findOne({ _id: id, deliveryPartner: partner._id }).populate('user', 'name email');
+        if (!order) return res.status(404).json({ message: "Order not found or not assigned to you" });
+
+        // Verify OTP
+        const otpRecord = await Otp.findOne({
+            orderId: id,
+            code: otp,
+            type: 'delivery_assignment',
+            isVerified: false
+        });
+
+        if (!otpRecord) {
+            return res.status(400).json({ message: "Invalid or expired OTP" });
+        }
+
+        if (new Date() > otpRecord.expiresAt) {
+            return res.status(400).json({ message: "OTP has expired" });
+        }
+
+        // Mark OTP as used
+        otpRecord.isVerified = true;
+        await otpRecord.save();
+
+        // Update Order Status
+        order.deliveryStatus = 'assigned_to_delivery';
+        order.timeline.push({
+            status: 'assigned_to_delivery',
+            description: 'Order accepted by delivery partner'
+        });
+        await order.save();
+
+        // Notify Customer (Now that partner accepted)
+        if (order.user) {
+            const message = `
+                <h3>Order Update!</h3>
+                <p>Your order <strong>#${order._id}</strong> has been assigned to ${partner.user.name || 'a delivery agent'}.</p>
+                <p>It will be picked up soon.</p>
+            `;
+            try {
+                await sendEmail({
+                    email: order.user.email,
+                    subject: 'Order Update - Delivery Agent Assigned',
+                    message
+                });
+                await sendSMS({
+                    phone: order.shippingAddress.phone || '0000000000',
+                    message: `Order #${order._id.toString().slice(-6)}: Agent assigned.`
+                });
+            } catch (e) { console.error("Notify error", e); }
+
+            req.io.to(order.user._id.toString()).emit('order_update', {
+                orderId: order._id,
+                status: 'assigned_to_delivery',
+                timeline: order.timeline
+            });
+        }
+
+        res.json({ message: "Assignment accepted successfully", order });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
 
-// Update Order Delivery Status
+// Update Order Delivery Status (Out for Delivery -> Send OTP)
 export const updateOrderDeliveryStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { status } = req.body; // 'out_for_delivery', 'delivered' (requires OTP)
+        const { status } = req.body; // 'out_for_delivery'
 
-        const order = await Order.findOne({ _id: id, deliveryPartner: req.user._id });
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner) return res.status(404).json({ message: "Delivery profile not found" });
+
+        const order = await Order.findOne({ _id: id, deliveryPartner: partner._id }).populate('user', 'name email');
         if (!order) return res.status(404).json({ message: "Order not found or not assigned to you" });
 
         if (status === 'out_for_delivery') {
             order.deliveryStatus = 'out_for_delivery';
+            order.timeline.push({ status: 'out_for_delivery', description: 'Out for delivery' });
+            await order.save(); // deliveryOtp is NOT saved on Order anymore
+
             // Generate OTP
-            const otp = Math.floor(1000 + Math.random() * 9000).toString();
-            order.deliveryOtp = otp;
-            await order.save();
+            const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            await Otp.create({
+                orderId: order._id,
+                recipientEmail: order.user.email,
+                code: otpCode,
+                type: 'delivery_confirmation'
+            });
 
-            // TODO: Send OTP to user email/sms (Mock for now)
-            console.log(`[OTP] Order ${id} OTP: ${otp}`);
+            // Send OTP via Email
+            const message = `
+                <h1>Your Order is Out for Delivery! 🚚</h1>
+                <p>Hi ${order.user.name},</p>
+                <p>Your order <strong>#${order._id}</strong> is out for delivery.</p>
+                <p>Please share this OTP with the delivery partner to receive your package:</p>
+                <h2 style="color: #2F855A; letter-spacing: 5px;">${otpCode}</h2>
+            `;
 
-            res.json({ message: "Order marked Out for Delivery", order });
+            try {
+                await sendEmail({
+                    email: order.user.email,
+                    subject: 'Delivery OTP - Nerdy Enough',
+                    message
+                });
+                // Send Mock SMS
+                await sendSMS({
+                    phone: order.shippingAddress.phone || '0000000000',
+                    message: `Order #${order._id.toString().slice(-6)} out for delivery. OTP: ${otpCode}`
+                });
+            } catch (error) {
+                console.error("Failed to send Notification:", error);
+            }
+
+            // Real-time update
+            req.io.to(order.user._id.toString()).emit('order_update', {
+                orderId: order._id,
+                status: 'out_for_delivery',
+                timeline: order.timeline
+            });
+
+            console.log(`[OTP] Order ${id} Delivery OTP: ${otpCode}`);
+            res.json({ message: "Order marked Out for Delivery. OTP sent to customer.", order });
         } else {
-            res.status(400).json({ message: "Invalid status update via this endpoint" });
+            res.status(400).json({ message: "Invalid status update via this endpoint. Use completeDelivery for final status." });
         }
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -101,24 +212,57 @@ export const completeDelivery = async (req, res) => {
         const { id } = req.params;
         const { otp } = req.body;
 
-        const order = await Order.findOne({ _id: id, deliveryPartner: req.user._id });
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner) return res.status(404).json({ message: "Delivery profile not found" });
+
+        const order = await Order.findOne({ _id: id, deliveryPartner: partner._id }).populate('user', 'name email');
         if (!order) return res.status(404).json({ message: "Order not found" });
 
         if (order.deliveryStatus !== 'out_for_delivery') {
-            return res.status(400).json({ message: "Order must be Out for Delivery" });
+            return res.status(400).json({ message: "Order must be Out for Delivery first" });
         }
 
-        if (order.deliveryOtp !== otp) {
-            return res.status(400).json({ message: "Invalid OTP" });
+        // Verify OTP
+        const otpRecord = await Otp.findOne({
+            orderId: id,
+            code: otp,
+            type: 'delivery_confirmation',
+            isVerified: false
+        });
+
+        if (!otpRecord) {
+            return res.status(400).json({ message: "Invalid or expired OTP" });
         }
+
+        // Mark OTP as used
+        otpRecord.isVerified = true;
+        await otpRecord.save();
 
         order.deliveryStatus = 'delivered';
         order.isDelivered = true;
         order.deliveredAt = Date.now();
-        order.deliveryOtp = null; // Clear OTP
+        order.timeline.push({ status: 'delivered', description: 'Delivered to customer' });
+        // order.deliveryOtp = null; // Removed generic field usage
         await order.save();
 
         res.json({ message: "Delivery verified and completed", order });
+
+        // Real-time update
+        req.io.to(order.user._id.toString()).emit('order_update', {
+            orderId: order._id,
+            status: 'delivered',
+            isDelivered: true,
+            timeline: order.timeline
+        });
+
+        // Notify user of completion
+        await Notification.create({
+            recipient: order.user._id,
+            type: 'order_update',
+            message: `Order #${order._id} Delivered`,
+            relatedId: order._id
+        });
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

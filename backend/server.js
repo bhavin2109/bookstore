@@ -3,6 +3,8 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import User from './models/User.js';
 
 import connectDB from './config/db.js';
 import { createServer } from 'http';
@@ -26,6 +28,8 @@ import orderRoutes from './routes/orderRoutes.js';
 import chatRoutes from './routes/chat.routes.js';
 import sellerRoutes from './routes/sellerRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 
 const app = express();
@@ -57,14 +61,65 @@ const corsOptions = {
 };
 
 const io = new Server(httpServer, {
+  pingTimeout: 60000,
   cors: {
-    origin: "*", // Simplify for socket since we have cors middleware
+    origin: "*",
     methods: ["GET", "POST"]
+  }
+});
+
+// Socket Auth Middleware
+io.use(async (socket, next) => {
+  if (socket.handshake.query && socket.handshake.query.token) {
+    try {
+      const token = socket.handshake.query.token;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.user = await User.findById(decoded.id).select('-password');
+      next();
+    } catch (error) {
+      console.log('Socket Auth Error:', error.message);
+      // Don't block connection for now to allow public tracking if needed,
+      // but strict apps would block next(new Error('Authentication error'));
+      next();
+    }
+  } else {
+    next();
   }
 });
 
 io.on("connection", (socket) => {
   console.log(`Socket Connected: ${socket.id}`);
+
+  if (socket.user) {
+    socket.join(socket.user._id.toString());
+    console.log(`User ${socket.user.name} joined room ${socket.user._id}`);
+    socket.emit("connected");
+  }
+
+  socket.on("join_chat", (room) => {
+    socket.join(room);
+    console.log(`User joined Chat Room: ${room}`);
+  });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop_typing", (room) => socket.in(room).emit("stop_typing"));
+
+  socket.on("new_message", (newMessageReceived) => {
+    var chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log("chat.users not defined");
+
+    chat.users.forEach((user) => {
+      if (user._id == newMessageReceived.sender._id) return;
+      socket.in(user._id).emit("message_received", newMessageReceived);
+      // Also emit notification
+      io.to(user._id).emit("notification", {
+        type: 'new_message',
+        message: `New message from ${newMessageReceived.sender.name}`,
+        relatedId: chat._id
+      });
+    });
+  });
 
   socket.on("join_order", (orderId) => {
     socket.join(orderId);
@@ -85,6 +140,12 @@ io.on("connection", (socket) => {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 
+// Inject Socket.io into request
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // Request logging middleware
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.path}`);
@@ -102,6 +163,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/delivery', deliveryRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const PORT = process.env.PORT || 5000;
 

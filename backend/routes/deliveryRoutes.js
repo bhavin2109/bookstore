@@ -5,7 +5,8 @@ import {
     getMyOrders,
     updateOrderDeliveryStatus,
     completeDelivery,
-    getAllDeliveryPartners
+    getAllDeliveryPartners,
+    acceptDeliveryAssignment
 } from '../controllers/deliveryController.js';
 import { protect, deliveryOnly, adminOnly } from '../middlewares/authMiddleware.js';
 
@@ -15,6 +16,7 @@ router.get('/admin/partners', protect, adminOnly, getAllDeliveryPartners);
 router.get('/me', protect, deliveryOnly, getMyProfile);
 router.put('/me', protect, deliveryOnly, updateProfile);
 router.get('/orders', protect, deliveryOnly, getMyOrders);
+router.put('/orders/:id/accept', protect, deliveryOnly, acceptDeliveryAssignment);
 router.put('/orders/:id/status', protect, deliveryOnly, updateOrderDeliveryStatus);
 router.post('/orders/:id/verify', protect, deliveryOnly, completeDelivery);
 

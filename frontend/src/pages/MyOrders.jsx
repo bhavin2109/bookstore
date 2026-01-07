@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../api/axios";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import TrackingMap from "../components/TrackingMap";
+import OrderTracker from "../components/OrderTracker";
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -270,25 +270,10 @@ const MyOrders = () => {
                       </p>
                     </div>
 
-                    {/* Live Tracking Map */}
-                    {order.deliveryStatus === "out_for_delivery" && (
-                      <div className="mt-4 mb-2">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                          </span>
-                          <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">
-                            Live Delivery Tracking
-                          </span>
-                        </div>
-                        <TrackingMap orderId={order._id} />
-                        <p className="text-xs text-slate-500 mt-2 text-center">
-                          Your order is on the way! Watch the delivery partner
-                          approach.
-                        </p>
-                      </div>
-                    )}
+                    {/* Detailed Tracker */}
+                    <div className="mt-4 border-t border-white/5 pt-4">
+                      <OrderTracker order={order} />
+                    </div>
 
                     {/* Footer */}
                     <div className="mt-6 flex items-center justify-between border-t border-white/5 pt-4">

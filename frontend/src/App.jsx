@@ -12,6 +12,8 @@ import DeliveryRoute from "./components/DeliveryRoute.jsx";
 import Chatbot from "./components/Chatbot.jsx";
 import SellerLayout from "./layouts/SellerLayout.jsx";
 import DeliveryLayout from "./layouts/DeliveryLayout.jsx";
+import { connectSocket, disconnectSocket } from "./services/socketService.js";
+import { useSelector } from "react-redux";
 
 // Lazy Load Pages
 // Lazy Load Pages
@@ -76,10 +78,20 @@ const LoadingSpinner = () => (
 
 const App = () => {
   const location = useLocation();
+  const { token } = useSelector((state) => state.auth);
   const hideLayout =
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/seller") ||
     location.pathname.startsWith("/delivery");
+
+  React.useEffect(() => {
+    if (token) {
+      connectSocket(token);
+    }
+    return () => {
+      disconnectSocket();
+    };
+  }, [token]);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);

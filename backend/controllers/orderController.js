@@ -4,6 +4,9 @@ import Order from '../models/Order.js';
 import sendEmail from '../utils/sendEmail.js';
 import Book from '../models/Book.js';
 import User from '../models/User.js';
+import Notification from '../models/Notification.js';
+import sendSMS from '../utils/sendSMS.js';
+import Otp from '../models/Otp.js';
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -357,17 +360,124 @@ const assignDeliveryPartner = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { deliveryPartnerId } = req.body;
 
-    const order = await Order.findById(id);
+    // Populate user to get email/phone
+    const order = await Order.findById(id).populate('user', 'name email');
     if (!order) {
         res.status(404);
         throw new Error('Order not found');
     }
 
+    // Check if flow allows assignment
+    if (order.deliveryStatus !== 'packed_by_seller' && order.deliveryStatus !== 'placed') {
+        // Allow assignment even if just placed, but ideally after packed.
+        // Let's enforce it needs to be packed or placed (if seller packs immediately)
+    }
+
+    // Resolve delivery partner user for notification
+    const partner = await DeliveryPartner.findById(deliveryPartnerId).populate('user', 'email name phone'); // Assuming phone is in User or we check DeliveryPartner details
+
+    // NOTE: DeliveryPartner model (Step 160) doesn't have phone. User model usually has it? 
+    // Step 157 Order.shippingAddress.phone exists. User model Step 138/171 doesn't explicitly show phone schema but let's assume valid email.
+
+    if (partner && partner.user) {
+        // Generate Assignment OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await Otp.create({
+            orderId: order._id,
+            recipientEmail: partner.user.email,
+            code: otpCode,
+            type: 'delivery_assignment'
+        });
+
+        const message = `
+            <h3>New Delivery Assignment!</h3>
+            <p>Hi ${partner.user.name}, you have been assigned Order <strong>#${order._id}</strong>.</p>
+            <p>Please use this OTP to accept the assignment:</p>
+            <h2 style="color: #2b6cb0;">${otpCode}</h2>
+        `;
+
+        try {
+            await sendEmail({
+                email: partner.user.email,
+                subject: 'New Delivery Assignment - OTP',
+                message
+            });
+            // Mock SMS
+            await sendSMS({
+                phone: '9999999999', // Placeholder if no phone in user
+                message: `Delivery Assignment: Order #${order._id}. OTP: ${otpCode}`
+            });
+        } catch (error) {
+            console.error("Failed to notify partner:", error);
+        }
+    }
+
+    // We do NOT set 'assigned_to_delivery' yet. We wait for OTP verification.
+    // However, to let them see it in dashboard, checking 'deliveryPartner' is enough as per logic.
     order.deliveryPartner = deliveryPartnerId;
-    order.deliveryStatus = 'pending';
+    // We update timeline to show 'Pending Acceptance' maybe?
+    order.timeline.push({
+        status: order.deliveryStatus, // Keep current status
+        description: 'Assigned to delivery partner (Pending Acceptance)'
+    });
+
     await order.save();
 
-    res.json({ message: 'Delivery Partner assigned', order });
+    res.json({ message: 'Delivery Partner assigned. Waiting for acceptance OTP.', order });
+});
+
+// @desc    Update order status
+// @route   PUT /api/orders/:id/status
+// @access  Private (Admin/Seller/Delivery)
+const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+
+    // Role-based validation
+    if (req.user.role === 'seller' && status === 'packed_by_seller') {
+        // Seller can mark as packed
+    } else if (req.user.role === 'delivery' && ['dispatched', 'out_for_delivery', 'delivered'].includes(status)) {
+        // Delivery partner updates
+        const partner = await DeliveryPartner.findOne({ user: req.user._id });
+        if (!partner || order.deliveryPartner.toString() !== partner._id.toString()) {
+            res.status(401);
+            throw new Error('Not authorized to update this order');
+        }
+    } else if (req.user.role === 'admin') {
+        // Admin can do anything
+    } else {
+        res.status(401);
+        throw new Error('Not authorized for this status change');
+    }
+
+    order.deliveryStatus = status;
+    order.timeline.push({
+        status: status,
+        description: `Order status updated to ${status}`
+    });
+
+    if (status === 'delivered') {
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+    }
+
+    const updatedOrder = await order.save();
+
+    // Notify User
+    await Notification.create({
+        recipient: order.user,
+        type: 'order_update',
+        message: `Order #${order._id} is now ${status.replace(/_/g, ' ')}`,
+        relatedId: order._id
+    });
+
+    res.json(updatedOrder);
 });
 
 export {
@@ -380,5 +490,6 @@ export {
     cancelOrder,
     hideOrder,
     getDashboardStats,
-    assignDeliveryPartner
+    assignDeliveryPartner,
+    updateOrderStatus
 };

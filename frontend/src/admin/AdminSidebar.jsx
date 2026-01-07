@@ -147,6 +147,7 @@ const SidebarContent = ({
           "dashboard",
           "books-management",
           "orders",
+          "chat",
           "role-requests",
           "reviews",
         ].map((path) => (
@@ -171,6 +172,8 @@ const SidebarContent = ({
                   ? "👥"
                   : path === "reviews"
                   ? "⭐"
+                  : path === "chat"
+                  ? "💬"
                   : "📚"}
               </span>
               {path === "dashboard"
@@ -181,6 +184,8 @@ const SidebarContent = ({
                 ? "Role Requests"
                 : path === "reviews"
                 ? "Reviews"
+                : path === "chat"
+                ? "Messages"
                 : "Books"}
             </NavLink>
           </motion.div>

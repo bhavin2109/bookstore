@@ -6,6 +6,8 @@ import orderReducer from './slices/orderSlice';
 import adminReducer from './slices/adminSlice';
 import sellerReducer from './slices/sellerSlice';
 import deliveryReducer from './slices/deliverySlice';
+import chatReducer from './slices/chatSlice';
+import notificationReducer from './slices/notificationSlice';
 
 export const store = configureStore({
     reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
         admin: adminReducer,
         seller: sellerReducer,
         delivery: deliveryReducer,
+        chat: chatReducer,
+        notification: notificationReducer,
     },
 });

@@ -41,7 +41,7 @@ const DeliveryJobs = () => {
       toast.success("Order marked Out For Delivery 🚚");
       fetchOrders();
     } catch (error) {
-      toast.error(error.message || "Failed to update order");
+      toast.error(error.response?.data?.message || "Failed to update order");
     }
   };
 

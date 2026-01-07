@@ -1,6 +1,7 @@
 import React from "react";
 
 import AdminSidebar from "./AdminSidebar";
+import NotificationDropdown from "../components/NotificationDropdown.jsx";
 
 const AdminHeader = ({ children, title, actions, noPadding = false }) => {
   return (
@@ -20,6 +21,7 @@ const AdminHeader = ({ children, title, actions, noPadding = false }) => {
 
           <div className="flex items-center gap-4">
             {actions}
+            <NotificationDropdown />
             <a
               href="/home"
               className="text-sm font-medium text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-2"
