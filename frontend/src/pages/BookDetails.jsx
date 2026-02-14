@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 import { toast } from "react-toastify";
 
@@ -103,6 +104,47 @@ function BookDetails() {
 
   return (
     <div className="min-h-screen bg-slate-900 py-8 lg:py-12">
+      <Helmet>
+        <title>{book.title} | Nerdy Enough</title>
+        <meta
+          name="description"
+          content={
+            book.description
+              ? book.description.substring(0, 160)
+              : `Buy ${book.title} by ${book.author} at Nerdy Enough.`
+          }
+        />
+        <meta property="og:title" content={`${book.title} | Nerdy Enough`} />
+        <meta
+          property="og:description"
+          content={
+            book.description
+              ? book.description.substring(0, 160)
+              : `Buy ${book.title} by ${book.author} at Nerdy Enough.`
+          }
+        />
+        <meta property="og:image" content={book.image} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: book.title,
+            image: book.image,
+            description: book.description,
+            brand: {
+              "@type": "Person",
+              name: book.author,
+            },
+            offers: {
+              "@type": "Offer",
+              url: window.location.href,
+              priceCurrency: "INR",
+              price: book.price,
+              availability: "https://schema.org/InStock",
+            },
+          })}
+        </script>
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <motion.button
