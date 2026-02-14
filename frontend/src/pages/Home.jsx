@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import BookCard from "../components/BookCard";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FAQs from "../components/FAQs";
@@ -117,6 +118,37 @@ const Home = () => {
 
   return (
     <div className="relative -mt-16 bg-slate-900 pt-16 overflow-x-hidden max-w-full">
+      <Helmet>
+        <title>Nerdy Enough – Bookstore Project in MERN Stack</title>
+        <meta
+          name="description"
+          content="Nerdy Enough is a full stack online bookstore website built with the MERN stack (MongoDB, Express, React, Node.js). Explore our vast collection of books."
+        />
+        <meta
+          name="keywords"
+          content="Online Bookstore Website, MERN Stack Bookstore Project, Full Stack Bookstore Application, React Node MongoDB Bookstore"
+        />
+        <link rel="canonical" href="https://nerdyenough.vercel.app/home" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BookStore",
+            name: "Nerdy Enough",
+            image: "https://nerdyenough.vercel.app/og-image.jpg",
+            "@id": "https://nerdyenough.vercel.app",
+            url: "https://nerdyenough.vercel.app",
+            telephone: "+91-9316134234",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Nerdy Enough HQ",
+              addressLocality: "City",
+              postalCode: "000000",
+              addressCountry: "IN",
+            },
+          })}
+        </script>
+      </Helmet>
+
       {/* Hero Section - Split Layout */}
       <section className="relative min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden">
         {/* Left Section - Welcome Content */}
@@ -142,7 +174,10 @@ const Home = () => {
               transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
             >
-              Welcome to <span className="text-emerald-400">Nerdy Enough</span>
+              Nerdy Enough –{" "}
+              <span className="text-emerald-400">
+                MERN Stack Bookstore Website
+              </span>
             </motion.h1>
 
             <motion.p
@@ -556,6 +591,83 @@ const Home = () => {
               </motion.button>
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* About Section (SEO Optimized) */}
+      <section className="bg-slate-950 py-16 lg:py-24 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              About <span className="text-emerald-400">Nerdy Enough</span>
+            </h2>
+            <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed mb-8">
+              Nerdy Enough is a premier{" "}
+              <strong className="text-white">
+                Bookstore Project in MERN Stack
+              </strong>{" "}
+              designed to showcase the capabilities of a{" "}
+              <strong className="text-white">
+                Full Stack Online Bookstore Website
+              </strong>
+              . Our platform provides a seamless shopping experience for book
+              lovers, powered by modern web technologies. Whether you are
+              looking for the latest bestsellers or technical documentation, our{" "}
+              <strong className="text-white">
+                React Node MongoDB Bookstore
+              </strong>{" "}
+              has it all.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Tech Stack Section (Developer Focused) */}
+      <section className="bg-slate-900 py-16 lg:py-24 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Built with <span className="text-emerald-400">MERN Stack</span>
+            </h2>
+            <p className="text-slate-400 max-w-2xl mx-auto">
+              This Full Stack Bookstore Application utilizes industry-standard
+              technologies for performance and scalability.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {[
+              { name: "MongoDB", role: "Database" },
+              { name: "Express.js", role: "Backend Framework" },
+              { name: "React.js", role: "Frontend Library" },
+              { name: "Node.js", role: "Runtime Environment" },
+            ].map((tech, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className="bg-slate-950 p-6 rounded-xl border border-white/10 hover:border-emerald-500/50 transition-colors"
+              >
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {tech.name}
+                </h3>
+                <p className="text-sm text-emerald-400">{tech.role}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
