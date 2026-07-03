@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
+
 import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
@@ -179,3 +182,4 @@ app.use(errorHandler);
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port: http://localhost:${PORT}`);
 });
+// Trigger nodemon restart after direct connection string update

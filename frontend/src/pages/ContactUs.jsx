@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Helmet } from "react-helmet-async";
 // eslint-disable-next-line no-unused-vars
 import { motion, useInView } from "framer-motion";
 
@@ -46,6 +47,18 @@ const ContactUs = () => {
       transition={{ duration: 0.6 }}
       className="bg-slate-900 text-white overflow-x-hidden max-w-full"
     >
+      <Helmet>
+        <title>Contact Us | Nerdy Enough</title>
+        <meta
+          name="description"
+          content="Get in touch with the Nerdy Enough bookstore team. Send us a message, find our physical address, email, or telephone contact details."
+        />
+        <meta
+          name="keywords"
+          content="contact nerdy enough, book support, customer support, email opbhavin21@gmail.com, phone 9316134234"
+        />
+        <link rel="canonical" href="https://nerdyenough.vercel.app/contact-us" />
+      </Helmet>
       <motion.section
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}

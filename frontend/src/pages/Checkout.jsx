@@ -14,6 +14,21 @@ const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Dynamic script loading for Razorpay SDK to improve initial page load performance
+    if (window.Razorpay) return;
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("Razorpay SDK loaded successfully");
+    };
+    script.onerror = () => {
+      console.error("Failed to load Razorpay SDK");
+    };
+    document.body.appendChild(script);
+  }, []);
+
   const [formData, setFormData] = useState(() => {
     const defaults = {
       name: "",

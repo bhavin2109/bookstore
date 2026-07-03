@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { getAllBooks } from "../services/bookServices.js";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -89,6 +90,18 @@ function Books() {
 
   return (
     <div className="min-h-screen bg-slate-900 pt-16">
+      <Helmet>
+        <title>Explore Our Books | Nerdy Enough</title>
+        <meta
+          name="description"
+          content="Explore the wide collection of books on Nerdy Enough. Browse by genre, price range, rating, and find your next read today."
+        />
+        <meta
+          name="keywords"
+          content="online book store, buy books online, book list, book genres, nerdy enough books, fiction, mystery, sci-fi"
+        />
+        <link rel="canonical" href="https://nerdyenough.vercel.app/books" />
+      </Helmet>
       <div className="flex items-start">
         {/* Sidebar Filters - Desktop */}
         <aside

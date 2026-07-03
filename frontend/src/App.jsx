@@ -9,7 +9,6 @@ import AuthRoute from "./components/AuthRoute.jsx";
 
 import SellerRoute from "./components/SellerRoute.jsx";
 import DeliveryRoute from "./components/DeliveryRoute.jsx";
-import Chatbot from "./components/Chatbot.jsx";
 import SellerLayout from "./layouts/SellerLayout.jsx";
 import DeliveryLayout from "./layouts/DeliveryLayout.jsx";
 import { connectSocket, disconnectSocket } from "./services/socketService.js";
@@ -68,6 +67,7 @@ const AdminDashboard = lazy(() => import("./admin/AdminDashboard.jsx"));
 const AdminOrders = lazy(() => import("./admin/AdminOrders.jsx"));
 const RoleRequests = lazy(() => import("./admin/RoleRequests.jsx"));
 const AdminReviews = lazy(() => import("./admin/AdminReviews.jsx"));
+const Chatbot = lazy(() => import("./components/Chatbot.jsx"));
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -136,7 +136,9 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
-      <Chatbot />
+      <Suspense fallback={null}>
+        <Chatbot />
+      </Suspense>
       {!hideLayout && <Header />}
 
       <Suspense fallback={<LoadingSpinner />}>

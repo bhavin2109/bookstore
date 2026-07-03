@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Helmet } from "react-helmet-async";
 // eslint-disable-next-line no-unused-vars
 import { motion, useInView } from "framer-motion";
 
@@ -71,6 +72,18 @@ function AboutUs() {
       transition={{ duration: 0.6 }}
       className="bg-slate-900 text-white overflow-x-hidden max-w-full"
     >
+      <Helmet>
+        <title>About Us | Nerdy Enough</title>
+        <meta
+          name="description"
+          content="Learn more about Nerdy Enough, your premier MERN stack online bookstore. Read about our curated selections, book clubs, author events, and mission."
+        />
+        <meta
+          name="keywords"
+          content="about nerdy enough, online bookstore team, bookstore mission, independent publishers, book curators"
+        />
+        <link rel="canonical" href="https://nerdyenough.vercel.app/about-us" />
+      </Helmet>
       <motion.section
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
