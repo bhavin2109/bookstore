@@ -67,4 +67,4 @@ const bookSchema = new Schema({
     }
 });
 
-export default model('Book', bookSchema, 'products');
+export default model('Book', bookSchema);

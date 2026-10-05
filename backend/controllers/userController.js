@@ -6,7 +6,6 @@ import DeliveryPartner from "../models/DeliveryPartner.js";
 import { OAuth2Client } from 'google-auth-library';
 import crypto from 'crypto';
 import sendEmail from '../utils/sendEmail.js';
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (user) => {
   const jwtSecret = process.env.JWT_SECRET;
@@ -276,9 +275,12 @@ export const googleAuthLogin = async (req, res) => {
       return res.status(400).json({ message: "Google token is required" });
     }
 
+    const googleClientId = process.env.GOOGLE_CLIENT_ID;
+    const client = new OAuth2Client(googleClientId);
+
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: googleClientId,
     });
 
     const { name, email, picture } = ticket.getPayload();
