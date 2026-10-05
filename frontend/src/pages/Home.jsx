@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import BookCard from "../components/BookCard";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FAQs from "../components/FAQs";
@@ -118,36 +117,34 @@ const Home = () => {
 
   return (
     <div className="relative -mt-16 bg-slate-900 pt-16 overflow-x-hidden max-w-full">
-      <Helmet>
-        <title>Nerdy Enough – Bookstore Project in MERN Stack</title>
-        <meta
-          name="description"
-          content="Nerdy Enough is a full stack online bookstore website built with the MERN stack (MongoDB, Express, React, Node.js). Explore our vast collection of books."
-        />
-        <meta
-          name="keywords"
-          content="Online Bookstore Website, MERN Stack Bookstore Project, Full Stack Bookstore Application, React Node MongoDB Bookstore"
-        />
-        <link rel="canonical" href="https://nerdyenough.vercel.app/home" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BookStore",
-            name: "Nerdy Enough",
-            image: "https://nerdyenough.vercel.app/og-image.jpg",
-            "@id": "https://nerdyenough.vercel.app",
-            url: "https://nerdyenough.vercel.app",
-            telephone: "+91-9316134234",
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: "Nerdy Enough HQ",
-              addressLocality: "City",
-              postalCode: "000000",
-              addressCountry: "IN",
-            },
-          })}
-        </script>
-      </Helmet>
+      <title>Nerdy Enough – Bookstore Project in MERN Stack</title>
+      <meta
+        name="description"
+        content="Nerdy Enough is a full stack online bookstore website built with the MERN stack (MongoDB, Express, React, Node.js). Explore our vast collection of books."
+      />
+      <meta
+        name="keywords"
+        content="Online Bookstore Website, MERN Stack Bookstore Project, Full Stack Bookstore Application, React Node MongoDB Bookstore"
+      />
+      <link rel="canonical" href="https://nerdyenough.vercel.app/home" />
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BookStore",
+          name: "Nerdy Enough",
+          image: "https://nerdyenough.vercel.app/og-image.jpg",
+          "@id": "https://nerdyenough.vercel.app",
+          url: "https://nerdyenough.vercel.app",
+          telephone: "+91-9316134234",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "Nerdy Enough HQ",
+            addressLocality: "City",
+            postalCode: "000000",
+            addressCountry: "IN",
+          },
+        })}
+      </script>
 
       {/* Hero Section - Split Layout */}
       <section className="relative min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden">

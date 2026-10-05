@@ -10,7 +10,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler') || id.includes('react-helmet-async')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
               return 'react-core';
             }
             if (id.includes('react-router') || id.includes('remix-run')) {
