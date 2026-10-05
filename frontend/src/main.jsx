@@ -6,15 +6,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store.js";
-import { HelmetProvider } from "react-helmet-async";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Provider store={store}>
-        <HelmetProvider>
-          <App />
-        </HelmetProvider>
+        <App />
       </Provider>
     </GoogleOAuthProvider>
   </BrowserRouter>
